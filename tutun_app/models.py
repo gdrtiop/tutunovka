@@ -1,20 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 #from django.contrib.postgres.fields import ArrayField
 
 
-class User(models.Model):
-    class Meta:
-        db_table = "Users"
-
-    first_name = models.CharField(max_length=40)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(max_length=150)
-    password = models.CharField(max_length=75)
-    is_superuser = models.BooleanField()
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
-    date_joined = models.DateTimeField()
-    tg_username = models.CharField(max_length=75)
+User.add_to_class('tg_username', models.CharField(max_length=75, default=None))
 
 
 class Dot(models.Model):
