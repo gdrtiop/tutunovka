@@ -102,6 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = '/me-my'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
