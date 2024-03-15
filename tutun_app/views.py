@@ -45,8 +45,7 @@ def logout_view(request):
 def index_page(request):
     context = {
         'bar': get_bar_context(request),
-        'author': 'mother...', 'creation_date': '24.12.2023',
-        'pages_count': 3,
+        'author': 'mother...', 'creation_date': '15.03.2024',
         'user': request.user}
     return render(request, 'index.html', context)
 
