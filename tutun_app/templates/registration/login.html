@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация на сайте</title>
+</head>
+<body>
+    <h1>Авторизация</h1>
+    <form action="/login/" method="POST" >
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Sign in">
+    </form>
+
+    {%if errors%}
+    <hr>
+    {{ errors }}
+    <hr>
+    {% endif %}
+</body>
+</html>
