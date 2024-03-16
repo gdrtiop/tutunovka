@@ -32,4 +32,5 @@ urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
     path('me-my', views.memy_page, name='me-my'),
     path('new_route', views.create_route, name='new_route'),
+    path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
 ]

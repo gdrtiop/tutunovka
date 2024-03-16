@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Detail</title>
+</head>
+<body>
+    <h1>Маршрут</h1>
+    <p><strong>Name:</strong> {{ route.Name }}</p>
+    <p><strong>Date In:</strong> {{ route.date_in }}</p>
+    <p><strong>Date Out:</strong> {{ route.date_out }}</p>
+    <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
+    <p><strong>Comment:</strong> {{ route.comment }}</p>
+
+    <h2>Точки</h2>
+    <ul>
+        {% for dot in route.dots.all %}
+            <li>
+                <p><strong>Name:</strong> {{ dot.name }}</p>
+                <p><strong>API Vision:</strong> {{ dot.api_vision }}</p>
+                <p><strong>Note:</strong> {{ dot.note }}</p>
+                <p><strong>Information:</strong> {{ dot.information }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

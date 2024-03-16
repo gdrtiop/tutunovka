@@ -55,6 +55,11 @@ class DotForm(forms.ModelForm):
             'information': forms.TextInput(attrs={'class': 'form-control'})
         }
 
+    def __init__(self, *args, **kwargs):
+        super(DotForm, self).__init__(*args, **kwargs)
+        self.fields['information'].required = False
+        self.fields['note'].required = False
+
 
 class RouteForm(forms.ModelForm):
     class Meta:
@@ -71,4 +76,6 @@ class RouteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(RouteForm, self).__init__(*args, **kwargs)
+        self.fields['baggage'].required = False
+        self.fields['note'].required = False
         self.fields['dots'].required = False

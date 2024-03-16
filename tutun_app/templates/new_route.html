@@ -1,4 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Маршрут</title>
+</head>
+<body>
+{% include 'bar.html' %}
 <form id="route-form" method="post">
+
   {% csrf_token %}
   {{ route_form.as_p }}
 
@@ -9,6 +18,7 @@
 
   <input type="submit" value="Создать">
 </form>
+</body>
 
 <script>
   function createDotForm(prefix) {
@@ -43,3 +53,4 @@
     dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
   }
 </script>
+</html>
