@@ -11,14 +11,15 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User
-from .forms import UserRegisterForm
+from .models import User, Route, Dot
+from .forms import UserRegisterForm, RouteForm, DotForm
 
 
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('me-my')))
+        menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
@@ -50,9 +51,57 @@ def index_page(request):
     return render(request, 'index.html', context)
 
 
+@login_required()
 def memy_page(request):
     context = {
         'bar': get_bar_context(request),
         'test': 'it works!'
     }
     return render(request, 'me-my.html', context)
+
+
+@login_required()
+def create_route(request):
+    if request.method == 'POST':
+        route_form = RouteForm(request.POST)
+        dot_forms = [DotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
+        if route_form.is_valid() and len(dot_forms) != 0:
+            route = route_form.save(commit=False)
+            route.author = request.user
+            route.save()
+            for dot_form in dot_forms:
+                dot_data = dot_form.data
+                if f'dots-{dot_form.prefix}-name' in dot_data:
+                    dot = Dot(
+                        name=dot_data[f'dots-{dot_form.prefix}-name'],
+                        api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
+                        note=dot_data.get(f'dots-{dot_form.prefix}-note'),
+                        information=dot_data.get(f'dots-{dot_form.prefix}-information')
+                    )
+                    dot.save()
+                    route.dots.add(dot)
+            return redirect('me-my')
+        else:
+            '''
+            print("Форма неверна или не все точки валидны.")
+            print("Ошибки основной формы:", route_form.errors)
+            for dot_form in dot_forms:
+                print(f"Ошибки формы точки {dot_form.prefix}: {dot_form.errors}")
+                '''
+            pass
+    else:
+        route_form = RouteForm()
+        dot_forms = [DotForm(prefix=str(x)) for x in range(5)]
+
+    return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
+
+
+
+
+
+
+@login_required()
+def route_detail(request, pk):
+    route = Route.objects.get(pk=pk)
+    dots = Dot.objects.filter(route=route)
+    return render(request, 'new_route_details.html', {'route': route, 'dots': dots})
