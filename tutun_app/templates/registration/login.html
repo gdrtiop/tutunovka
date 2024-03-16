@@ -1,79 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Авторизация на сайте</title>
-    <style>
-        body {
-            background-color: #222222;
-            color: #FFA500;
-            font-family: Bahnschrift SemiBold, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            color: #FFFFFF;
-        }
-
-        h5 {
-            color: #F7941E;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
-            border-radius: 5px;
-            border: 1px solid #F7941E;
-        }
-
-        button {
-            background-color: #F7941E;
-            color: #222222;
-            border: none;
-            padding: 15px 30px;
-            text-align: center;
-            display: inline-block;
-            text-decoration: none;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-
-        button:hover {
-            background-color: #F15A29;
-        }
-    </style>
 </head>
-
 <body>
-    <br>
-    <br>
-    <br>
     <h1>Авторизация</h1>
-    <form action="/login/" method="POST">
-
-        <input type="text" name="username" placeholder="Username" style="width:324px;height:30px;"><br>
-        <input type="password" name="password" placeholder="Password" style="width:324px;height:30px;"><br>
-        <a input type="submit" value="Sign in" href="{% url 'login' %}"><button style="font-size: 1.5rem">Войти</button></a>
+    <form action="/login/" method="POST" >
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Sign in">
     </form>
 
-
-
-
+    {%if errors%}
+    <hr>
+    {{ errors }}
+    <hr>
+    {% endif %}
 </body>
-
 </html>
