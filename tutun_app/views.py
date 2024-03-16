@@ -53,9 +53,24 @@ def index_page(request):
 
 @login_required()
 def memy_page(request):
+    user = request.user
+    routes = Route.objects.filter(author=user)
+
+    profile_info = {
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+    }
+
     context = {
         'bar': get_bar_context(request),
-        'test': 'it works!'
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'routes': routes,
+        'profile_info': profile_info
     }
     return render(request, 'me-my.html', context)
 
@@ -96,12 +111,13 @@ def create_route(request):
     return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
 
 
-
-
-
-
 @login_required()
-def route_detail(request, pk):
-    route = Route.objects.get(pk=pk)
+def route_detail(request, route_id):
+    route = Route.objects.get(id=route_id)
     dots = Dot.objects.filter(route=route)
-    return render(request, 'new_route_details.html', {'route': route, 'dots': dots})
+    context = {
+        'bar': get_bar_context(request),
+        'route': route,
+        'dots': dots,
+    }
+    return render(request, 'route_detail.html', context)
