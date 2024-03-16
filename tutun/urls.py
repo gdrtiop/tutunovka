@@ -16,7 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
+
+from tutun_app import views
+from tutun_app.views import UserRegisterView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index_page, name='index'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('register/', UserRegisterView.as_view(), name='register'),
+    path('me-my', views.memy_page, name='me-my')
+
 ]
