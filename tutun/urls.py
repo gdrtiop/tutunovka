@@ -30,6 +30,6 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('register/', UserRegisterView.as_view(), name='register'),
-    path('me-my', views.memy_page, name='me-my')
-
+    path('me-my', views.memy_page, name='me-my'),
+    path('new_route', views.create_route, name='new_route'),
 ]

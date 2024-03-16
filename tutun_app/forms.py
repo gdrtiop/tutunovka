@@ -6,6 +6,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+from django import forms
+from .models import Route, Dot
+
 
 class UserRegisterForm(UserCreationForm):
     """
@@ -40,3 +43,32 @@ class UserRegisterForm(UserCreationForm):
             self.fields['password2'].widget.attrs.update({"placeholder": 'Повторите придуманный пароль'})
             self.fields['tg_username'].widget.attrs.update({"placeholder": 'Введите ваш тг ник'})
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
+
+
+class DotForm(forms.ModelForm):
+    class Meta:
+        model = Dot
+        fields = ['name', 'api_vision', 'note', 'information']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'note': forms.Textarea(attrs={'class': 'form-control'}),
+            'information': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+
+class RouteForm(forms.ModelForm):
+    class Meta:
+        model = Route
+        fields = ['Name', 'date_in', 'date_out', 'baggage', 'note', 'dots']
+        widgets = {
+            'comment': forms.TextInput(attrs={'class': 'form-control'}),
+            'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'baggage': forms.Textarea(attrs={'class': 'form-control'}),
+            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '1', 'max': '10'}),
+            'dots': forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(RouteForm, self).__init__(*args, **kwargs)
+        self.fields['dots'].required = False

@@ -10,15 +10,16 @@ class Dot(models.Model):
     class Meta:
         db_table = "Dots"
 
+    name = models.CharField(max_length=125, default='Untitled dot')
     api_vision = models.JSONField()
-    Note = models.CharField(max_length=700)
+    note = models.CharField(max_length=700)
     information = models.CharField(max_length=700)
 
 
 class Route(models.Model):
     class Meta:
         db_table = "Routes"
-
+    Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     date_in = models.DateTimeField()
     date_out = models.DateTimeField()
@@ -26,5 +27,5 @@ class Route(models.Model):
     #baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
     note = models.CharField(max_length=700)
-    rate = models.IntegerField()
-    dots = models.ForeignKey(to=Dot, on_delete=models.CASCADE)
+    rate = models.IntegerField(default='-1')
+    dots = models.ManyToManyField(to=Dot)
