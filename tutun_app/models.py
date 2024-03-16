@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 #from django.contrib.postgres.fields import ArrayField
 
 
-User.add_to_class('tg_username', models.CharField(max_length=75, default=None))
+User.add_to_class('tg_username', models.CharField(max_length=75, default=None, unique=True, null=True))
 
 
 class Dot(models.Model):
