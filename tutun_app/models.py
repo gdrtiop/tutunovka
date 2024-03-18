@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 #from django.contrib.postgres.fields import ArrayField
 
 
+
 User.add_to_class('tg_username', models.CharField(max_length=75, default=None, unique=True, null=True))
 
 
@@ -27,5 +28,14 @@ class Route(models.Model):
     #baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
     note = models.CharField(max_length=700)
+    rate = models.IntegerField(default='-1')
+    dots = models.ManyToManyField(to=Dot)
+
+class Route_for_list(models.Model):
+    class Meta:
+        db_table = "Routes_for_list"
+    Name = models.CharField(max_length=125, default='Untitled')
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=Dot)
