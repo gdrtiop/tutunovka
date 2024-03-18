@@ -8,10 +8,11 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
+from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Route, Dot
+from .models import User, Route, Route_for_list, Dot
 from .forms import UserRegisterForm, RouteForm, DotForm
 
 
@@ -49,6 +50,14 @@ def index_page(request):
         'author': 'mother...', 'creation_date': '15.03.2024',
         'user': request.user}
     return render(request, 'index.html', context)
+
+class IndexView(generic.ListView):
+    template_name = 'tutun_app/index.html'
+    context_object_name = 'routes_list'
+
+    def get_queryset(self):
+        return Route_for_list.objects
+
 
 
 @login_required()
