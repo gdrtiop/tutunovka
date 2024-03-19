@@ -8,20 +8,23 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
+from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User
-from .forms import UserRegisterForm
+from .models import User, PrivateRoute, PublicRoute, PrivateDot
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm
 
 
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
-        menu.append(dict(title=str(request.user), url=reverse('me-my')))
+        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
+
     return menu
 
 
@@ -34,6 +37,7 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Регистрация на сайте'
+
         return context
 
 
@@ -50,9 +54,102 @@ def index_page(request):
     return render(request, 'index.html', context)
 
 
-def memy_page(request):
+@login_required()
+def profile(request, stat):
+    user = request.user
+
+    if user.is_anonymous:
+        return redirect('login')
+
+    routes = PrivateRoute.objects.filter(author=user)
+
+    profile_info = {
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'tg_username': user.tg_username
+    }
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+
+        if form.is_valid():
+            User.objects.filter(id=user.id).update(username=form.data["username"], email=form.data["email"],
+                                              first_name=form.data["first_name"], last_name=form.data["last_name"],
+                                              tg_username=form.data["tg_username"])
+
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+    else:
+        form = ProfileForm(initial={
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'tg_username': user.tg_username
+        })
+
     context = {
         'bar': get_bar_context(request),
-        'test': 'it works!'
+        'username': user.username,
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'tg_username': user.tg_username,
+        'routes': routes,
+        'stat': stat,
+        'form': form,
+        'profile_info': profile_info,
+        'url': reverse('profile', kwargs={'stat': 'editing'}),
+        'url_back': reverse('profile', kwargs={'stat': 'reading'})
     }
-    return render(request, 'me-my.html', context)
+
+    return render(request, 'profile.html', context)
+
+
+@login_required()
+def create_route(request):
+    if request.method == 'POST':
+        route_form = PrivateRouteForm(request.POST)
+        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
+        if route_form.is_valid() and len(dot_forms) != 0:
+            route = route_form.save(commit=False)
+            route.author = request.user
+            route.save()
+            for dot_form in dot_forms:
+                dot_data = dot_form.data
+                if f'dots-{dot_form.prefix}-name' in dot_data:
+                    dot = PrivateDot(
+                        name=dot_data[f'dots-{dot_form.prefix}-name'],
+                        api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
+                        note=dot_data.get(f'dots-{dot_form.prefix}-note'),
+                        information=dot_data.get(f'dots-{dot_form.prefix}-information')
+                    )
+                    dot.save()
+                    route.dots.add(dot)
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+        else:
+            '''
+            print("Форма неверна или не все точки валидны.")
+            print("Ошибки основной формы:", route_form.errors)
+            for dot_form in dot_forms:
+                print(f"Ошибки формы точки {dot_form.prefix}: {dot_form.errors}")
+                '''
+            pass
+    else:
+        route_form = PrivateRouteForm()
+        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
+
+    return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
+
+
+@login_required()
+def route_detail(request, route_id):
+    route = PrivateRoute.objects.get(id=route_id)
+    dots = PrivateDot.objects.filter(privateroute=route)
+    context = {
+        'bar': get_bar_context(request),
+        'route': route,
+        'dots': dots,
+    }
+    return render(request, 'route_detail.html', context)

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Маршрут</title>
+</head>
+<body>
+{% include 'bar.html' %}
+<form id="route-form" method="post">
+
+  {% csrf_token %}
+  {{ route_form.as_p }}
+
+  <div id="dots-container">
+  </div>
+
+  <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
+
+  <input type="submit" value="Создать">
+</form>
+</body>
+
+<script>
+  function createDotForm(prefix) {
+    const dotFormHtml = `
+      <p>Точка</p>
+      <div>
+        <label for="id_dots-${prefix}-name">Название:</label>
+        <input type="text" name="dots-${prefix}-name" required>
+      </div>
+      <div>
+        <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
+        <input type="text" name="dots-${prefix}-api_vision">
+      </div>
+      <div>
+        <label for="id_dots-${prefix}-note">Примечание:</label>
+        <textarea name="dots-${prefix}-note"></textarea>
+      </div>
+      <div>
+        <label for="id_dots-${prefix}-information">Информация:</label>
+        <input type="text" name="dots-${prefix}-information">
+      </div>
+      <hr>
+    `;
+    return dotFormHtml;
+  }
+
+  // Функция для добавления формы для точки при нажатии на кнопку
+  function addDotForm() {
+    const dotsContainer = document.getElementById('dots-container');
+    const nextIndex = dotsContainer.children.length;
+    const dotFormHtml = createDotForm(nextIndex);
+    dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
+  }
+</script>
+</html>
