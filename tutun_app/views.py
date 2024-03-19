@@ -13,17 +13,18 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm
 
 
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
-        menu.append(dict(title=str(request.user), url=reverse('me-my')))
+        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
+
     return menu
 
 
@@ -36,6 +37,7 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Регистрация на сайте'
+
         return context
 
 
@@ -61,8 +63,12 @@ class IndexView(generic.ListView):
 
 
 @login_required()
-def memy_page(request):
+def profile(request, stat):
     user = request.user
+
+    if user.is_anonymous:
+        return redirect('login')
+
     routes = PrivateRoute.objects.filter(author=user)
 
     profile_info = {
@@ -70,7 +76,26 @@ def memy_page(request):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'tg_username': user.tg_username
     }
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+
+        if form.is_valid():
+            User.objects.filter(id=user.id).update(username=form.data["username"], email=form.data["email"],
+                                              first_name=form.data["first_name"], last_name=form.data["last_name"],
+                                              tg_username=form.data["tg_username"])
+
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+    else:
+        form = ProfileForm(initial={
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'tg_username': user.tg_username
+        })
 
     context = {
         'bar': get_bar_context(request),
@@ -78,10 +103,16 @@ def memy_page(request):
         'email': user.email,
         'first_name': user.first_name,
         'last_name': user.last_name,
+        'tg_username': user.tg_username,
         'routes': routes,
-        'profile_info': profile_info
+        'stat': stat,
+        'form': form,
+        'profile_info': profile_info,
+        'url': reverse('profile', kwargs={'stat': 'editing'}),
+        'url_back': reverse('profile', kwargs={'stat': 'reading'})
     }
-    return render(request, 'me-my.html', context)
+
+    return render(request, 'profile.html', context)
 
 
 @login_required()
@@ -104,7 +135,7 @@ def create_route(request):
                     )
                     dot.save()
                     route.dots.add(dot)
-            return redirect('me-my')
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         else:
             '''
             print("Форма неверна или не все точки валидны.")

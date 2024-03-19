@@ -45,6 +45,33 @@ class UserRegisterForm(UserCreationForm):
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
 
 
+class ProfileForm(forms.Form):
+    username = forms.CharField(
+        label='Логин',
+        max_length=100,
+        min_length=4
+    )
+    email = forms.EmailField(
+        label='Email',
+        max_length=100
+    )
+    first_name = forms.CharField(
+        label='Имя',
+        max_length=100,
+        min_length=4
+    )
+    last_name = forms.CharField(
+        label='Фамилия',
+        max_length=100,
+        min_length=4
+    )
+    tg_username = forms.CharField(
+        label='TG логин',
+        max_length=100,
+        min_length=2
+    )
+
+
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
