@@ -12,8 +12,8 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Route, Route_for_list, Dot
-from .forms import UserRegisterForm, RouteForm, DotForm
+from .models import User, PrivateRoute, PublicRoute, PrivateDot
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm
 
 
 def get_bar_context(request):
@@ -51,19 +51,19 @@ def index_page(request):
         'user': request.user}
     return render(request, 'index.html', context)
 
+
 class IndexView(generic.ListView):
     template_name = 'tutun_app/index.html'
     context_object_name = 'routes_list'
 
     def get_queryset(self):
-        return Route_for_list.objects
-
+        return PublicRoute.objects
 
 
 @login_required()
 def memy_page(request):
     user = request.user
-    routes = Route.objects.filter(author=user)
+    routes = PrivateRoute.objects.filter(author=user)
 
     profile_info = {
         'username': user.username,
@@ -87,8 +87,8 @@ def memy_page(request):
 @login_required()
 def create_route(request):
     if request.method == 'POST':
-        route_form = RouteForm(request.POST)
-        dot_forms = [DotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
+        route_form = PrivateRouteForm(request.POST)
+        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
             route.author = request.user
@@ -96,7 +96,7 @@ def create_route(request):
             for dot_form in dot_forms:
                 dot_data = dot_form.data
                 if f'dots-{dot_form.prefix}-name' in dot_data:
-                    dot = Dot(
+                    dot = PrivateDot(
                         name=dot_data[f'dots-{dot_form.prefix}-name'],
                         api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
                         note=dot_data.get(f'dots-{dot_form.prefix}-note'),
@@ -114,16 +114,16 @@ def create_route(request):
                 '''
             pass
     else:
-        route_form = RouteForm()
-        dot_forms = [DotForm(prefix=str(x)) for x in range(5)]
+        route_form = PrivateRouteForm()
+        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
 
     return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
 
 
 @login_required()
 def route_detail(request, route_id):
-    route = Route.objects.get(id=route_id)
-    dots = Dot.objects.filter(route=route)
+    route = PrivateRoute.objects.get(id=route_id)
+    dots = PrivateDot.objects.filter(privateroute=route)
     context = {
         'bar': get_bar_context(request),
         'route': route,

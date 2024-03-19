@@ -7,9 +7,9 @@ from django.contrib.auth.models import User
 User.add_to_class('tg_username', models.CharField(max_length=75, default=None, unique=True, null=True))
 
 
-class Dot(models.Model):
+class PrivateDot(models.Model):
     class Meta:
-        db_table = "Dots"
+        db_table = "Private_Dots"
 
     name = models.CharField(max_length=125, default='Untitled dot')
     api_vision = models.JSONField()
@@ -17,9 +17,18 @@ class Dot(models.Model):
     information = models.CharField(max_length=700)
 
 
-class Route(models.Model):
+class PublicDot(models.Model):
     class Meta:
-        db_table = "Routes"
+        db_table = "Public_Dots"
+
+    name = models.CharField(max_length=125, default='Untitled dot')
+    api_vision = models.JSONField()
+    information = models.CharField(max_length=700)
+
+
+class PrivateRoute(models.Model):
+    class Meta:
+        db_table = "Private_Routes"
 
     Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
@@ -30,15 +39,15 @@ class Route(models.Model):
     baggage = models.CharField(max_length=3000)
     note = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
-    dots = models.ManyToManyField(to=Dot)
+    dots = models.ManyToManyField(to=PrivateDot)
 
 
-class Route_for_list(models.Model):
+class PublicRoute(models.Model):
     class Meta:
-        db_table = "Routes_for_list"
+        db_table = "Public_Routes"
 
     Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
-    dots = models.ManyToManyField(to=Dot)
+    dots = models.ManyToManyField(to=PublicDot)
