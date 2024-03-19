@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Routes</title>
+</head>
+<body>
+{% include 'bar.html' %}
+    <h1>Ваш профиль:</h1>
+
+    {% if stat == "editing" %}
+    <div class="container">
+        <form method="post" action="{{ url }}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-first" value="Применить">
+        </form>
+        <br>
+        <a href="{{ url_back }}"><button class ="btn btn-secondary">Отменить</button></a>
+    </div>
+    {% else %}
+    <div class="container">
+        <ul>
+            <li>Username: {{ profile_info.username }}</li>
+            <li>Email: {{ profile_info.email }}</li>
+            <li>First Name: {{ profile_info.first_name }}</li>
+            <li>Last Name: {{ profile_info.last_name }}</li>
+            <li>TG username: {{ profile_info.tg_username }}</li>
+        </ul>
+        <a href="{{url}}"><button class ="btn btn-first">Редактировать</button></a>
+    </div>
+
+    <div  class="container mt-4">
+        <h2>Ваши маршруты:</h2>
+        {% if routes %}
+            <ul>
+                {% for route in routes %}
+                    <li>
+                        <a href="{% url 'route_detail' route_id=route.id %}">{{ route.Name }}</a><br>
+                        Date In: {{ route.date_in }}<br>
+                        Date Out: {{ route.date_out }}<br>
+                        Number of Dots: {{ route.dots.count }}<br>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No routes found for this user.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</body>
+</html>

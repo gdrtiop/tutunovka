@@ -102,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_REDIRECT_URL = '/me-my'
+LOGIN_REDIRECT_URL = '/profile/reding'
 
 
 # Internationalization
