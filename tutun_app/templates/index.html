@@ -1,26 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Index page</title>
-    </head>
 
-    <body>
-        {% include 'bar.html' %}
-        <h1>Welcome to our site!</h1>
-        <p>Мы рады тебя видеть у нас в гостях =)</p>
-        <h5>Параметры этого сайта:</h5>
-        <ul>
-            <li>Автор: {{ author }}</li>
-            <li>Дата создания: {{ creation_date }}</li>
-            <li>Количество страниц: {{ pages_count }}</li>
-        </ul>
+<head>
+    <meta charset="UTF-8">
+    <title>Index page</title>
+    <style>
+        body {
+            background-color: #222222;
+            color: #FFA500;
+            font-family: Bahnschrift SemiBold, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
 
-    Текущий пользователь: {{ user }} <br>
+        h1 {
+            color: #FFFFFF;
+        }
 
-    <a href="{% url 'login' %}"><button>Авторизация</button></a>
+        h5 {
+            color: #F7941E;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #F7941E;
+            color: #222222;
+            border: none;
+            padding: 20px 40px;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+
+        button:hover {
+            background-color: #F15A29;
+        }
+    </style>
+</head>
+
+<body>
+
     <br>
-    <a href="{% url 'register' %}"><button>Регистрация</button></a>
+    <br>
+    <br>
+    <br>
+     <img src="https://imageup.ru/img297/4766978/logo.png" alt="Logo" class="logo" style="width:348px;height:62px;">
+    <h1 >Welcome to our site!</h1>
+    <br>
+    <br>
+    <p>Мы рады тебя видеть у нас в гостях =)</p>
+    <h5>Параметры этого сайта:</h5>
+    <ul>
+        <li>Автор:  author </li>
+        <li>Дата создания:  creation_date </li>
+        <li>Количество страниц:  pages_count </li>
+    </ul>
 
-    </body>
+    Текущий пользователь:  user  <br><br>
+    <a href="{% url 'login' %}"><button style="font-size: 1.5rem">Авторизация</button></a>
+    <a href="{% url 'register' %}"><button style="font-size: 1.5rem">Регистрация</button></a>
+
+
+    <a href="https://imageup.ru/img197/4766976/background.png.html" ><img src="https://imageup.ru/img197/4766976/background.png" alt="background00c25132f9500e65.png" border="0" style="width:1904px;height:660px;"></a>
+    <a href="
+    <br>
+    <a href="></a>
+
+</body>
+
 </html>
