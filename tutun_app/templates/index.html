@@ -34,22 +34,6 @@
 
     Текущий пользователь: {{ user }} <br>
 
-    {% for route in routes_list %}
-            <tr>
-            <th scope="row">{{ route.id }}</th>
-            <th>
-                {% if request.user.is_authenticated %}
-                    <a href="{% url 'voting:route_detail' route.id %}">Перейти</a>
-                {% else %}
-                    <a href="{% url 'voting:index' %}">Перейти</a>
-                {% endif  %}
-            </th>
-            <th>{{ route.Name }}</th>
-            <th>{{ route.author }}</th>
-            </tr>
-    {% endfor %}
-
-
     <a href="{% url 'login' %}"><button>Авторизация</button></a>
     <br>
     <a href="{% url 'register' %}"><button>Регистрация</button></a>

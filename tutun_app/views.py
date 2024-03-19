@@ -54,14 +54,6 @@ def index_page(request):
     return render(request, 'index.html', context)
 
 
-class IndexView(generic.ListView):
-    template_name = 'tutun_app/index.html'
-    context_object_name = 'routes_list'
-
-    def get_queryset(self):
-        return PublicRoute.objects
-
-
 @login_required()
 def profile(request, stat):
     user = request.user

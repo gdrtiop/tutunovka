@@ -29,7 +29,7 @@
         </ul>
         <a href="{{url}}"><button class ="btn btn-first">Редактировать</button></a>
     </div>
-
+    {% endif %}
     <div  class="container mt-4">
         <h2>Ваши маршруты:</h2>
         {% if routes %}
@@ -47,6 +47,5 @@
             <p>No routes found for this user.</p>
         {% endif %}
     </div>
-    {% endif %}
 </body>
 </html>
