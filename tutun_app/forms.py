@@ -49,26 +49,29 @@ class ProfileForm(forms.Form):
     username = forms.CharField(
         label='Логин',
         max_length=100,
-        min_length=4
+        min_length=4,
     )
     email = forms.EmailField(
         label='Email',
-        max_length=100
+        max_length=100,
     )
     first_name = forms.CharField(
         label='Имя',
         max_length=100,
-        min_length=4
+        min_length=2,
+        required=False,
     )
     last_name = forms.CharField(
         label='Фамилия',
         max_length=100,
-        min_length=4
+        min_length=2,
+        required=False,
     )
     tg_username = forms.CharField(
         label='TG логин',
         max_length=100,
-        min_length=2
+        min_length=1,
+        required=False,
     )
 
 
