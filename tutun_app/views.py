@@ -54,6 +54,15 @@ def index_page(request):
     return render(request, 'index.html', context)
 
 
+class public_routes_page(generic.ListView):
+    template_name = 'public_routes.html'
+    context_object_name = 'routes_list'
+
+    def get_queryset(self):
+        return PublicRoute.objects.all()
+
+
+
 @login_required()
 def profile(request, stat):
     user = request.user

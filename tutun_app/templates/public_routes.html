@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Routes</title>
+</head>
+<body>
+    {% for route in routes_list %}
+    <tr>
+        <th scope="row">{{ route.id }}</th>
+        <th>
+            <a href="{% url 'tutun_app:route_detail' route.id %}">Перейти</a>
+        </th>
+        <th>{{ route.Name }}</th>
+        <th>{{ route.author }}</th>
+    </tr>
+    {% endfor %}
+
+</body>
+</html>
