@@ -20,6 +20,7 @@ def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
@@ -52,6 +53,15 @@ def index_page(request):
         'author': 'mother...', 'creation_date': '15.03.2024',
         'user': request.user}
     return render(request, 'index.html', context)
+
+
+class public_routes_page(generic.ListView):
+    template_name = 'public_routes.html'
+    context_object_name = 'routes_list'
+
+    def get_queryset(self):
+        return PublicRoute.objects.all()
+
 
 
 @login_required()
