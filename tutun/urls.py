@@ -33,4 +33,5 @@ urlpatterns = [
     path('profile/<str:stat>', views.profile, name='profile'),
     path('new_route', views.create_route, name='new_route'),
     path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
+    path('reduction_route/<int:route_id>/', views.reduction_route, name='reduction_route'),
 ]
