@@ -20,6 +20,7 @@ def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
