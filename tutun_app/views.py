@@ -76,8 +76,8 @@ def profile(request, stat):
 
         if form.is_valid():
             User.objects.filter(id=user.id).update(username=form.data["username"], email=form.data["email"],
-                                              first_name=form.data["first_name"], last_name=form.data["last_name"],
-                                              tg_username=form.data["tg_username"])
+                                                   first_name=form.data["first_name"], last_name=form.data["last_name"],
+                                                   tg_username=form.data["tg_username"])
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
     else:
@@ -156,31 +156,32 @@ def route_detail(request, route_id):
 
 
 @login_required()
-def reduction_route(request,id):
-    if request.user != PrivateRouteForm.objects.get(id=id).author:
+def reduction_route(request, route_id):
+    if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
 
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
         dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
         if route_form.is_valid() and len(dot_forms) != 0:
-            PrivateRoute.objects.filter(id=id).update(Name=route_form.data['Name'],
-                                                    date_in=route_form.data['title'],
-                                                    date_out=route_form.data['date_out'],
-                                                    comment=route_form.data['comment'],
-                                                    baggage=route_form.data['baggage'],
-                                                    note=route_form.data['note'],
-                                                    rate=route_form.data['rate'],
-                                                    dots=route_form.data['dots'],
-            )
+            PrivateRoute.objects.filter(id=route_id).update(Name=route_form.data['Name'],
+                                                            date_in=route_form.data['title'],
+                                                            date_out=route_form.data['date_out'],
+                                                            comment=route_form.data['comment'],
+                                                            baggage=route_form.data['baggage'],
+                                                            note=route_form.data['note'],
+                                                            rate=route_form.data['rate'],
+                                                            dots=route_form.data['dots'],
+                                                            )
             for dot_form in dot_forms:
                 dot_data = dot_form.data
                 if f'dots-{dot_form.prefix}-name' in dot_data:
-                    PrivateDot.objects.filter(privateroute=PrivateRoute.objects.get(id=id)).update(name=dot_form.data['name'],
-                                                    api_vision=dot_form.data['api_vision'],
-                                                    note=dot_form.data['note'],
-                                                    information=dot_form.data['information'],
-                    )
+                    PrivateDot.objects.filter(privateroute=PrivateRoute.objects.get(id=route_id)).update(
+                        name=dot_form.data['name'],
+                        api_vision=dot_form.data['api_vision'],
+                        note=dot_form.data['note'],
+                        information=dot_form.data['information'],
+                        )
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         else:
             '''
@@ -195,4 +196,3 @@ def reduction_route(request,id):
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
 
     return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
-

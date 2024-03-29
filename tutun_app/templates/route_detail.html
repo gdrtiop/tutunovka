@@ -23,5 +23,7 @@
             </li>
         {% endfor %}
     </ul>
+
+    <a href="{% url 'reduction_route' route_id=route.id %}"><button>Редактировать</button></a>
 </body>
 </html>
