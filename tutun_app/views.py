@@ -1,7 +1,8 @@
+import json
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -12,14 +13,15 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User, PrivateRoute, PublicRoute, PrivateDot
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm
+from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm
 
 
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
@@ -52,6 +54,14 @@ def index_page(request):
         'author': 'mother...', 'creation_date': '15.03.2024',
         'user': request.user}
     return render(request, 'index.html', context)
+
+
+class public_routes_page(generic.ListView):
+    template_name = 'public_routes.html'
+    context_object_name = 'routes_list'
+
+    def get_queryset(self):
+        return PublicRoute.objects.all()
 
 
 @login_required()
@@ -107,15 +117,18 @@ def profile(request, stat):
     return render(request, 'profile.html', context)
 
 
-@login_required()
+@login_required
 def create_route(request):
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
         dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
+        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(5) if f'notes-{x}-text' in request.POST]
+
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
             route.author = request.user
             route.save()
+
             for dot_form in dot_forms:
                 dot_data = dot_form.data
                 if f'dots-{dot_form.prefix}-name' in dot_data:
@@ -127,30 +140,41 @@ def create_route(request):
                     )
                     dot.save()
                     route.dots.add(dot)
+
+            for note_form in note_forms:
+                note_data = note_form.data
+                note = Note(
+                    text=note_data[f'notes-{note_form.prefix}-text']
+                )
+                note.save()
+                route.note.add(note)
+
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         else:
-            '''
-            print("Форма неверна или не все точки валидны.")
-            print("Ошибки основной формы:", route_form.errors)
-            for dot_form in dot_forms:
-                print(f"Ошибки формы точки {dot_form.prefix}: {dot_form.errors}")
-                '''
+            # Обработка ошибок или невалидных форм
             pass
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
+        note_forms = [NoteForm(prefix=str(x)) for x in range(5)]
 
-    return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
+    return render(request, 'new_route.html',
+                  {'route_form': route_form, 'dot_forms': dot_forms, 'note_forms': note_forms})
 
 
 @login_required()
 def route_detail(request, route_id):
     route = PrivateRoute.objects.get(id=route_id)
-    dots = PrivateDot.objects.filter(privateroute=route)
+    dots = route.dots.all()
+    notes = route.note.all()
+    print("Route:", route)  # Отладочный вывод
+    print("Dots:", dots)  # Отладочный вывод
+    print("Notes:", notes)
     context = {
         'bar': get_bar_context(request),
         'route': route,
         'dots': dots,
+        'notes': notes,
     }
     return render(request, 'route_detail.html', context)
 
@@ -196,3 +220,17 @@ def reduction_route(request, route_id):
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
 
     return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
+
+
+def update_note(request, note_id):
+    if request.method == 'PATCH':
+        try:
+            note = Note.objects.get(id=note_id)
+            done = json.loads(request.body.decode('utf-8')).get('done')  # Преобразование в булево значение
+            note.done = done
+            note.save()
+            return JsonResponse({'status': 'success', 'message': 'Состояние задачи успешно обновлено'})
+        except Note.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Задача не найдена'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Неверный метод запроса'})

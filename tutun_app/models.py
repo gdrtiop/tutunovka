@@ -26,6 +26,14 @@ class PublicDot(models.Model):
     information = models.CharField(max_length=700)
 
 
+class Note(models.Model):
+    class Meta:
+        db_table = "Notes"
+
+    done = models.BooleanField(default=False)
+    text = models.CharField(max_length=200)
+
+
 class PrivateRoute(models.Model):
     class Meta:
         db_table = "Private_Routes"
@@ -37,7 +45,7 @@ class PrivateRoute(models.Model):
     comment = models.CharField(max_length=700)
     # baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
-    note = models.CharField(max_length=700)
+    note = models.ManyToManyField(to=Note)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PrivateDot)
 

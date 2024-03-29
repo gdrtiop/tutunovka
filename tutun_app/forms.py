@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
-from .models import PrivateRoute, PrivateDot
+from .models import PrivateRoute, PrivateDot, Note
 
 
 class UserRegisterForm(UserCreationForm):
@@ -94,18 +94,28 @@ class PrivateDotForm(forms.ModelForm):
 class PrivateRouteForm(forms.ModelForm):
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'date_in', 'date_out', 'baggage', 'note', 'dots']
+        fields = ['Name', 'comment','date_in', 'date_out', 'baggage', 'rate', 'dots']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
-            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '1', 'max': '10'}),
+            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
             'dots': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
-        self.fields['note'].required = False
         self.fields['dots'].required = False
+        self.fields['comment'].required = False
+
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ['text', 'done']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
+            'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
