@@ -119,6 +119,7 @@ def profile(request, stat):
 
 @login_required
 def create_route(request):
+    error_text = ''
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
         dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
@@ -150,16 +151,24 @@ def create_route(request):
                 route.note.add(note)
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+        elif len(dot_forms) == 0:
+            error_text = 'Необходимо добавить хотя бы одну точку.'
+
         else:
-            # Обработка ошибок или невалидных форм
             pass
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
         note_forms = [NoteForm(prefix=str(x)) for x in range(5)]
 
-    return render(request, 'new_route.html',
-                  {'route_form': route_form, 'dot_forms': dot_forms, 'note_forms': note_forms})
+    context = {
+        'bar': get_bar_context(request),
+        'route_form': route_form,
+        'dot_forms': dot_forms,
+        'note_forms': note_forms,
+        'error_text': error_text,
+    }
+    return render(request, 'new_route.html', context)
 
 
 @login_required()
@@ -167,9 +176,6 @@ def route_detail(request, route_id):
     route = PrivateRoute.objects.get(id=route_id)
     dots = route.dots.all()
     notes = route.note.all()
-    print("Route:", route)  # Отладочный вывод
-    print("Dots:", dots)  # Отладочный вывод
-    print("Notes:", notes)
     context = {
         'bar': get_bar_context(request),
         'route': route,
@@ -205,11 +211,12 @@ def reduction_route(request, route_id):
                         api_vision=dot_form.data['api_vision'],
                         note=dot_form.data['note'],
                         information=dot_form.data['information'],
-                        )
+                    )
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
-            return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms, 'error_text': error_text})
+            return render(request, 'new_route.html',
+                          {'route_form': route_form, 'dot_forms': dot_forms, 'error_text': error_text})
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]

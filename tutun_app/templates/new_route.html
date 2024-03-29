@@ -5,7 +5,7 @@
     <title>Маршрут</title>
 </head>
 <body>
-{% include 'bar.html' %}
+    {% include 'bar.html' %}
 
     {% if error_text %}
         <ul class="error-list">
@@ -13,7 +13,6 @@
         </ul>
     {% endif %}
 
-    {% include 'bar.html' %}
     <form id="route-form" method="post">
         {% csrf_token %}
         {{ route_form.as_p }}
@@ -53,7 +52,6 @@
 
     function createNoteForm(prefix) {
         const noteFormHtml = `
-            <p>Заметка</p>
             <div>
                 <label for="id_notes-${prefix}-text">Заметка:</label>
                 <textarea name="notes-${prefix}-text"></textarea>
