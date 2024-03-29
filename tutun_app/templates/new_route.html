@@ -5,6 +5,14 @@
     <title>Маршрут</title>
 </head>
 <body>
+{% include 'bar.html' %}
+
+    {% if error_text %}
+        <ul class="error-list">
+        <li class="error-item">{{error_text}}</li>
+        </ul>
+    {% endif %}
+
     {% include 'bar.html' %}
     <form id="route-form" method="post">
         {% csrf_token %}

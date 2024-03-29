@@ -207,14 +207,9 @@ def reduction_route(request, route_id):
                         information=dot_form.data['information'],
                         )
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
-        else:
-            '''
-            print("Форма неверна или не все точки валидны.")
-            print("Ошибки основной формы:", route_form.errors)
-            for dot_form in dot_forms:
-                print(f"Ошибки формы точки {dot_form.prefix}: {dot_form.errors}")
-                '''
-            pass
+        elif len(dot_forms) == 0:
+            error_text = 'Необходимо добавить хотя бы одну точку.'
+            return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms, 'error_text': error_text})
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
