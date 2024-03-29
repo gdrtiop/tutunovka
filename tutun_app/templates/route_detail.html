@@ -25,6 +25,7 @@
         {% endfor %}
     </ul>
 
+    <a href="{% url 'reduction_route' route_id=route.id %}"><button>Редактировать</button></a>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
