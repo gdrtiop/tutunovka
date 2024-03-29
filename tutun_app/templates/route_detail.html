@@ -34,9 +34,9 @@
         const done = checkbox.checked;
 
         if (done) {
-            noteText.innerHTML = `<strike>${noteText.innerHTML}</strike>`;
+            noteText.innerHTML = `<strike>${noteText.innerText}</strike>`;
         } else {
-            noteText.innerHTML = noteText.innerHTML.replace('<strike>', '').replace('</strike>', '');
+            noteText.innerHTML = noteText.innerText;
         }
 
         const csrftoken = getCookie('csrftoken');
@@ -69,7 +69,6 @@
         }
         return cookieValue;
     }
-</script>
-
+    </script>
 </body>
 </html>
