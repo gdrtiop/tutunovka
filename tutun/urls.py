@@ -33,6 +33,7 @@ urlpatterns = [
     path('profile/<str:stat>', views.profile, name='profile'),
     path('new_route', views.create_route, name='new_route'),
     path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
-    path('public_routes/', views.public_routes_page.as_view(), name='public_routes')
+    path('public_routes/', views.public_routes_page.as_view(), name='public_routes'),
+    path('update_note/<int:note_id>/', views.update_note, name='update_note')
 
 ]
