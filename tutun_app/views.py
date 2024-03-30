@@ -186,7 +186,6 @@ def route_detail(request, route_id):
     }
     return render(request, 'route_detail.html', context)
 
-
 @login_required()
 def reduction_route(request, route_id):
     if request.user != PrivateRoute.objects.get(id=route_id).author:
@@ -194,37 +193,43 @@ def reduction_route(request, route_id):
 
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
-        if route_form.is_valid() and len(dot_forms) != 0:
+        if route_form.is_valid():
             PrivateRoute.objects.filter(id=route_id).update(Name=route_form.data['Name'],
-                                                            date_in=route_form.data['title'],
+                                                            date_in=route_form.data['date_in'],
                                                             date_out=route_form.data['date_out'],
                                                             comment=route_form.data['comment'],
                                                             baggage=route_form.data['baggage'],
-                                                            note=route_form.data['note'],
                                                             rate=route_form.data['rate'],
-                                                            dots=route_form.data['dots'],
                                                             )
-            for dot_form in dot_forms:
-                dot_data = dot_form.data
-                if f'dots-{dot_form.prefix}-name' in dot_data:
-                    PrivateDot.objects.filter(privateroute=PrivateRoute.objects.get(id=route_id)).update(
-                        name=dot_form.data['name'],
-                        api_vision=dot_form.data['api_vision'],
-                        note=dot_form.data['note'],
-                        information=dot_form.data['information'],
-                    )
-            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
-        elif len(dot_forms) == 0:
-            error_text = 'Необходимо добавить хотя бы одну точку.'
-            return render(request, 'new_route.html',
-                          {'route_form': route_form, 'dot_forms': dot_forms, 'error_text': error_text})
+            return redirect(reverse('route_detail', kwargs={'route_id': route_id}))
     else:
-        route_form = PrivateRouteForm()
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
+        route = PrivateRoute.objects.get(id=route_id)
+        route_form = PrivateRouteForm(initial={
+            'Name': route.Name,
+            'date_in': route.date_in,
+            'date_out': route.date_out,
+            'baggage': route.baggage,
+            'comment': route.comment,
+            'rate': route.rate,
+        })
+        notes = route.note.all()
+        notes_form = []
+        for note in notes:
+            notes_form.append(NoteForm(initial={
+                'text': note.text,
+                'done': note.done,
+            }))
+        dots = route.dots.all()
+        dots_form = []
+        for dot in dots:
+            dots_form.append(PrivateDotForm(initial={
+                'name': dot.name,
+                'note': dot.note,
+                'information': dot.information,
+            }))
 
-    return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
-
+        return render(request, 'reduction_route.html',
+                      {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
 
 def update_note(request, note_id):
     if request.method == 'PATCH':
