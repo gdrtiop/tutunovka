@@ -106,7 +106,7 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'comment','date_in', 'date_out', 'baggage', 'rate', 'dots']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'dots']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
