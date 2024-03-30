@@ -81,6 +81,8 @@ class PublicRoutesTagsPage(generic.ListView):
         queryset = PublicRoute.objects.all().filter(tags__slug=self.tag.slug)
         return queryset
 
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = f'Маршруты по тегу: {self.tag.name}'
