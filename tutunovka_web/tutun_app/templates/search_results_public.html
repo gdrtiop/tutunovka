@@ -5,6 +5,10 @@
     <title>Public Routes</title>
 </head>
 <body>
+    <form action="{% url 'search_results_public' %}" method="get">
+        <input name="q" type="text" placeholder="Поиск...">
+    </form>
+
     {% for route in routes_list %}
         <li>
             <th scope="row">{{ route.id }}</th>
