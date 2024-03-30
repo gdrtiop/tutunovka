@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
-from .models import PrivateRoute, PrivateDot, Note
+from .models import PrivateRoute, PrivateDot, Note, Complaint
 
 
 class UserRegisterForm(UserCreationForm):
@@ -130,4 +130,22 @@ class NoteForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
+
+
+class ComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['text']
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AnswerComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['answer']
+        widgets = {
+            'answer': forms.TextInput(attrs={'class': 'form-control'}),
         }
