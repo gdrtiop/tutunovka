@@ -187,7 +187,7 @@ def route_detail(request, route_id):
     return render(request, 'route_detail.html', context)
 
 @login_required()
-def reduction_route(request, route_id):
+def editing_route(request, route_id):
     if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
 
@@ -240,7 +240,7 @@ def reduction_route(request, route_id):
                 'information': dot.information,
             }))
 
-        return render(request, 'reduction_route.html',
+        return render(request, 'editing_route.html',
                       {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
 
 def update_note(request, note_id):
