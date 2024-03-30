@@ -71,7 +71,7 @@ class PublicRoutesSearchResults(generic.ListView):
     template_name = 'search_results_public.html'
     context_object_name = 'routes_list'
 
-    def get_queryset(self): # новый
+    def get_queryset(self):
         query = self.request.GET.get('q')
         object_list = PublicRoute.objects.filter(
             Q(Name__icontains=query)
