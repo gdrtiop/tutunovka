@@ -78,17 +78,19 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'note', 'information']
+        fields = ['name', 'date', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
-            'information': forms.TextInput(attrs={'class': 'form-control'})
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateDotForm, self).__init__(*args, **kwargs)
         self.fields['information'].required = False
         self.fields['note'].required = False
+        self.fields['date'].required = False
 
 
 class PrivateRouteForm(forms.ModelForm):
@@ -100,26 +102,24 @@ class PrivateRouteForm(forms.ModelForm):
         cleaned_data = super().clean()
         date_in = cleaned_data.get('date_in')
         date_out = cleaned_data.get('date_out')
-        if date_in >= date_out:
+        if date_in > date_out:
             raise forms.ValidationError('Дата возвращения должна быть позже даты прибытия.')
         return cleaned_data
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'comment','date_in', 'date_out', 'baggage', 'rate', 'dots']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
             'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
-            'dots': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
-        self.fields['dots'].required = False
         self.fields['comment'].required = False
 
 
