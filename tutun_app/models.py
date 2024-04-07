@@ -4,6 +4,14 @@ from django.contrib.auth.models import User
 # from django.contrib.postgres.fields import ArrayField
 
 
+class PublicRoute(models.Model):
+    name = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    comment = models.TextField()
+    rating = models.IntegerField()
+    points = models.JSONField()
+
+
 User.add_to_class('tg_username', models.CharField(max_length=75, default=None, unique=True, null=True))
 
 
@@ -40,14 +48,3 @@ class PrivateRoute(models.Model):
     note = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PrivateDot)
-
-
-class PublicRoute(models.Model):
-    class Meta:
-        db_table = "Public_Routes"
-
-    Name = models.CharField(max_length=125, default='Untitled')
-    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    comment = models.CharField(max_length=700)
-    rate = models.IntegerField(default='-1')
-    dots = models.ManyToManyField(to=PublicDot)

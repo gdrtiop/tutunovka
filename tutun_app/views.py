@@ -8,12 +8,20 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
+from .models import User, PrivateRoute, PublicRoute, PrivateDot
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import PublicRoute
 
-from .models import User, PrivateRoute, PublicRoute, PrivateDot
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm
+
+def public_route_detail(request, pk):
+    public_route = PublicRoute.objects.get(pk=pk)
+    return render(request, 'public_routes/public_route_detail.html', {
+        'public_route': public_route,
+    })
 
 
 def get_bar_context(request):
