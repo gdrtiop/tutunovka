@@ -13,6 +13,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
@@ -23,7 +24,7 @@ def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
-        menu.append(dict(title='все маршруты', url=reverse('public_routes')))
+        menu.append(dict(title='все маршруты', url=reverse('search_results_public')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
@@ -58,13 +59,24 @@ def index_page(request):
         'user': request.user}
     return render(request, 'index.html', context)
 
-
-class public_routes_page(generic.ListView):
+class PublicRoutesPage(generic.ListView):
     template_name = 'public_routes.html'
     context_object_name = 'routes_list'
 
     def get_queryset(self):
         return PublicRoute.objects.all()
+
+
+class PublicRoutesSearchResults(generic.ListView):
+    template_name = 'search_results_public.html'
+    context_object_name = 'routes_list'
+
+    def get_queryset(self): # новый
+        query = self.request.GET.get('q')
+        object_list = PublicRoute.objects.filter(
+            Q(Name__icontains=query)
+        )
+        return object_list
 
 
 @login_required()
