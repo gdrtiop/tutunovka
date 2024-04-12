@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from taggit.managers import TaggableManager
 
 # from django.contrib.postgres.fields import ArrayField
 
@@ -60,6 +61,7 @@ class PublicRoute(models.Model):
     comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
+    tags = TaggableManager()
 
 
 class Complaint(models.Model):
