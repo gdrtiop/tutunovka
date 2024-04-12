@@ -36,4 +36,7 @@ urlpatterns = [
     path('reduction_route/<int:route_id>/', views.reduction_route, name='reduction_route'),
     path('public_routes/', views.public_routes_page.as_view(), name='public_routes'),
     path('update_note/<int:note_id>/', views.update_note, name='update_note'),
+    path('complaints/', views.complaints, name='complaints'),
+    path('creat_complaint', views.creat_complaint, name='creat_complaint'),
+    path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer')
 ]
