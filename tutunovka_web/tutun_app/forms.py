@@ -109,11 +109,7 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-<<<<<<< HEAD:tutunovka_web/tutun_app/forms.py
-        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'dots']
-=======
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
->>>>>>> 6fcb3c5 (dots fixed & added date to dots):tutun_app/forms.py
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
