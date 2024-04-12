@@ -7,4 +7,6 @@ RUN pip install -r requirements.txt
 
 CMD python3 manage.py makemigrations
 CMD python3 manange.py migrate \
-    && python3 manage.py shell -c ""
+    && python3 manage.py shell -c "from django contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='root').exists() or User.objects.create_superuser('root', 'root@g,ail.com', 'root')"
+    && python3 manage.py initialize_db \
+    && python3 manage.py runserver 0.0.0.0:8000
