@@ -222,18 +222,20 @@ def editing_route(request, route_id):
             new_dots = {"new_name": request.POST.getlist('name'),
                         "new_note": request.POST.getlist('note'),
                         "new_information": request.POST.getlist('information'),
+                        "new_date": request.POST.getlist('date'),
                         }
             dots = route.dots.all()
             for index_note in range(len(dots)):
                 PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
                                                                          note=new_dots['new_note'][index_note],
-                                                                         information=new_dots['new_information'][
-                                                                             index_note],
+                                                                         information=new_dots['new_information'][index_note],
+                                                                         date=new_dots['new_date'][index_note],
                                                                          )
             for index_note in range(len(dots), len(new_dots["new_name"])):
                 dot = PrivateDot(name=new_dots['new_name'][index_note],
                                  note=new_dots['new_note'][index_note],
                                  information=new_dots['new_information'][index_note],
+                                 date=new_dots['new_date'][index_note],
                                  )
                 dot.save()
                 route.dots.add(dot)
