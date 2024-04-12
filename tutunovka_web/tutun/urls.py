@@ -39,6 +39,7 @@ urlpatterns = [
     path('creat_complaint', views.creat_complaint, name='creat_complaint'),
     path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer'),
     path('public_routes/', views.PublicRoutesPage.as_view(), name='public_routes'),
+    path('public_routes/tags/<str:tag>/', views.PublicRoutesTagsPage.as_view(), name='public_routes_by_tags'),
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public')
 
 ]

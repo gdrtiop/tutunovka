@@ -14,6 +14,8 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from taggit.models import Tag
+
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
@@ -65,6 +67,24 @@ class PublicRoutesPage(generic.ListView):
 
     def get_queryset(self):
         return PublicRoute.objects.all()
+
+
+class PublicRoutesTagsPage(generic.ListView):
+    template_name = 'public_routes.html'
+    context_object_name = 'routes_list'
+    model = PublicRoute
+    paginate_by = 10
+    tag = None
+
+    def get_queryset(self):
+        self.tag = Tag.objects.get(slug=self.kwargs['tag'])
+        queryset = PublicRoute.objects.all().filter(tags__slug=self.tag.slug)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = f'Маршруты по тегу: {self.tag.name}'
+        return context
 
 
 class PublicRoutesSearchResults(generic.ListView):
