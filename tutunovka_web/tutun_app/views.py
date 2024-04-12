@@ -16,7 +16,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from taggit.models import Tag
 
-
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
     AnswerComplaintForm
@@ -31,7 +30,7 @@ def get_bar_context(request):
         menu.append(dict(title='Создать жалобу', url=reverse('creat_complaint')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
         if request.user.is_superuser:
-            menu.append(dict(title='Ответить на жалобу', url=reverse('#')))
+            menu.append(dict(title='Ответить на жалобу', url='#'))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
@@ -64,6 +63,7 @@ def index_page(request):
         'user': request.user}
     return render(request, 'index.html', context)
 
+
 class PublicRoutesPage(generic.ListView):
     template_name = 'public_routes.html'
     context_object_name = 'routes_list'
@@ -83,8 +83,6 @@ class PublicRoutesTagsPage(generic.ListView):
         self.tag = Tag.objects.get(slug=self.kwargs['tag'])
         queryset = PublicRoute.objects.all().filter(tags__slug=self.tag.slug)
         return queryset
-
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,8 +179,8 @@ def create_route(request):
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
                     information=dot_data.get(f'dots-{dot_form.prefix}-information')
                 )
-                
-                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+
+                if dot_data[f'dots-{dot_form.prefix}-date'] is not None:
                     dot.date = dot_data[f'dots-{dot_form.prefix}-date']
 
                 dot.save()
@@ -209,12 +207,12 @@ def create_route(request):
         note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
 
     context = {
-            'bar': get_bar_context(request),
-            'route_form': route_form,
-            'dot_forms': dot_forms,
-            'note_forms': note_forms,
-            'error_text': error_text,
-        }
+        'bar': get_bar_context(request),
+        'route_form': route_form,
+        'dot_forms': dot_forms,
+        'note_forms': note_forms,
+        'error_text': error_text,
+    }
     return render(request, 'new_route.html', context)
 
 
@@ -265,7 +263,8 @@ def editing_route(request, route_id):
             for index_note in range(len(dots)):
                 PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
                                                                          note=new_dots['new_note'][index_note],
-                                                                         information=new_dots['new_information'][index_note],
+                                                                         information=new_dots['new_information'][
+                                                                             index_note],
                                                                          date=new_dots['new_date'][index_note],
                                                                          )
             for index_note in range(len(dots), len(new_dots["new_name"])):
@@ -297,6 +296,8 @@ def editing_route(request, route_id):
             dots_form.append(PrivateDotForm(initial={
                 'name': dot.name,
                 'note': dot.note,
+                'date': dot.date,
+                'api_vision': dot.api_vision,
                 'information': dot.information,
             }))
 
