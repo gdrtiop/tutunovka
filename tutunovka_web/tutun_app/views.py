@@ -15,7 +15,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, AnswerComplaintForm
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
+    AnswerComplaintForm
 
 
 def get_bar_context(request):
@@ -186,6 +187,7 @@ def route_detail(request, route_id):
     }
     return render(request, 'route_detail.html', context)
 
+
 @login_required()
 def editing_route(request, route_id):
     if request.user != PrivateRoute.objects.get(id=route_id).author:
@@ -202,20 +204,32 @@ def editing_route(request, route_id):
                                                             baggage=route_form.data['baggage'],
                                                             rate=route_form.data['rate'],
                                                             )
-            new_notes={"new_text":request.POST.getlist('text')}
-            notes=route.note.all()
-            for  index_note in range(len(notes)):
+            new_notes = {"new_text": request.POST.getlist('text')}
+            notes = route.note.all()
+            for index_note in range(len(notes)):
                 Note.objects.filter(id=notes[index_note].id).update(text=new_notes["new_text"][index_note])
-            new_dots={"new_name":request.POST.getlist('name'),
-                      "new_note": request.POST.getlist('note'),
-                      "new_information": request.POST.getlist('information'),
-                      }
-            dots=route.dots.all()
-            for  index_note in range(len(dots)):
+            for index_note in range(len(notes), len(new_notes["new_text"])):
+                note = Note(text=new_notes["new_text"][index_note])
+                note.save()
+                route.note.add(note)
+            new_dots = {"new_name": request.POST.getlist('name'),
+                        "new_note": request.POST.getlist('note'),
+                        "new_information": request.POST.getlist('information'),
+                        }
+            dots = route.dots.all()
+            for index_note in range(len(dots)):
                 PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
-                                                                    note=new_dots['new_note'][index_note],
-                                                                    information=new_dots['new_information'][index_note],
-                )
+                                                                         note=new_dots['new_note'][index_note],
+                                                                         information=new_dots['new_information'][
+                                                                             index_note],
+                                                                         )
+            for index_note in range(len(dots), len(new_dots["new_name"])):
+                dot = PrivateDot(name=new_dots['new_name'][index_note],
+                                 note=new_dots['new_note'][index_note],
+                                 information=new_dots['new_information'][index_note],
+                                 )
+                dot.save()
+                route.dots.add(dot)
             return redirect(reverse('route_detail', kwargs={'route_id': route_id}))
     else:
         route = PrivateRoute.objects.get(id=route_id)
@@ -230,7 +244,7 @@ def editing_route(request, route_id):
         notes = route.note.all()
         notes_form = []
         for note in notes:
-            notes_form.append(NoteForm(initial={'text': note.text,}))
+            notes_form.append(NoteForm(initial={'text': note.text, }))
         dots = route.dots.all()
         dots_form = []
         for dot in dots:
@@ -242,6 +256,7 @@ def editing_route(request, route_id):
 
         return render(request, 'editing_route.html',
                       {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
+
 
 def update_note(request, note_id):
     if request.method == 'PATCH':

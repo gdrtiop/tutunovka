@@ -19,69 +19,32 @@
         {{ route_form.as_p }}
         <div id="notes-container">
             {% for note_form in notes_form%}
+            <a>
                 {% csrf_token %}
                 {{ note_form.as_p }}
-            {% endfor %}
-        </div>
-        <div id="dots-container">
-            {% for dot_form in dots_form%}
-                {% csrf_token %}
-                {{ dot_form.as_p }}
+            </a>
             {% endfor %}
         </div>
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
-        <button type="button" id="add-note-btn" onclick="addDotForm()">Добавить точку</button>
+        <div id="dots-container">
+            {% for dot_form in dots_form%}
+            <a>
+                {% csrf_token %}
+                {{ dot_form.as_p }}
+            </a>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
         <input type="submit" value="Создать">
     </form>
 </body>
 <script>
-    function createDotForm(prefix) {
-        const dotFormHtml = `
-            <p>Точка</p>
-            <div>
-                <label for="id_dots-${prefix}-name">Название:</label>
-                <input type="text" name="dots-${prefix}-name" required>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
-                <input type="text" name="dots-${prefix}-api_vision">
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-note">Примечание:</label>
-                <textarea name="dots-${prefix}-note"></textarea>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-information">Информация:</label>
-                <input type="text" name="dots-${prefix}-information">
-            </div>
-            <hr>
-        `;
-        return dotFormHtml;
-    }
-
-    function createNoteForm(prefix) {
-        const noteFormHtml = `
-            <div>
-                <label for="id_notes-${prefix}-text">Заметка:</label>
-                <textarea name="notes-${prefix}-text"></textarea>
-            </div>
-            <hr>
-        `;
-        return noteFormHtml;
-    }
-
     function addNoteForm() {
-        const notesContainer = document.getElementById('notes-container');
-        const nextIndex = notesContainer.children.length;
-        const noteFormHtml = createNoteForm(nextIndex);
-        notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
+        notes-container.innerHTML  =notes-container.innerHTML +'<a>{% csrf_token %}{{ note_form.as_p }}</a>'
     }
 
     function addDotForm() {
-        const dotsContainer = document.getElementById('dots-container');
-        const nextIndex = dotsContainer.children.length;
-        const dotFormHtml = createDotForm(nextIndex);
-        dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
+        dots-container.innerHTML  =dots-container.innerHTML +'<a>{% csrf_token %}{{ dot_form.as_p }}</a>'
     }
 </script>
 </html>
