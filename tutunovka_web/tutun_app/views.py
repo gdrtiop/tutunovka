@@ -125,8 +125,10 @@ def create_route(request):
     error_text = ''
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
-        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(5) if f'notes-{x}-text' in request.POST]
+        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                     f'dots-{x}-name' in request.POST]
+        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                      f'notes-{x}-text' in request.POST]
 
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
@@ -135,21 +137,26 @@ def create_route(request):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                if f'dots-{dot_form.prefix}-name' in dot_data:
-                    dot = PrivateDot(
-                        name=dot_data[f'dots-{dot_form.prefix}-name'],
-                        api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
-                        note=dot_data.get(f'dots-{dot_form.prefix}-note'),
-                        information=dot_data.get(f'dots-{dot_form.prefix}-information')
-                    )
-                    dot.save()
-                    route.dots.add(dot)
+                dot = PrivateDot(
+                    name=dot_data[f'dots-{dot_form.prefix}-name'],
+                    api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
+                    date=None,
+                    note=dot_data.get(f'dots-{dot_form.prefix}-note'),
+                    information=dot_data.get(f'dots-{dot_form.prefix}-information')
+                )
+                
+                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+                    dot.date = dot_data[f'dots-{dot_form.prefix}-date']
+
+                dot.save()
+                route.dots.add(dot)
 
             for note_form in note_forms:
                 note_data = note_form.data
                 note = Note(
                     text=note_data[f'notes-{note_form.prefix}-text']
                 )
+
                 note.save()
                 route.note.add(note)
 
@@ -161,16 +168,16 @@ def create_route(request):
             pass
     else:
         route_form = PrivateRouteForm()
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
-        note_forms = [NoteForm(prefix=str(x)) for x in range(5)]
+        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(2)]
+        note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
 
     context = {
-        'bar': get_bar_context(request),
-        'route_form': route_form,
-        'dot_forms': dot_forms,
-        'note_forms': note_forms,
-        'error_text': error_text,
-    }
+            'bar': get_bar_context(request),
+            'route_form': route_form,
+            'dot_forms': dot_forms,
+            'note_forms': note_forms,
+            'error_text': error_text,
+        }
     return render(request, 'new_route.html', context)
 
 
