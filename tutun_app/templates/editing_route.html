@@ -39,12 +39,58 @@
     </form>
 </body>
 <script>
+    function createDotForm() {
+        const dotFormHtml = `
+            <p>Точка</p>
+            <div>
+                <label for="name">Название:</label>
+                <input type="text" name="name" required>
+            </div>
+            <div>
+                <label for="api_vision">Api Vision:</label>
+                <input type="text" name="api_vision">
+            </div>
+            <div>
+                <label for="date">Дата:</label>
+                <input type="date" name="date">
+            </div>
+            <div>
+                <label for="note">Примечание:</label>
+                <textarea name="note"></textarea>
+            </div>
+            <div>
+                <label for="information">Информация:</label>
+                <input type="text" name="information">
+            </div>
+            <hr>
+        `;
+        return dotFormHtml;
+    }
+
+
+    function createNoteForm() {
+        const noteFormHtml = `
+            <div>
+                <label for="text">Заметка:</label>
+                <textarea name="text"></textarea>
+            </div>
+            <hr>
+        `;
+        return noteFormHtml;
+    }
+
     function addNoteForm() {
-        notes-container.innerHTML  =notes-container.innerHTML +'<a>{% csrf_token %}{{ note_form.as_p }}</a>'
+        const notesContainer = document.getElementById('notes-container');
+        const nextIndex = notesContainer.children.length;
+        const noteFormHtml = createNoteForm();
+        notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
     }
 
     function addDotForm() {
-        dots-container.innerHTML  =dots-container.innerHTML +'<a>{% csrf_token %}{{ dot_form.as_p }}</a>'
+        const dotsContainer = document.getElementById('dots-container');
+        const nextIndex = dotsContainer.children.length;
+        const dotFormHtml = createDotForm();
+        dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
     }
 </script>
 </html>
