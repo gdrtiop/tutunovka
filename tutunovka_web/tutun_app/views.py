@@ -194,8 +194,6 @@ def reduction_route(request, route_id):
     if request.method == 'POST':
         route = PrivateRoute.objects.get(id=route_id)
         route_form = PrivateRouteForm(request.POST)
-        dots_form = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(route.dots.count) if f'dots-{x}-name' in request.POST]
-        notes_form = [NoteForm(request.POST, prefix=str(x)) for x in range(route.note.count) if f'notes-{x}-text' in request.POST]
         if route_form.is_valid():
             PrivateRoute.objects.filter(id=route_id).update(Name=route_form.data['Name'],
                                                             date_in=route_form.data['date_in'],
@@ -204,20 +202,19 @@ def reduction_route(request, route_id):
                                                             baggage=route_form.data['baggage'],
                                                             rate=route_form.data['rate'],
                                                             )
-            for dot_form in dots_form:
-                dot_data = dot_form.data
-                if f'dots-{dot_form.prefix}-name' in dot_data:
-                    dot = PrivateDot(
-                        name=dot_data[f'dots-{dot_form.prefix}-name'],
-                        api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
-                        note=dot_data.get(f'dots-{dot_form.prefix}-note'),
-                        information=dot_data.get(f'dots-{dot_form.prefix}-information')
-                    )
-
-            for note_form in notes_form:
-                note_data = note_form.data
-                note = Note(
-                    text=note_data[f'notes-{note_form.prefix}-text']
+            new_notes={"new_text":request.POST.getlist('text')}
+            notes=route.note.all()
+            for  index_note in range(len(notes)):
+                Note.objects.filter(id=notes[index_note].id).update(text=new_notes["new_text"][index_note])
+            new_dots={"new_name":request.POST.getlist('name'),
+                      "new_note": request.POST.getlist('note'),
+                      "new_information": request.POST.getlist('information'),
+                      }
+            dots=route.dots.all()
+            for  index_note in range(len(dots)):
+                PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
+                                                                    note=new_dots['new_note'][index_note],
+                                                                    information=new_dots['new_information'][index_note],
                 )
             return redirect(reverse('route_detail', kwargs={'route_id': route_id}))
     else:
@@ -233,10 +230,7 @@ def reduction_route(request, route_id):
         notes = route.note.all()
         notes_form = []
         for note in notes:
-            notes_form.append(NoteForm(initial={
-                'text': note.text,
-                'done': note.done,
-            }))
+            notes_form.append(NoteForm(initial={'text': note.text,}))
         dots = route.dots.all()
         dots_form = []
         for dot in dots:

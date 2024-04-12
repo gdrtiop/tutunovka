@@ -78,7 +78,7 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'api_vision', 'note', 'information']
+        fields = ['name', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
@@ -126,7 +126,7 @@ class PrivateRouteForm(forms.ModelForm):
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
-        fields = ['text', 'done']
+        fields = ['text',]
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
