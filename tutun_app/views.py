@@ -15,7 +15,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, AnswerComplaintForm
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
+    AnswerComplaintForm
 
 
 def get_bar_context(request):
@@ -124,8 +125,10 @@ def create_route(request):
     error_text = ''
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
-        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(5) if f'notes-{x}-text' in request.POST]
+        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                     f'dots-{x}-name' in request.POST]
+        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                      f'notes-{x}-text' in request.POST]
 
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
@@ -134,21 +137,26 @@ def create_route(request):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                if f'dots-{dot_form.prefix}-name' in dot_data:
-                    dot = PrivateDot(
-                        name=dot_data[f'dots-{dot_form.prefix}-name'],
-                        api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
-                        note=dot_data.get(f'dots-{dot_form.prefix}-note'),
-                        information=dot_data.get(f'dots-{dot_form.prefix}-information')
-                    )
-                    dot.save()
-                    route.dots.add(dot)
+                dot = PrivateDot(
+                    name=dot_data[f'dots-{dot_form.prefix}-name'],
+                    api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
+                    date=None,
+                    note=dot_data.get(f'dots-{dot_form.prefix}-note'),
+                    information=dot_data.get(f'dots-{dot_form.prefix}-information')
+                )
+                
+                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+                    dot.date = dot_data[f'dots-{dot_form.prefix}-date']
+
+                dot.save()
+                route.dots.add(dot)
 
             for note_form in note_forms:
                 note_data = note_form.data
                 note = Note(
                     text=note_data[f'notes-{note_form.prefix}-text']
                 )
+
                 note.save()
                 route.note.add(note)
 
@@ -160,16 +168,16 @@ def create_route(request):
             pass
     else:
         route_form = PrivateRouteForm()
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
-        note_forms = [NoteForm(prefix=str(x)) for x in range(5)]
+        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(2)]
+        note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
 
     context = {
-        'bar': get_bar_context(request),
-        'route_form': route_form,
-        'dot_forms': dot_forms,
-        'note_forms': note_forms,
-        'error_text': error_text,
-    }
+            'bar': get_bar_context(request),
+            'route_form': route_form,
+            'dot_forms': dot_forms,
+            'note_forms': note_forms,
+            'error_text': error_text,
+        }
     return render(request, 'new_route.html', context)
 
 
@@ -188,42 +196,75 @@ def route_detail(request, route_id):
 
 
 @login_required()
-def reduction_route(request, route_id):
+def editing_route(request, route_id):
     if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
 
     if request.method == 'POST':
+        route = PrivateRoute.objects.get(id=route_id)
         route_form = PrivateRouteForm(request.POST)
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(5) if f'dots-{x}-name' in request.POST]
-        if route_form.is_valid() and len(dot_forms) != 0:
+        if route_form.is_valid():
             PrivateRoute.objects.filter(id=route_id).update(Name=route_form.data['Name'],
-                                                            date_in=route_form.data['title'],
+                                                            date_in=route_form.data['date_in'],
                                                             date_out=route_form.data['date_out'],
                                                             comment=route_form.data['comment'],
                                                             baggage=route_form.data['baggage'],
-                                                            note=route_form.data['note'],
                                                             rate=route_form.data['rate'],
-                                                            dots=route_form.data['dots'],
                                                             )
-            for dot_form in dot_forms:
-                dot_data = dot_form.data
-                if f'dots-{dot_form.prefix}-name' in dot_data:
-                    PrivateDot.objects.filter(privateroute=PrivateRoute.objects.get(id=route_id)).update(
-                        name=dot_form.data['name'],
-                        api_vision=dot_form.data['api_vision'],
-                        note=dot_form.data['note'],
-                        information=dot_form.data['information'],
-                    )
-            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
-        elif len(dot_forms) == 0:
-            error_text = 'Необходимо добавить хотя бы одну точку.'
-            return render(request, 'new_route.html',
-                          {'route_form': route_form, 'dot_forms': dot_forms, 'error_text': error_text})
+            new_notes = {"new_text": request.POST.getlist('text')}
+            notes = route.note.all()
+            for index_note in range(len(notes)):
+                Note.objects.filter(id=notes[index_note].id).update(text=new_notes["new_text"][index_note])
+            for index_note in range(len(notes), len(new_notes["new_text"])):
+                note = Note(text=new_notes["new_text"][index_note])
+                note.save()
+                route.note.add(note)
+            new_dots = {"new_name": request.POST.getlist('name'),
+                        "new_note": request.POST.getlist('note'),
+                        "new_information": request.POST.getlist('information'),
+                        "new_date": request.POST.getlist('date'),
+                        }
+            dots = route.dots.all()
+            for index_note in range(len(dots)):
+                PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
+                                                                         note=new_dots['new_note'][index_note],
+                                                                         information=new_dots['new_information'][index_note],
+                                                                         date=new_dots['new_date'][index_note],
+                                                                         )
+            for index_note in range(len(dots), len(new_dots["new_name"])):
+                dot = PrivateDot(name=new_dots['new_name'][index_note],
+                                 note=new_dots['new_note'][index_note],
+                                 information=new_dots['new_information'][index_note],
+                                 date=new_dots['new_date'][index_note],
+                                 )
+                dot.save()
+                route.dots.add(dot)
+            return redirect(reverse('route_detail', kwargs={'route_id': route_id}))
     else:
-        route_form = PrivateRouteForm()
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(5)]
+        route = PrivateRoute.objects.get(id=route_id)
+        route_form = PrivateRouteForm(initial={
+            'Name': route.Name,
+            'date_in': route.date_in,
+            'date_out': route.date_out,
+            'baggage': route.baggage,
+            'comment': route.comment,
+            'rate': route.rate,
+        })
+        notes = route.note.all()
+        notes_form = []
+        for note in notes:
+            notes_form.append(NoteForm(initial={'text': note.text, }))
+        dots = route.dots.all()
+        dots_form = []
+        for dot in dots:
+            dots_form.append(PrivateDotForm(initial={
+                'name': dot.name,
+                'note': dot.note,
+                'information': dot.information,
+            }))
 
-    return render(request, 'new_route.html', {'route_form': route_form, 'dot_forms': dot_forms})
+        return render(request, 'editing_route.html',
+                      {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
 
 
 def update_note(request, note_id):
