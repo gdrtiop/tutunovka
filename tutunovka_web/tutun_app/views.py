@@ -1,4 +1,5 @@
 import json
+import datetime
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -13,8 +14,8 @@ from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm
+from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, AnswerComplaintForm
 
 
 def get_bar_context(request):
@@ -23,6 +24,7 @@ def get_bar_context(request):
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
         menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
+        menu.append(dict(title='Обратная связь', url=reverse('complaints')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
@@ -236,3 +238,76 @@ def update_note(request, note_id):
             return JsonResponse({'status': 'error', 'message': 'Задача не найдена'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Неверный метод запроса'})
+
+
+@login_required()
+def complaints(request):
+    if request.user.is_superuser:
+        status = 1
+        data = Complaint.objects.filter().order_by('data')
+    else:
+        status = 0
+        data = Complaint.objects.filter(author=request.user)
+
+    data = list(reversed(data))
+
+    context = {
+        'bar': get_bar_context(request),
+        'data': data,
+        'status': status
+    }
+
+    return render(request, 'complaints.html', context)
+
+
+@login_required()
+def creat_complaint(request):
+    if request.method == 'POST':
+        form = ComplaintForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
+            saver_form.save()
+
+            context = {
+                'bar': get_bar_context(request),
+                'form': form,
+                'text': form.data['text']
+            }
+
+    else:
+        form = ComplaintForm
+
+        context = {
+            'bar': get_bar_context(request),
+            'form': form
+        }
+
+    return render(request, 'creat_complaint.html', context)
+
+
+@login_required()
+def comlaint_answer(request, id):
+    if request.method == 'POST':
+        answer_form = AnswerComplaintForm(request.POST)
+        comlaint = Complaint.objects.filter(id=id)
+
+        if answer_form.is_valid():
+            comlaint.update(answer=answer_form.data["answer"])
+
+            return redirect(reverse('complaints'))
+        else:
+            answer_form = AnswerComplaintForm(initial={
+                'answer': comlaint.answer,
+            })
+
+        context = {
+            'bar': get_bar_context(request),
+            'text': comlaint.text,
+            'author': comlaint.author,
+            'answer': comlaint.answer,
+            'data': comlaint.data,
+            'form': answer_form
+        }
+
+        return render(request, 'complaints.html', context)

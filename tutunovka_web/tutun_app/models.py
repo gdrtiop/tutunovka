@@ -59,3 +59,13 @@ class PublicRoute(models.Model):
     comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
+
+
+class Complaint(models.Model):
+    class Meta:
+        db_table = "Complaints"
+
+    text = models.CharField(max_length=1000, default='')
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=1000, default='')
+    data = models.DateTimeField()
