@@ -78,11 +78,10 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'date', 'api_vision', 'note', 'information']
+        fields = ['name', 'date', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
-            'api-vision': forms.Textarea(attrs={'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -109,11 +108,7 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-<<<<<<< HEAD:tutunovka_web/tutun_app/forms.py
-        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'dots']
-=======
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
->>>>>>> 6fcb3c5 (dots fixed & added date to dots):tutun_app/forms.py
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -138,6 +133,7 @@ class NoteForm(forms.ModelForm):
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
+
 
 
 class ComplaintForm(forms.ModelForm):
