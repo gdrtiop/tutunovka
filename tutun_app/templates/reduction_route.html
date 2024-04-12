@@ -20,7 +20,7 @@
         <div id="notes-container">
             {% for note_form in notes_form%}
                 {% csrf_token %}
-                {{ note.as_p }}
+                {{ note_form.as_p }}
             {% endfor %}
         </div>
         <div id="dots-container">
