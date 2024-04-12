@@ -34,9 +34,11 @@ urlpatterns = [
     path('new_route', views.create_route, name='new_route'),
     path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
     path('editing_route/<int:route_id>/', views.editing_route, name='editing_route'),
-    path('public_routes/', views.public_routes_page.as_view(), name='public_routes'),
     path('update_note/<int:note_id>/', views.update_note, name='update_note'),
     path('complaints/', views.complaints, name='complaints'),
     path('creat_complaint', views.creat_complaint, name='creat_complaint'),
-    path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer')
+    path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer'),
+    path('public_routes/', views.PublicRoutesPage.as_view(), name='public_routes'),
+    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public')
+
 ]
