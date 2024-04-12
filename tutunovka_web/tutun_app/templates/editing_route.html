@@ -1,3 +1,4 @@
+        
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,38 +17,50 @@
     <form id="route-form" method="post">
         {% csrf_token %}
         {{ route_form.as_p }}
-        <div id="dots-container">
-        </div>
         <div id="notes-container">
+            {% for note_form in notes_form%}
+            <a>
+                {% csrf_token %}
+                {{ note_form.as_p }}
+            </a>
+            {% endfor %}
         </div>
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
+        <div id="dots-container">
+            {% for dot_form in dots_form%}
+            <a>
+                {% csrf_token %}
+                {{ dot_form.as_p }}
+            </a>
+            {% endfor %}
+        </div>
         <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
         <input type="submit" value="Создать">
     </form>
 </body>
 <script>
-    function createDotForm(prefix) {
+    function createDotForm() {
         const dotFormHtml = `
             <p>Точка</p>
             <div>
-                <label for="id_dots-${prefix}-name">Название:</label>
-                <input type="text" name="dots-${prefix}-name" required>
+                <label for="name">Название:</label>
+                <input type="text" name="name" required>
             </div>
             <div>
-                <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
-                <input type="text" name="dots-${prefix}-api_vision">
+                <label for="api_vision">Api Vision:</label>
+                <input type="text" name="api_vision">
             </div>
             <div>
-                <label for="id_dots-${prefix}-date">Дата:</label>
-                <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
+                <label for="date">Дата:</label>
+                <input type="date" name="date">
             </div>
             <div>
-                <label for="id_dots-${prefix}-note">Примечание:</label>
-                <textarea name="dots-${prefix}-note"></textarea>
+                <label for="note">Примечание:</label>
+                <textarea name="note"></textarea>
             </div>
             <div>
-                <label for="id_dots-${prefix}-information">Информация:</label>
-                <input type="text" name="dots-${prefix}-information">
+                <label for="information">Информация:</label>
+                <input type="text" name="information">
             </div>
             <hr>
         `;
@@ -55,11 +68,11 @@
     }
 
 
-    function createNoteForm(prefix) {
+    function createNoteForm() {
         const noteFormHtml = `
             <div>
-                <label for="id_notes-${prefix}-text">Заметка:</label>
-                <textarea name="notes-${prefix}-text"></textarea>
+                <label for="text">Заметка:</label>
+                <textarea name="text"></textarea>
             </div>
             <hr>
         `;
@@ -69,14 +82,14 @@
     function addNoteForm() {
         const notesContainer = document.getElementById('notes-container');
         const nextIndex = notesContainer.children.length;
-        const noteFormHtml = createNoteForm(nextIndex);
+        const noteFormHtml = createNoteForm();
         notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
     }
 
     function addDotForm() {
         const dotsContainer = document.getElementById('dots-container');
         const nextIndex = dotsContainer.children.length;
-        const dotFormHtml = createDotForm(nextIndex);
+        const dotFormHtml = createDotForm();
         dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
     }
 </script>

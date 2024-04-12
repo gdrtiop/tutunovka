@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
-from .models import PrivateRoute, PrivateDot, Note
+from .models import PrivateRoute, PrivateDot, Note, Complaint
 
 
 class UserRegisterForm(UserCreationForm):
@@ -78,17 +78,20 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'api_vision', 'note', 'information']
+        fields = ['name', 'date', 'api_vision', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
-            'information': forms.TextInput(attrs={'class': 'form-control'})
+            'api-vision': forms.Textarea(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateDotForm, self).__init__(*args, **kwargs)
         self.fields['information'].required = False
         self.fields['note'].required = False
+        self.fields['date'].required = False
 
 
 class PrivateRouteForm(forms.ModelForm):
@@ -100,34 +103,56 @@ class PrivateRouteForm(forms.ModelForm):
         cleaned_data = super().clean()
         date_in = cleaned_data.get('date_in')
         date_out = cleaned_data.get('date_out')
-        if date_in >= date_out:
+        if date_in > date_out:
             raise forms.ValidationError('Дата возвращения должна быть позже даты прибытия.')
         return cleaned_data
 
     class Meta:
         model = PrivateRoute
+<<<<<<< HEAD:tutunovka_web/tutun_app/forms.py
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'dots']
+=======
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
+>>>>>>> 6fcb3c5 (dots fixed & added date to dots):tutun_app/forms.py
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
             'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
-            'dots': forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
-        self.fields['dots'].required = False
         self.fields['comment'].required = False
 
 
 class NoteForm(forms.ModelForm):
+    text = forms.CharField(label='Заметка')
+
     class Meta:
         model = Note
-        fields = ['text', 'done']
+        fields = ['text']
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control'}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
+
+
+class ComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['text']
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AnswerComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['answer']
+        widgets = {
+            'answer': forms.TextInput(attrs={'class': 'form-control'}),
         }

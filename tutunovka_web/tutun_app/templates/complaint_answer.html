@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div class="container">
+        <form method="post" action="complaint_answer">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-first" value="Apply">
+        </form>
+
+        <form action="/comlaints/" class="inline">
+            <button class="float-left submit-button" >Back</button>
+        </form>
+    </div>
+</body>
+</html>

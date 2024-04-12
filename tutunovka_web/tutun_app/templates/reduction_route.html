@@ -1,3 +1,4 @@
+        
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,12 +17,20 @@
     <form id="route-form" method="post">
         {% csrf_token %}
         {{ route_form.as_p }}
-        <div id="dots-container">
-        </div>
         <div id="notes-container">
+            {% for note_form in notes_form%}
+                {% csrf_token %}
+                {{ note_form.as_p }}
+            {% endfor %}
+        </div>
+        <div id="dots-container">
+            {% for dot_form in dots_form%}
+                {% csrf_token %}
+                {{ dot_form.as_p }}
+            {% endfor %}
         </div>
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
-        <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
+        <button type="button" id="add-note-btn" onclick="addDotForm()">Добавить точку</button>
         <input type="submit" value="Создать">
     </form>
 </body>
@@ -38,10 +47,6 @@
                 <input type="text" name="dots-${prefix}-api_vision">
             </div>
             <div>
-                <label for="id_dots-${prefix}-date">Дата:</label>
-                <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
-            </div>
-            <div>
                 <label for="id_dots-${prefix}-note">Примечание:</label>
                 <textarea name="dots-${prefix}-note"></textarea>
             </div>
@@ -53,7 +58,6 @@
         `;
         return dotFormHtml;
     }
-
 
     function createNoteForm(prefix) {
         const noteFormHtml = `

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from taggit.managers import TaggableManager
 
 # from django.contrib.postgres.fields import ArrayField
 
@@ -13,6 +14,7 @@ class PrivateDot(models.Model):
 
     name = models.CharField(max_length=125, default='Untitled dot')
     api_vision = models.JSONField()
+    date = models.DateTimeField(default=None, null=True)
     note = models.CharField(max_length=700)
     information = models.CharField(max_length=700)
 
@@ -59,3 +61,14 @@ class PublicRoute(models.Model):
     comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
+    tags = TaggableManager()
+
+
+class Complaint(models.Model):
+    class Meta:
+        db_table = "Complaints"
+
+    text = models.CharField(max_length=1000, default='')
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=1000, default='')
+    data = models.DateTimeField()

@@ -17,10 +17,10 @@
             </th>
             <th>{{ route.Name }}</th> <th>{{ route.author }}</th>
             {% if route.tags.all %}
-                <div>
-                    Теги записи: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a>, {% endfor %}
-                </div>
-            {% endif %}
+	        <div>
+		        Теги записи: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a>, {% endfor %}
+	        </div>
+	        {% endif %}
         </li>
     {% endfor %}
 </body>
