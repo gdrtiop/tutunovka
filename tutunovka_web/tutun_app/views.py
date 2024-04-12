@@ -28,7 +28,10 @@ def get_bar_context(request):
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
         menu.append(dict(title='все маршруты', url=reverse('search_results_public')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
+        menu.append(dict(title='Создать жалобу', url=reverse('creat_complaint')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
+        if request.user.is_superuser:
+            menu.append(dict(title='Ответить на жалобу', url=reverse('#')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
