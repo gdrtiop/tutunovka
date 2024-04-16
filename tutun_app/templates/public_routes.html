@@ -23,5 +23,12 @@
             {% endif %}
         </li>
     {% endfor %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ tags_form.as_p }}
+        <input type="submit" value="Поиск">
+    </form>
+
 </body>
 </html>

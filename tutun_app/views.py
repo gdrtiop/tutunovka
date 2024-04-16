@@ -18,8 +18,7 @@ from taggit.models import Tag
 
 
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
-    AnswerComplaintForm
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, TagResultsForm, AnswerComplaintForm
 
 
 def get_bar_context(request):
@@ -61,44 +60,59 @@ def index_page(request):
         'user': request.user}
     return render(request, 'index.html', context)
 
+
 class PublicRoutesPage(generic.ListView):
     template_name = 'public_routes.html'
-    context_object_name = 'routes_list'
 
-    def get_queryset(self):
-        return PublicRoute.objects.all()
+    def post(self, request, *args, **kwargs):
+        form = TagResultsForm(request.POST)
+        if form.is_valid():
+            tags = form.cleaned_data['tags']
+            routes_list = PublicRoute.objects.all().filter(tags__in=tags)
+        else:
+            routes_list = PublicRoute.objects.all()
+        return render(request, self.template_name, context={'routes_list': routes_list, 'tags': Tag.objects.all()})
+
+    def get(self, request):
+        return render(request, self.template_name, context={'routes_list': PublicRoute.objects.all(), 'tags': Tag.objects.all(), 'tags_form': TagResultsForm})
 
 
 class PublicRoutesTagsPage(generic.ListView):
     template_name = 'public_routes.html'
-    context_object_name = 'routes_list'
     model = PublicRoute
     paginate_by = 10
     tag = None
 
-    def get_queryset(self):
+    def post(self, request, *args, **kwargs):
+        form = TagResultsForm(request.POST)
+        if form.is_valid():
+            tags = form.cleaned_data['tags']
+        routes_list = PublicRoute.objects.all().filter(tags__in=tags)
+        return render(request, self.template_name, context={'routes_list': routes_list, 'tags': Tag.objects.all()})
+
+    def get(self, request, tag):
         self.tag = Tag.objects.get(slug=self.kwargs['tag'])
-        queryset = PublicRoute.objects.all().filter(tags__slug=self.tag.slug)
-        return queryset
-
-
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = f'Маршруты по тегу: {self.tag.name}'
-        return context
+        title = f'Маршруты по тегу: {self.tag.name}'
+        queryset = PublicRoute.objects.all().filter(tags=self.tag)
+        return render(request, self.template_name, context={'routes_list': queryset, 'tags': Tag.objects.all(), 'tags_form': TagResultsForm, 'title': title})
 
 
 class PublicRoutesSearchResults(generic.ListView):
     template_name = 'search_results_public.html'
-    context_object_name = 'routes_list'
 
-    def get_queryset(self):
+    def post(self, request, *args, **kwargs):
+        form = TagResultsForm(request.POST)
+        if form.is_valid():
+            tags = form.cleaned_data['tags']
+        routes_list = PublicRoute.objects.all().filter(tags__in=tags)
+        return render(request, self.template_name, context={'routes_list': routes_list, 'tags': Tag.objects.all()})
+
+    def get(self, request):
         query = self.request.GET.get('q')
         object_list = PublicRoute.objects.filter(
             Q(Name__icontains=query)
         )
-        return object_list
+        return render(request, self.template_name, context={'routes_list': object_list, 'tags': Tag.objects.all(), 'tags_form': TagResultsForm})
 
 
 @login_required()

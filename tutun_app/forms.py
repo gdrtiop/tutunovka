@@ -1,14 +1,11 @@
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-
-from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
 from .models import PrivateRoute, PrivateDot, Note, Complaint
+from taggit.models import Tag
 
+tags = Tag.objects.all()
 
 class UserRegisterForm(UserCreationForm):
     """
@@ -152,3 +149,7 @@ class AnswerComplaintForm(forms.ModelForm):
         widgets = {
             'answer': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class TagResultsForm(forms.Form):
+    tags = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset=Tag.objects.all())
