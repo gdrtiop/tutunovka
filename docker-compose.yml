@@ -16,4 +16,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      -postgres-db:
+      - postgres-db
+    volumes:
+      - ./.env.django:/tutunovka_web/.env.django
