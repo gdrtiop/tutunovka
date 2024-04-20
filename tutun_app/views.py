@@ -68,12 +68,15 @@ class PublicRoutesPage(generic.ListView):
         form = TagResultsForm(request.POST)
         if form.is_valid():
             tags = form.cleaned_data['tags']
-            routes_list = PublicRoute.objects.all().filter(tags__in=tags)
+            routes_list = PublicRoute.objects.all()
+            for tag in tags:
+                routes_list = routes_list.filter(tags=tag)
         else:
             routes_list = PublicRoute.objects.all()
         return render(request, self.template_name, context={'routes_list': routes_list, 'tags': Tag.objects.all()})
 
     def get(self, request):
+        print('da')
         return render(request, self.template_name, context={'routes_list': PublicRoute.objects.all(), 'tags': Tag.objects.all(), 'tags_form': TagResultsForm})
 
 
