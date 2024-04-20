@@ -230,6 +230,18 @@ def route_detail(request, route_id):
 
 
 @login_required()
+def public_route_detail(request, route_id):
+    route = PublicRoute.objects.get(id=route_id)
+    dots = route.dots.all()
+    context = {
+        'bar': get_bar_context(request),
+        'route': route,
+        'dots': dots,
+    }
+    return render(request, 'public_routes_detail.html', context)
+
+
+@login_required()
 def editing_route(request, route_id):
     if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
