@@ -236,6 +236,7 @@ def editing_route(request, route_id):
                                  note=new_dots['new_note'][index_note],
                                  information=new_dots['new_information'][index_note],
                                  date=new_dots['new_date'][index_note],
+                                 api_vision=''
                                  )
                 dot.save()
                 route.dots.add(dot)
@@ -260,6 +261,7 @@ def editing_route(request, route_id):
             dots_form.append(PrivateDotForm(initial={
                 'name': dot.name,
                 'note': dot.note,
+                'date': dot.date,
                 'information': dot.information,
             }))
 
