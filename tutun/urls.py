@@ -41,6 +41,7 @@ urlpatterns = [
     path('public_routes/', views.PublicRoutesPage.as_view(), name='public_routes'),
     path('public_routes/tags/<str:tag>/', views.PublicRoutesTagsPage.as_view(), name='public_routes_by_tags'),
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
-    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public')
+    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
+    path('public_route_detail/<int:route_id>/', views.public_route_detail, name='public_route_detail')
 
 ]
