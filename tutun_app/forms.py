@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from taggit.models import Tag
 
 from django import forms
 from .models import PrivateRoute, PrivateDot, Note, Complaint
@@ -94,21 +95,19 @@ class PrivateDotForm(forms.ModelForm):
 
 
 class PrivateRouteForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False, label='Tags')
 
     def clean(self):
-        """
-        Проверка корректности введенных дат
-        """
         cleaned_data = super().clean()
         date_in = cleaned_data.get('date_in')
         date_out = cleaned_data.get('date_out')
-        if date_in > date_out:
+        if date_in and date_out and date_in > date_out:
             raise forms.ValidationError('Дата возвращения должна быть позже даты прибытия.')
         return cleaned_data
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -123,6 +122,7 @@ class PrivateRouteForm(forms.ModelForm):
         self.fields['comment'].required = False
 
 
+
 class NoteForm(forms.ModelForm):
     text = forms.CharField(label='Заметка')
 
@@ -134,6 +134,36 @@ class NoteForm(forms.ModelForm):
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
 
+
+class TagSelectMultiple(forms.SelectMultiple):
+    def render_options(self, *args, **kwargs):
+        """Override render_options to include selected attribute for selected tags."""
+        selected_choices = set([str(v) for v in self.value()])
+        output = []
+        for group in self.choices:
+            group_output = []
+            for value, label in group:
+                if str(value) in selected_choices:
+                    group_output.append(
+                        '<option value="%s" selected="selected">%s</option>' % (
+                            forms.html.escape(value), forms.html.escape(label)
+                        )
+                    )
+                else:
+                    group_output.append(
+                        '<option value="%s">%s</option>' % (
+                            forms.html.escape(value), forms.html.escape(label)
+                        )
+                    )
+            output.append('\n'.join(group_output))
+        return '\n'.join(output)
+
+
+class TagsField(forms.MultipleChoiceField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.queryset = Tag.objects.all()
+        self.widget = TagSelectMultiple()
 
 
 class ComplaintForm(forms.ModelForm):

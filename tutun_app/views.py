@@ -192,10 +192,11 @@ def create_route(request):
                 note.save()
                 route.note.add(note)
 
+            route.tags.set(route_form.cleaned_data['tags'])
+
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
-
         else:
             pass
     else:
