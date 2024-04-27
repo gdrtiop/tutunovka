@@ -50,6 +50,7 @@ class PrivateRoute(models.Model):
     note = models.ManyToManyField(to=Note)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PrivateDot)
+    tags = TaggableManager()
     length = models.CharField(max_length=10, default=None, null=True)
     month = models.CharField(max_length=20, default=None, null=True)
     year = models.CharField(max_length=20, default=None, null=True)
