@@ -19,6 +19,7 @@
 
     h5 {
         color: #F7941E;
+        font-size: 0pt;
     }
 
     ul {
@@ -72,32 +73,14 @@
         <div class="card-title nth-card-title">
             <h1>Регистрация на сайте</h1>
         </div>
+        <br>
+        <br>
         <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <br>
-            <p>
-                <input type="text" name="username" maxlength="150" autofocus required placeholder="Username">
-
-                <input type="email" name="email" maxlength="254" required placeholder="Email">
-            </p>
-            <p>
-                <input type="text" name="tg_username" maxlength="150" required placeholder="Telegram Username">
-
-                <input type="text" name="first_name" maxlength="30" required placeholder="First Name">
-            </p>
-            <p>
-                <input type="text" name="last_name" maxlength="30" required placeholder="Last Name">
-
-                <input type="password" name="password1" required placeholder="Password">
-            </p>
-            <p>
-                <input type="password" name="password2" required placeholder="Password confirmation">
-            </p>
+            <h5>{{ form.as_p }}</h5>
             <br>
             <br>
-            <br>
-            <button type="submit" class="btn btn-dark mt-2">Зарегистрироваться</button>
-            <a><img src="https://iili.io/Jh0MBV4.png" alt="Jh0ClWv.png" alt="JhlkvWX.png" border="0" style="width:100%;height:100%px; "></a>
+            <button type="submit">Зарегистрироваться</button>
         </form>
     </div>
 </div>
