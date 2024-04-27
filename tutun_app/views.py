@@ -15,7 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from taggit.models import Tag
-
+import calendar
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
     AnswerComplaintForm
@@ -165,6 +165,9 @@ def create_route(request):
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
             route.author = request.user
+            route.length = (route.date_out - route.date_in).days  # Calculate length in days
+            route.month = calendar.month_name[route.date_in.month]
+            route.year = route.date_in.year  # Extract year from date_in
             route.save()
 
             for dot_form in dot_forms:
@@ -174,7 +177,8 @@ def create_route(request):
                     api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
                     date=None,
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
-                    information=dot_data.get(f'dots-{dot_form.prefix}-information')
+                    information=dot_data.get(f'dots-{dot_form.prefix}-information'),
+
                 )
 
                 if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
