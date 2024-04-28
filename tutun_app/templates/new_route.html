@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Маршрут</title>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=871c45f9-726b-4202-bf74-0decb2a77698&lang=ru_RU" type="text/javascript"></script>
+    <style>
+        #map {
+            width: 600px;
+            height: 400px;
+        }
+        #coordinates {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     {% include 'bar.html' %}
@@ -23,6 +34,7 @@
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
         <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
         <input type="submit" value="Создать">
+        <div id="map"></div>
     </form>
 </body>
 <script>
@@ -79,5 +91,28 @@
         const dotFormHtml = createDotForm(nextIndex);
         dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
     }
+
+    initMap();
+    async function initMap() {
+        await ymaps3.ready;
+        const {YMap, YMapDefaultSchemeLayer, YMapListener} = ymaps3;
+        const map = new YMap(
+            document.getElementById('map'),
+            {
+                location: {
+                    center: [37.588144, 55.733842],
+                    zoom: 10
+                }
+            }
+        )
+        const clickCallback = () => alert('О, нажал!');
+        const mapListener = new YMapListener({
+            layerId: 1,
+            onClick: clickCallback,
+        });
+        map.addChild(mapListener);
+        map.addChild(new YMapDefaultSchemeLayer());
+    }
+
 </script>
 </html>
