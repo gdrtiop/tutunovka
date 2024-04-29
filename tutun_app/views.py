@@ -214,6 +214,71 @@ def create_route(request):
     }
     return render(request, 'new_route.html', context)
 
+@login_required
+def save_route(request, pk=None):
+    error_text = ''
+    data = get_object_or_404(PublicRoute, pk=pk)
+    if request.method == 'POST':
+        route_form = PrivateRouteForm(request.POST)
+        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                     f'dots-{x}-name' in request.POST]
+        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+                      f'notes-{x}-text' in request.POST]
+
+        if route_form.is_valid() and len(dot_forms) != 0:
+            route = route_form.save(commit=False)
+            route.author = request.user
+            route.length = (route.date_out - route.date_in).days  # Calculate length in days
+            route.month = calendar.month_name[route.date_in.month]
+            route.year = route.date_in.year  # Extract year from date_in
+            route.save()
+
+            for dot_form in dot_forms:
+                dot_data = dot_form.data
+                dot = PrivateDot(
+                    name=dot_data[f'dots-{dot_form.prefix}-name'],
+                    api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
+                    date=None,
+                    note=dot_data.get(f'dots-{dot_form.prefix}-note'),
+                    information=dot_data.get(f'dots-{dot_form.prefix}-information'),
+
+                )
+
+                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+                    dot.date = dot_data[f'dots-{dot_form.prefix}-date']
+
+                dot.save()
+                route.dots.add(dot)
+
+            for note_form in note_forms:
+                note_data = note_form.data
+                note = Note(
+                    text=note_data[f'notes-{note_form.prefix}-text']
+                )
+
+                note.save()
+                route.note.add(note)
+
+            route.tags.set(route_form.cleaned_data['tags'])
+
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+        elif len(dot_forms) == 0:
+            error_text = 'Необходимо добавить хотя бы одну точку.'
+        else:
+            pass
+    else:
+        route_form = PrivateRouteForm(instance=data)
+        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(2)]
+        note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
+
+    context = {
+        'bar': get_bar_context(request),
+        'route_form': route_form,
+        'dot_forms': dot_forms,
+        'note_forms': note_forms,
+        'error_text': error_text,
+    }
+    return render(request, 'new_route.html', context)
 
 @login_required()
 def route_detail(request, route_id):

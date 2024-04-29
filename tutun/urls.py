@@ -32,6 +32,7 @@ urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
     path('profile/<str:stat>', views.profile, name='profile'),
     path('new_route', views.create_route, name='new_route'),
+    path('save_route/<int:pk>', views.save_route, name='save_route'),
     path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
     path('editing_route/<int:route_id>/', views.editing_route, name='editing_route'),
     path('update_note/<int:note_id>/', views.update_note, name='update_note'),

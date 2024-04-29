@@ -19,5 +19,7 @@
             <p><strong>Information:</strong> {{ dot.information }}</p>
         </li>
     {% endfor %}
+
+    <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
 </body>
 </html>
