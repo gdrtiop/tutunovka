@@ -8,129 +8,168 @@
 
     body {
         background-color: #222222;
-        color: #FFA500;
         font-family: Arial;
         text-align: left;
         margin: 0;
         padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-
     h1 {
         color: #FFFFFF;
         font-family: Arkhip;
-        font-size: 35pt;
-        margin-left: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 45pt;
     }
 
-    h5 {
-        color: #F7941E;
-        font-size: 0pt;
-    }
-
-    magicNoWrap {
-        white-space: nowrap;
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        margin-bottom: 10px;
-        color: #FFFFFF;
-        font-size: 35pt;
-        font-weight: 200;
-        margin-left: 220px;
-    }
-    li2 {
-        margin-bottom: 10px;
-        color: #FFFFFF;
-        font-size: 35pt;
-        font-weight: 200;
-        margin-left: 45px;
-    }
-
-    img {
-        position: bottom;
-        right: 0;
-        bottom: 0;
-    }
-
-    p {
-        margin-top: 20px;
-        margin-bottom: 10px;
-        margin-right: 65px;
-        margin-left: 10px;
-    }
-    p2 {
-        margin-right: 80px;
-
-    }
-    p3 {
-        margin-left: -3%;
-    }
-    p4 {
-        margin-bottom: -1px;
-    }
-    p5 {
-        margin-left: 120px;
-        margin-bottom: 50px;
-    }
-
-    input[type="submit"],
-    input[type="text"],
-    input[type="password"],
-    input[type="email"] {
+    input {
+        font-family: Arkhip;
         padding: 10px;
-        font-size: 13pt;
+        font-size: 10pt;
         margin: 5px;
-        width: 250px;
-        border-radius: 50px;
+        width: 200px;
+        border-radius: 30px;
         border: 1px solid #F7941E;
     }
 
     button {
-        background-color: #F7941E;
-        color: #222222;
-        border: none;
-        padding: 15px 30px;
-        font-size: 18pt;
-        display: inline-block;
-        text-decoration: none;
-        cursor: pointer;
-        margin-top: 10px;
-        border-radius: 50px;
-    }
-
-    Textarea{
-        font-family: Arial;
-        font-size: 13pt;
-        width: 250px;
-        height:50px
-    }
-
-    button2 {
+        font-family: Arkhip;
         background-color: #FFFFFF;
         color: #222222;
         border: none;
         padding: 15px 30px;
-        font-size: 18pt;
+        font-size: 10pt;
         display: inline-block;
         text-decoration: none;
         cursor: pointer;
         margin-top: 10px;
-        border-radius: 15px;
+        border-radius: 30px;
     }
 
-    button:hover {
-        background-color: #F15A29;
+    Textarea{
+        font-family: Arkhip;
+        font-size: 13pt;
+        width: 200px;
+        height:50px
     }
-    button2:hover {
-        background-color: #ABABAB;
+
+    .route_name {
+        color: #FFFFFF;
+        background-color: #464646;
+        font-size: 30pt;
+        width: 870px;
+        border-radius: 20px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        padding-bottom: 7px;
+        margin-left: 20px;
     }
-    .block-left{width:50%;height:1000px;overflow:auto;float:left;}
-    .block-right{width:50%;height:1000px;overflow:auto;}
+
+    .container {
+        display: flex;
+        margin-top: -20px;
+        margin-bottom: 20px;
+    }
+
+    .starting-date {
+        color: #000000;
+        background-color: #FFD84C;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .ending-date {
+        color: #000000;
+        background-color: #FF9900;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .notes {
+        color: #000000;
+        background-color: #FF9900;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .dotes {
+        color: #000000;
+        align-items: center;
+        background-color: #FF9900;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: auto;
+        display: flex;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .comment {
+        color: #ffffff;
+        align-items: center;
+        background-color: #FF4D00;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: 140px;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+    .list_of_things {
+        color: #ffffff;
+        align-items: center;
+        background-color: #FF9900;
+        font-size: 10pt;
+        width: 386px;
+        border-radius: 30px;
+        height: 140px;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .edit_btn{
+        color: #ffffff;
+        background-color: #FF4D00;
+        font-size: 10pt;
+        width: 246px;
+        border-radius: 30px;
+        height: 40px;
+        margin-left: 350px;
+        margin-top: 60px;
+        padding-left: 20px;
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
+        border: none;
+    }
+
+
 
 
 
@@ -139,27 +178,38 @@
     </style>
 </head>
 <body>
-{% include 'bar.html' %}
-
 {% if error_text %}
 <ul class="error-list">
     <li class="error-item">{{error_text}}</li>
 </ul>
 {% endif %}
 <form id="route-form" method="post">
-    <div class="block-left">
+
+    {% csrf_token %}
+    <div>
+        <h1>Маршрут</h1>
+        <p class="route_name"><label>Название: </label> <input type="text" name="Name"></p>
         <div class="container">
-            {% csrf_token %}
-            {{ route_form.as_p }}
+            <p class="starting-date"><label>Дата начала: </label> <input type="date" name="date_in"></p>
+            <p class="ending-date"><label>Дата конца:</label> <input type="date" name="date_out"></p>
         </div>
-        <div id="notes-container">
+        <div class="container">
+            <p class="list_of_things"><label>Список вещей для путешествия:</label> <input type="text" name="baggage">
+            </p>
+            <p class="comment"><label>Комментарий:</label> <input type="text" name="comment"></p>
         </div>
-        <button id="add-note-btn" onclick="addNoteForm()"> Добавить заметку</button>
-    </div>
-    <div class="block-right">
-        <div id="dots-container">
+        <div class="container">
+            <div class="dotes">
+                <div id="dots-container">
+                </div>
+                <button type="button" id="add-dot-btn" onclick="addDotForm()"> Добавить точку</button>
+            </div>
+            <div class="notes">
+                <div id="notes-container">
+                </div>
+                <button type="button" id="add-note-btn" onclick="addNoteForm()"> Добавить заметку</button>
+            </div>
         </div>
-        <button id="add-dot-btn" onclick="addDotForm()"> Добавить точку</button>
     </div>
     <input type="submit" value="Создать">
 </form>
@@ -216,6 +266,13 @@
         const noteFormHtml = createNoteForm(nextIndex);
         notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
     }
+
+
+
+
+
+
+
 
 
 
