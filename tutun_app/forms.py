@@ -92,6 +92,16 @@ class PrivateDotForm(forms.ModelForm):
 
 
 class PrivateRouteForm(forms.ModelForm):
+
+    def check(self):
+        data_checked = super().clean()
+        date_in = data_checked.get('date_in')
+        date_out = data_checked.get('date_out')
+        if date_in >= date_out:
+            messages.success(request, "Дата возвращения должна быть позже даты прибытия." )
+        return data_checked
+
+
     class Meta:
         model = PrivateRoute
         fields = ['Name', 'date_in', 'date_out', 'baggage', 'note', 'dots']
