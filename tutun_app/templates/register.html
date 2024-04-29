@@ -1,71 +1,87 @@
 {% block content %}
 <style>
-        body {
-            background-color: #222222;
-            color: #FFA500;
-            font-family: Bahnschrift SemiBold, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 35pt;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    img {
+            position: bottom;
+            right: 0;
+            bottom: 0;
         }
 
-        h1 {
-            color: #FFFFFF;
-        }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
 
-        h5 {
-            color: #F7941E;
-        }
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
-            border-radius: 5px;
-            border: 1px solid #F7941E;
-        }
-
-        button {
-            background-color: #F7941E;
-            color: #222222;
-            border: none;
-            padding: 15px 30px;
-            text-align: center;
-            display: inline-block;
-            text-decoration: none;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-
-        button:hover {
-            background-color: #F15A29;
-        }
-    </style>
-    <br>
-    <br>
-    <div class="card mb-3 border-0 nth-shadow">
-        <div class="card-body">
-            <div class="card-title nth-card-title">
-                <h1>Регистрация на сайте</h1>
-            </div>
-            <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <br>
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-dark mt-2">Зарегистрироваться</button>
-
-            </form>
+    button:hover {
+        background-color: #F15A29;
+    }
+</style>
+<br>
+<br>
+<div class="card mb-3 border-0 nth-shadow">
+    <div class="card-body">
+        <div class="card-title nth-card-title">
+            <h1>Регистрация на сайте</h1>
         </div>
+        <br>
+        <br>
+        <form method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h5>{{ form.as_p }}</h5>
+            <br>
+            <br>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
     </div>
+</div>
 {% endblock %}

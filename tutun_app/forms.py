@@ -108,13 +108,12 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
-            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -128,7 +127,7 @@ class NoteForm(forms.ModelForm):
         model = Note
         fields = ['text',]
         widgets = {
-            'text': forms.Textarea(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={'class': 'form-control '}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
 

@@ -209,7 +209,6 @@ def editing_route(request, route_id):
                                                             date_out=route_form.data['date_out'],
                                                             comment=route_form.data['comment'],
                                                             baggage=route_form.data['baggage'],
-                                                            rate=route_form.data['rate'],
                                                             )
             new_notes = {"new_text": request.POST.getlist('text')}
             notes = route.note.all()

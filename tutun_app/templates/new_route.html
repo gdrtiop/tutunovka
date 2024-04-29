@@ -3,57 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <title>Маршрут</title>
+    <style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 35pt;
+        margin-left: 40px;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+
+    magicNoWrap {
+        white-space: nowrap;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 200;
+        margin-left: 220px;
+    }
+    li2 {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 200;
+        margin-left: 45px;
+    }
+
+    img {
+        position: bottom;
+        right: 0;
+        bottom: 0;
+    }
+
+    p {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        margin-right: 65px;
+        margin-left: 10px;
+    }
+    p2 {
+        margin-right: 80px;
+
+    }
+    p3 {
+        margin-left: -3%;
+    }
+    p4 {
+        margin-bottom: -1px;
+    }
+    p5 {
+        margin-left: 120px;
+        margin-bottom: 50px;
+    }
+
+    input[type="submit"],
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
+
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+    Textarea{
+        font-family: Arial;
+        font-size: 13pt;
+        width: 250px;
+        height:50px
+    }
+
+    button2 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 15px;
+    }
+
+    button:hover {
+        background-color: #F15A29;
+    }
+    button2:hover {
+        background-color: #ABABAB;
+    }
+    .block-left{width:50%;height:1000px;overflow:auto;float:left;}
+    .block-right{width:50%;height:1000px;overflow:auto;}
+
+
+
+
+
+    </style>
 </head>
 <body>
-    {% include 'bar.html' %}
+{% include 'bar.html' %}
 
-    {% if error_text %}
-        <ul class="error-list">
-        <li class="error-item">{{error_text}}</li>
-        </ul>
-    {% endif %}
-
-    <form id="route-form" method="post">
-        {% csrf_token %}
-        {{ route_form.as_p }}
-        <div id="dots-container">
+{% if error_text %}
+<ul class="error-list">
+    <li class="error-item">{{error_text}}</li>
+</ul>
+{% endif %}
+<form id="route-form" method="post">
+    <div class="block-left">
+        <div class="container">
+            {% csrf_token %}
+            {{ route_form.as_p }}
         </div>
         <div id="notes-container">
         </div>
-        <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
-        <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
-        <input type="submit" value="Создать">
-    </form>
+        <button id="add-note-btn" onclick="addNoteForm()"> Добавить заметку</button>
+    </div>
+    <div class="block-right">
+        <div id="dots-container">
+        </div>
+        <button id="add-dot-btn" onclick="addDotForm()"> Добавить точку</button>
+    </div>
+    <input type="submit" value="Создать">
+</form>
 </body>
 <script>
     function createDotForm(prefix) {
-        const dotFormHtml = `
-            <p>Точка</p>
-            <div>
-                <label for="id_dots-${prefix}-name">Название:</label>
-                <input type="text" name="dots-${prefix}-name" required>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
-                <input type="text" name="dots-${prefix}-api_vision">
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-date">Дата:</label>
-                <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-note">Примечание:</label>
-                <textarea name="dots-${prefix}-note"></textarea>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-information">Информация:</label>
-                <input type="text" name="dots-${prefix}-information">
-            </div>
-            <hr>
+        const dotFormHtml =`
+                <div>
+                    <label for="id_dots-${prefix}-name">Название:</label>
+                    <input type="text" name="dots-${prefix}-name" required>
+                </div>
+                <div>
+                    <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
+                    <input type="text" name="dots-${prefix}-api_vision">
+                </div>
+                <div>
+                    <label for="id_dots-${prefix}-date">Дата:</label>
+                    <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
+                </div>
+                <div>
+                    <label for="id_dots-${prefix}-note">Примечание:</label>
+                    <textarea name="dots-${prefix}-note"></textarea>
+                </div>
+                <div>
+                    <label for="id_dots-${prefix}-information">Информация:</label>
+                    <input type="text" name="dots-${prefix}-information">
+                </div>
+           <br>
         `;
         return dotFormHtml;
     }
 
+    function addDotForm() {
+        const dotsContainer = document.getElementById('dots-container');
+        const nextIndex = dotsContainer.children.length;
+        const dotFormHtml = createDotForm(nextIndex);
+        dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
+    }
 
     function createNoteForm(prefix) {
         const noteFormHtml = `
@@ -61,7 +205,7 @@
                 <label for="id_notes-${prefix}-text">Заметка:</label>
                 <textarea name="notes-${prefix}-text"></textarea>
             </div>
-            <hr>
+            <br>
         `;
         return noteFormHtml;
     }
@@ -73,11 +217,9 @@
         notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
     }
 
-    function addDotForm() {
-        const dotsContainer = document.getElementById('dots-container');
-        const nextIndex = dotsContainer.children.length;
-        const dotFormHtml = createDotForm(nextIndex);
-        dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
-    }
+
+
+
+
 </script>
 </html>

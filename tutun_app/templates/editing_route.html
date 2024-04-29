@@ -1,20 +1,152 @@
-        
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Маршрут</title>
+    <style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 35pt;
+        margin-left: 40px;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+
+    magicNoWrap {
+        white-space: nowrap;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 200;
+        margin-left: 220px;
+    }
+    li2 {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 200;
+        margin-left: 45px;
+    }
+
+    img {
+        position: bottom;
+        right: 0;
+        bottom: 0;
+    }
+
+    p {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        margin-right: 65px;
+        margin-left: 10px;
+    }
+    p2 {
+        margin-right: 80px;
+
+    }
+    p3 {
+        margin-left: -3%;
+    }
+    p4 {
+        margin-bottom: -1px;
+    }
+    p5 {
+        margin-left: 120px;
+        margin-bottom: 50px;
+    }
+
+    input[type="submit"],
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
+
+    Textarea{
+        font-family: Arial;
+        font-size: 13pt;
+        width: 250px;
+        height:50px
+    }
+
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+
+    button2 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 15px;
+    }
+
+    button:hover {
+        background-color: #F15A29;
+    }
+    button2:hover {
+        background-color: #ABABAB;
+    }
+    .block-left{width:50%;height:1000px;overflow:auto;float:left;}
+    .block-right{width:50%;height:1000px;overflow:auto;}
+
+
+    </style>
 </head>
 <body>
-    {% include 'bar.html' %}
+{% include 'bar.html' %}
 
-    {% if error_text %}
-        <ul class="error-list">
-        <li class="error-item">{{error_text}}</li>
-        </ul>
-    {% endif %}
+{% if error_text %}
+<ul class="error-list">
+    <li class="error-item">{{error_text}}</li>
+</ul>
+{% endif %}
 
-    <form id="route-form" method="post">
+<form id="route-form" method="post">
+    <div class="block-left">
         {% csrf_token %}
         {{ route_form.as_p }}
         <div id="notes-container">
@@ -26,6 +158,8 @@
             {% endfor %}
         </div>
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
+    </div>
+    <div class="block-right">
         <div id="dots-container">
             {% for dot_form in dots_form%}
             <a>
@@ -35,8 +169,9 @@
             {% endfor %}
         </div>
         <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
-        <input type="submit" value="Создать">
-    </form>
+    </div>
+    <input type="submit" value="Создать">
+</form>
 </body>
 <script>
     function createDotForm() {
@@ -62,7 +197,7 @@
                 <label for="information">Информация:</label>
                 <input type="text" name="information">
             </div>
-            <hr>
+            <br>
         `;
         return dotFormHtml;
     }
@@ -74,7 +209,7 @@
                 <label for="text">Заметка:</label>
                 <textarea name="text"></textarea>
             </div>
-            <hr>
+            <br>
         `;
         return noteFormHtml;
     }
@@ -92,5 +227,7 @@
         const dotFormHtml = createDotForm();
         dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
     }
+
+
 </script>
 </html>
