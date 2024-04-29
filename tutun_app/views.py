@@ -335,6 +335,12 @@ def update_note(request, note_id):
 
 @login_required()
 def complaints(request):
+    """
+    @param request: запрос пользователя
+    @param status: яляется ли пользователь админом(superuser)
+    @param data: списком всех жалоб
+    @return: возвращает страницу со списком жалоб
+    """
     if request.user.is_superuser:
         status = 1
         data = Complaint.objects.filter().order_by('data')
@@ -355,6 +361,13 @@ def complaints(request):
 
 @login_required()
 def create_complaint(request):
+    """
+    @param request: запрос пользователя
+    @param form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице создания жалоб
+    """
+
     if request.method == 'POST':
         form = ComplaintForm(request.POST)
 
@@ -368,6 +381,7 @@ def create_complaint(request):
                 'text': form.data['text']
             }
 
+        return redirect(reverse('complaints'))
     else:
         form = ComplaintForm
 
@@ -380,8 +394,18 @@ def create_complaint(request):
 
 
 @login_required()
-def complaint_answer(request, id):
-    complaint = Complaint.objects.filter(id=id)
+def complaint_answer(request, complaint_id):
+    """
+    @param request: запрос пользователя
+    @param complaint_id: id жалобы
+    @param complaint: конкретная жалоба, взятая по id
+    @param answer_form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице написания ответа на жалобу
+    """
+
+    complaint = Complaint.objects.filter(id=complaint_id)
+
     if request.method == 'POST':
         answer_form = AnswerComplaintForm(request.POST)
 
@@ -391,12 +415,13 @@ def complaint_answer(request, id):
             return redirect(reverse('complaints'))
     else:
         answer_form = AnswerComplaintForm(initial={
-            'answer': complaint.answer,
+            'answer': complaint[0].answer,
         })
 
     context = {
         'bar': get_bar_context(request),
-        'form': answer_form
+        'form': answer_form,
+        'url': reverse('complaint_answer', args=(complaint_id,))
     }
 
     return render(request, 'complaint_answer.html', context)

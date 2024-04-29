@@ -43,5 +43,5 @@ urlpatterns = [
     path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer'),
     path('complaints', views.complaints, name='complaints'),
     path('create_complaint', views.create_complaint, name='create_complaint'),
-    path('complaint_answer/<int:complaint_id>', views.complaint_answer, name='complaint_answer')
+    path('complaint_answer/<int:complaint_id>/', views.complaint_answer, name='complaint_answer')
 ]

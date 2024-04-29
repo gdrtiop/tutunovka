@@ -23,7 +23,7 @@
             <th>User: {{ complaint.author }}</th>
             <br>
             <th>
-                <a href="{% url 'complaint_answer'%}"><input type="button", value="Answer" /></a>
+                <a href="{% url 'complaint_answer' complaint.id %}"><input type="button", value="Answer" /></a>
             </th>
         {% else %}
             <th>Answer: {{ complaint.answer }}</th>
