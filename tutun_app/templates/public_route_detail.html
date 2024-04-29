@@ -7,7 +7,7 @@
 <body>
     {% include 'bar.html' %}
     <h1>Маршрут</h1>
-    <p><strong>Author:</strong> {{ route.author }}</p>
+    <p><strong>Author:</strong> {{ route.author.username }}</p>
     <p><strong>Comment:</strong> {{ route.comment }}</p>
     <p><strong>Rate:</strong> {{ route.rate }}</p>
     <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
@@ -16,9 +16,8 @@
         <li>
             <p><strong>Name:</strong> {{ dot.name }}</p>
             <p><strong>Api_vision:</strong> {{ dot.api_vision }}</p>
-            <p><strong>Information:</strong> {{ dot.api_vision }}</p>
+            <p><strong>Information:</strong> {{ dot.information }}</p>
         </li>
     {% endfor %}
-
 </body>
 </html>

@@ -1,12 +1,9 @@
 import json
 import datetime
-from django import forms
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
@@ -16,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from taggit.models import Tag
 import calendar
-from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint
+from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint,PublicDot
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
     AnswerComplaintForm
 
@@ -234,14 +231,14 @@ def route_detail(request, route_id):
 
 @login_required()
 def public_route_detail(request, route_id):
-    route = PublicRoute.objects.get(id=route_id)
+    route = get_object_or_404(PublicRoute, id=route_id)
     dots = route.dots.all()
     context = {
         'bar': get_bar_context(request),
         'route': route,
         'dots': dots,
     }
-    return render(request, 'public_route_detail.html', context)
+    return render(request, 'public_route_detail.html', {'route': route, 'dots': dots})
 
 
 @login_required()
@@ -404,3 +401,30 @@ def comlaint_answer(request, id):
         }
 
         return render(request, 'complaints.html', context)
+
+@login_required()
+def post_route(request, id):
+    private_route = get_object_or_404(PrivateRoute, id=id)
+    public_dots = []
+
+    public_route = PublicRoute.objects.create(
+        Name=private_route.Name,
+        author=request.user,
+        comment=private_route.comment,
+        rate=private_route.rate,
+    )
+    public_route.save()
+
+    for dot in private_route.dots.all():
+        public_dot, created = PublicDot.objects.get_or_create(
+            name=dot.name,
+            api_vision=dot.api_vision,
+            information=dot.information
+        )
+        public_dots.append(public_dot)
+
+
+    public_route.dots.set(public_dots)
+    public_route.tags.add(*private_route.tags.names())
+
+    return redirect(reverse('public_route_detail', kwargs={'route_id': public_route.id}))
