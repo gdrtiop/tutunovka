@@ -98,7 +98,7 @@ class PrivateRouteForm(forms.ModelForm):
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
         if date_in >= date_out:
-            messages.success(request, "Дата возвращения должна быть позже даты прибытия." )
+            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
         return data_checked
 
 
