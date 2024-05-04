@@ -111,16 +111,14 @@ class PrivateDotForm(forms.ModelForm):
 
 class PrivateRouteForm(forms.ModelForm):
 
-    def clean(self):
-        """
-        Проверка корректности введенных дат
-        """
-        cleaned_data = super().clean()
-        date_in = cleaned_data.get('date_in')
-        date_out = cleaned_data.get('date_out')
-        if date_in > date_out:
-            raise forms.ValidationError('Дата возвращения должна быть позже даты прибытия.')
-        return cleaned_data
+    def check(self):
+        data_checked = super().clean()
+        date_in = data_checked.get('date_in')
+        date_out = data_checked.get('date_out')
+        if date_in >= date_out:
+            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
+        return data_checked
+
 
     class Meta:
         model = PrivateRoute

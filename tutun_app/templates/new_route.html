@@ -5,14 +5,9 @@
     <title>Маршрут</title>
 </head>
 <body>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    {% include 'bar.html' %}
+{% include 'bar.html' %}
+{% include 'messages.html' %}
+<form id="route-form" method="post">
 
     {% if error_text %}
         <ul class="error-list">
