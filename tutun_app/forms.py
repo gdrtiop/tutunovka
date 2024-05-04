@@ -95,7 +95,8 @@ class PrivateDotForm(forms.ModelForm):
 
 
 class PrivateRouteForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple, required=False, label='Tags')
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple,
+                                          required=False, label='Tags')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -120,7 +121,6 @@ class PrivateRouteForm(forms.ModelForm):
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
         self.fields['comment'].required = False
-
 
 
 class NoteForm(forms.ModelForm):
