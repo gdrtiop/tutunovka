@@ -1,5 +1,5 @@
 import json
-import datetime
+from datetime import datetime
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -176,20 +176,25 @@ def create_route(request):
             ind = 0
             for dot_form in dot_forms:
                 if dot_form.is_valid():
-                    print(dot_form.data)
-                    if dot_form.data.get(f'dots-{ind}-date') > route.date_out or dot_form.data.get(
-                            'date') < route.date_in:
+                    dot_date = datetime.strptime(dot_form.data.get(f'dots-{ind}-date'), '%Y-%m-%d').date()
+                    if dot_date > route.date_out.date() or dot_date < route.date_in.date():
                         messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
-                        return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+                        context = {
+                            'bar': get_bar_context(request),
+                            'route_form': route_form,
+                            'dot_forms': dot_forms,
+                            'note_forms': note_forms,
+                        }
+                        route.delete()
+                        return render(request, 'new_route.html', context)
                     dot = dot_form.save(commit=False)
                     dot.save()
                     route.dots.add(dot)
                 ind += 1
 
             for note_form in note_forms:
-                note = note_form.save(commit=False)
-                note.save()
-                route.note.add(note)
+                note = note_form.save()
+                route.notes.add(note)
 
             messages.success(request, 'Маршрут успешно создан.')
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
