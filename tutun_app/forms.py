@@ -87,8 +87,24 @@ class PrivateDotForm(forms.ModelForm):
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        date = cleaned_data.get('date')
+        route_start_date = cleaned_data.get('route_start_date')
+        route_end_date = cleaned_data.get('route_end_date')
+
+        if date and route_start_date and route_end_date:
+            if date < route_start_date or date > route_end_date:
+                raise forms.ValidationError('Дата точки должна быть в пределах дат маршрута.')
+
+        return cleaned_data
+
     def __init__(self, *args, **kwargs):
+        route_start_date = kwargs.pop('route_start_date', None)
+        route_end_date = kwargs.pop('route_end_date', None)
         super(PrivateDotForm, self).__init__(*args, **kwargs)
+        self.route_start_date = route_start_date
+        self.route_end_date = route_end_date
         self.fields['information'].required = False
         self.fields['note'].required = False
         self.fields['date'].required = False
@@ -98,13 +114,14 @@ class PrivateRouteForm(forms.ModelForm):
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple,
                                           required=False, label='Tags')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        date_in = cleaned_data.get('date_in')
-        date_out = cleaned_data.get('date_out')
-        if date_in and date_out and date_in > date_out:
-            raise forms.ValidationError('Дата возвращения должна быть позже даты прибытия.')
-        return cleaned_data
+    def check(self):
+        data_checked = super().clean()
+        date_in = data_checked.get('date_in')
+        date_out = data_checked.get('date_out')
+        if date_in >= date_out:
+            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
+        return data_checked
+
 
     class Meta:
         model = PrivateRoute
