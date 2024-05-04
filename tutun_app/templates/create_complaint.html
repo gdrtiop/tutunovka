@@ -6,10 +6,10 @@
 </head>
 <body>
     <div class="container">
-        <form method="post" action="/complaint_answer">
+        <form method="post" action="/create_complaint">
             {% csrf_token %}
             {{ form.as_p }}
-            <input type="submit" class="btn btn-first" value="Apply">
+            <input type="submit" class="btn btn-first" value="Create">
         </form>
         <form method="post" action="/complaints">
             {% csrf_token %}

@@ -35,13 +35,13 @@ urlpatterns = [
     path('route_detail/<int:route_id>/', views.route_detail, name='route_detail'),
     path('editing_route/<int:route_id>/', views.editing_route, name='editing_route'),
     path('update_note/<int:note_id>/', views.update_note, name='update_note'),
-    path('complaints/', views.complaints, name='complaints'),
-    path('creat_complaint', views.creat_complaint, name='creat_complaint'),
-    path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer'),
     path('public_routes/', views.PublicRoutesPage.as_view(), name='public_routes'),
     path('public_routes/tags/<str:tag>/', views.PublicRoutesTagsPage.as_view(), name='public_routes_by_tags'),
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
     path('public_route_detail/<int:route_id>/', views.public_route_detail, name='public_route_detail'),
     path('comlaint_answer/<int:complaint_id>', views.comlaint_answer, name='complaint_answer'),
+    path('complaints', views.complaints, name='complaints'),
+    path('create_complaint', views.create_complaint, name='create_complaint'),
+    path('complaint_answer/<int:complaint_id>', views.complaint_answer, name='complaint_answer')
 ]

@@ -354,12 +354,12 @@ def complaints(request):
 
 
 @login_required()
-def creat_complaint(request):
+def create_complaint(request):
     if request.method == 'POST':
-        form = ComplaintForm(request.POST, request.FILES)
+        form = ComplaintForm(request.POST)
 
         if form.is_valid():
-            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
+            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now(), answer='')
             saver_form.save()
 
             context = {
@@ -376,31 +376,27 @@ def creat_complaint(request):
             'form': form
         }
 
-    return render(request, 'creat_complaint.html', context)
+    return render(request, 'create_complaint.html', context)
 
 
 @login_required()
-def comlaint_answer(request, id):
+def complaint_answer(request, id):
+    complaint = Complaint.objects.filter(id=id)
     if request.method == 'POST':
         answer_form = AnswerComplaintForm(request.POST)
-        comlaint = Complaint.objects.filter(id=id)
 
         if answer_form.is_valid():
-            comlaint.update(answer=answer_form.data["answer"])
+            complaint.update(answer=answer_form.data["answer"])
 
             return redirect(reverse('complaints'))
-        else:
-            answer_form = AnswerComplaintForm(initial={
-                'answer': comlaint.answer,
-            })
+    else:
+        answer_form = AnswerComplaintForm(initial={
+            'answer': complaint.answer,
+        })
 
-        context = {
-            'bar': get_bar_context(request),
-            'text': comlaint.text,
-            'author': comlaint.author,
-            'answer': comlaint.answer,
-            'data': comlaint.data,
-            'form': answer_form
-        }
+    context = {
+        'bar': get_bar_context(request),
+        'form': answer_form
+    }
 
-        return render(request, 'complaints.html', context)
+    return render(request, 'complaint_answer.html', context)
