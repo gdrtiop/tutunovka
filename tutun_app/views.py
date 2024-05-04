@@ -421,6 +421,7 @@ def complaint_answer(request, complaint_id):
     context = {
         'bar': get_bar_context(request),
         'form': answer_form,
+        'complaint': Complaint.objects.get(id=complaint_id),
         'url': reverse('complaint_answer', args=(complaint_id,))
     }
 

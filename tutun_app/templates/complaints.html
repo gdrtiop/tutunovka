@@ -15,23 +15,26 @@
         <h1>User complaints</h1>
     {% endif %}
 
+    {% if data.count %}
+    {% else %}
+        <p>у вас пока нету жалоб</p>
+    {% endif %}
+
     {% for complaint in data %}
-    <tr>
-        <th>Message: {{ complaint.text }}</th>
-        <br>
-        {% if status == 1 %}
+        <tr>
+            <th>Message: {{ complaint.text }}</th>
+            <br>
             <th>User: {{ complaint.author }}</th>
             <br>
-            <th>
-                <a href="{% url 'complaint_answer' complaint.id %}"><input type="button", value="Answer" /></a>
-            </th>
-        {% else %}
             <th>Answer: {{ complaint.answer }}</th>
             <br>
-        {% endif %}
-        <th>Time: {{ complaint.data }}</th>
-        <br>
-    </tr>
+            {% if status == 1 and complaint.answer == '' %}
+                <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
+            {% endif %}
+            <th>Time: {{ complaint.data }}</th>
+            <br>
+            <br>
+        </tr>
     {% endfor %}
 
 </body>

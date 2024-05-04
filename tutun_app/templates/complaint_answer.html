@@ -6,6 +6,7 @@
 </head>
 <body>
     <div class="container">
+        <th>Message: {{ complaint.text }}</th>
         <form method="post" action="{{ url }}">
             {% csrf_token %}
             {{ form.as_p }}

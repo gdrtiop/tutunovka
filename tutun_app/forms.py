@@ -171,7 +171,7 @@ class ComplaintForm(forms.ModelForm):
         model = Complaint
         fields = ['text']
         widgets = {
-            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 
@@ -180,5 +180,5 @@ class AnswerComplaintForm(forms.ModelForm):
         model = Complaint
         fields = ['answer']
         widgets = {
-            'answer': forms.TextInput(attrs={'class': 'form-control'}),
+            'answer': forms.Textarea(attrs={'class': 'form-control'}),
         }
