@@ -24,14 +24,11 @@ from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileFo
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
-        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
-<<<<<<< HEAD
+        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reding'})))
         menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
-=======
-        menu.append(dict(title='Новый маршрут', url=reverse('new_route')))
->>>>>>> 3da25f6 (main page)
+
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
@@ -150,7 +147,7 @@ def profile(request, stat):
         'form': form,
         'profile_info': profile_info,
         'url': reverse('profile', kwargs={'stat': 'editing'}),
-        'url_back': reverse('profile', kwargs={'stat': 'reading'})
+        'url_back': reverse('profile', kwargs={'stat': 'reding'})
     }
 
     return render(request, 'profile.html', context)
@@ -202,7 +199,7 @@ def create_route(request):
 
             route.tags.set(route_form.cleaned_data['tags'])
 
-            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+            return redirect(reverse('profile', kwargs={'stat': 'reding'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
         else:
