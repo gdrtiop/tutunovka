@@ -19,3 +19,10 @@ services:
       - postgres-db
     volumes:
       - ./.env.django:/tutunovka_web/.env.django
+  tutunovka_bot:
+    build:
+      context: ./tutunovka_bot
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./.env.bot:/tutunovka_bot/.env.bot
