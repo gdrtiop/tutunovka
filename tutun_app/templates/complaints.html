@@ -8,31 +8,33 @@
     {% include 'bar.html' %}
 
     {% if status == 0 %}
-    <h1>You`r complaints</h1>
+        <h1>You`r complaints</h1>
+        <a href="{% url 'create_complaint' %}"><input type="button", value="Create complaint" /></a>
+        <br>
     {% else %}
-    <h1>User complaints</h1>
+        <h1>User complaints</h1>
     {% endif %}
 
-    {% if status == 0 %}
-        <a href="{% url 'creat_complaint' %}">Creat complaint</a>
-        <br>
+    {% if data.count %}
+    {% else %}
+        <p>у вас пока нету жалоб</p>
     {% endif %}
 
     {% for complaint in data %}
-    <tr>
-        <th>Message: {{ complaint.text }}</th>
-        <br>
-        {% if status == 1 %}
+        <tr>
+            <th>Message: {{ complaint.text }}</th>
+            <br>
             <th>User: {{ complaint.author }}</th>
             <br>
-            <th>
-                <a href="{% url 'complaint_answer/{{ complaint.id }}' %}">Answer</a>
-            </th>
-        {% endif %}
-        <th>Time: {{ complaint.data }}</th>
-        <br>
-        <br>
-    </tr>
+            <th>Answer: {{ complaint.answer }}</th>
+            <br>
+            {% if status == 1 and complaint.answer == '' %}
+                <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
+            {% endif %}
+            <th>Time: {{ complaint.data }}</th>
+            <br>
+            <br>
+        </tr>
     {% endfor %}
 
 </body>
