@@ -93,7 +93,7 @@ class PublicRoutesSearchResults(generic.ListView):
     context_object_name = 'routes_list'
 
     def get_queryset(self):
-        query = self.request.GET.get('q')
+        query = self.request.GET.get('ind')
         object_list = PublicRoute.objects.filter(
             Q(Name__icontains=query)
         )
@@ -152,60 +152,50 @@ def profile(request, stat):
 
     return render(request, 'profile.html', context)
 
+
 @login_required
 def create_route(request):
-
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
-        if route_form.is_valid():
-            dot_forms = [PrivateDotForm(request.POST, prefix=f'dots-{x}', route_start_date=route_form.cleaned_data['date_in'], route_end_date=route_form.cleaned_data['date_out']) for x in range(len(request.POST)) if f'dots-{x}-name' in request.POST]
-            note_forms = [NoteForm(request.POST, prefix=f'notes-{x}') for x in range(len(request.POST)) if f'notes-{x}-text' in request.POST]
+        dot_forms = [PrivateDotForm(request.POST, prefix=f'dots-{x}',
+                                    initial={'route_start_date': route_form.data['date_in'],
+                                             'route_end_date': route_form.data['date_out']}) for x in
+                     range(len(request.POST)) if
+                     f'dots-{x}-name' in request.POST]
+        note_forms = [NoteForm(request.POST, prefix=f'notes-{x}') for x in range(len(request.POST)) if
+                      f'notes-{x}-text' in request.POST]
 
-            context = {
-                'bar': get_bar_context(request),
-                'route_form': route_form,
-                'dot_forms': dot_forms,
-                'note_forms': note_forms,
-            }
+        if route_form.is_valid() and len(dot_forms) != 0:
+            route = route_form.save(commit=False)
+            route.author = request.user
+            route.length = (route.date_out - route.date_in).days  # Calculate length in days
+            route.month = calendar.month_name[route.date_in.month]
+            route.year = route.date_in.year  # Extract year from date_in
+            route.save()
 
-            if len(dot_forms) != 0:
-                route = route_form.save(commit=False)
-                route.author = request.user
-                route.length = (route.date_out - route.date_in).days  # Calculate length in days
-                route.month = calendar.month_name[route.date_in.month]
-                route.year = route.date_in.year  # Extract year from date_in
-                route.save()
+            ind = 0
+            for dot_form in dot_forms:
+                if dot_form.is_valid():
+                    print(dot_form.data)
+                    if dot_form.data.get(f'dots-{ind}-date') > route.date_out or dot_form.data.get(
+                            'date') < route.date_in:
+                        messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
+                        return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+                    dot = dot_form.save(commit=False)
+                    dot.save()
+                    route.dots.add(dot)
+                ind += 1
 
-                for dot_form in dot_forms:
-                    dot_form.full_clean()
-                    if dot_form.is_valid():
-                        dot = dot_form.save(commit=False)
-                        dot.save()
-                        route.dots.add(dot)
-                    else:
-                        route_form = PrivateRouteForm()
-                        dot_forms = [PrivateDotForm(prefix=f'dots-{x}') for x in range(2)]
-                        note_forms = [NoteForm(prefix=f'notes-{x}') for x in range(2)]
-                        context = {
-                            'bar': get_bar_context(request),
-                            'route_form': route_form,
-                            'dot_forms': dot_forms,
-                            'note_forms': note_forms,
-                        }
-                        return render(request, 'new_route.html', context)
+            for note_form in note_forms:
+                note = note_form.save(commit=False)
+                note.save()
+                route.note.add(note)
 
-                for note_form in note_forms:
-                    note = note_form.save(commit=False)
-                    note.save()
-                    route.note.add(note)
-
-                messages.success(request, 'Маршрут успешно создан.')
-                return redirect(reverse('profile', kwargs={'stat': 'reading'}))
-            else:
-                error_text = 'Необходимо добавить хотя бы одну точку.'
-                messages.error(request, error_text)
-        else:
-            pass
+            messages.success(request, 'Маршрут успешно создан.')
+            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+        elif len(dot_forms) == 0:
+            error_text = 'Необходимо добавить хотя бы одну точку.'
+            messages.error(request, error_text)
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=f'dots-{x}') for x in range(2)]
@@ -217,7 +207,6 @@ def create_route(request):
         'dot_forms': dot_forms,
         'note_forms': note_forms,
     }
-
     return render(request, 'new_route.html', context)
 
 
