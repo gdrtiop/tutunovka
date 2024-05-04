@@ -25,10 +25,11 @@ from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileFo
 def get_bar_context(request):
     menu = []
     if request.user.is_authenticated:
-        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
+        menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reding'})))
         menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
+
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
@@ -147,7 +148,7 @@ def profile(request, stat):
         'form': form,
         'profile_info': profile_info,
         'url': reverse('profile', kwargs={'stat': 'editing'}),
-        'url_back': reverse('profile', kwargs={'stat': 'reading'})
+        'url_back': reverse('profile', kwargs={'stat': 'reding'})
     }
 
     return render(request, 'profile.html', context)
@@ -196,11 +197,16 @@ def create_route(request):
                 note = note_form.save()
                 route.notes.add(note)
 
+
             messages.success(request, 'Маршрут успешно создан.')
-            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+            route.tags.set(route_form.cleaned_data['tags'])
+
+            return redirect(reverse('profile', kwargs={'stat': 'reding'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
             messages.error(request, error_text)
+        else:
+            pass
     else:
         route_form = PrivateRouteForm()
         dot_forms = [PrivateDotForm(prefix=f'dots-{x}') for x in range(2)]
@@ -332,6 +338,12 @@ def update_note(request, note_id):
 
 @login_required()
 def complaints(request):
+    """
+    @param request: запрос пользователя
+    @param status: яляется ли пользователь админом(superuser)
+    @param data: списком всех жалоб
+    @return: возвращает страницу со списком жалоб
+    """
     if request.user.is_superuser:
         status = 1
         data = Complaint.objects.filter().order_by('data')
@@ -351,12 +363,19 @@ def complaints(request):
 
 
 @login_required()
-def creat_complaint(request):
+def create_complaint(request):
+    """
+    @param request: запрос пользователя
+    @param form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице создания жалоб
+    """
+
     if request.method == 'POST':
-        form = ComplaintForm(request.POST, request.FILES)
+        form = ComplaintForm(request.POST)
 
         if form.is_valid():
-            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
+            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now(), answer='')
             saver_form.save()
 
             context = {
@@ -365,6 +384,7 @@ def creat_complaint(request):
                 'text': form.data['text']
             }
 
+        return redirect(reverse('complaints'))
     else:
         form = ComplaintForm
 
@@ -373,31 +393,39 @@ def creat_complaint(request):
             'form': form
         }
 
-    return render(request, 'creat_complaint.html', context)
+    return render(request, 'create_complaint.html', context)
 
 
 @login_required()
-def comlaint_answer(request, id):
+def complaint_answer(request, complaint_id):
+    """
+    @param request: запрос пользователя
+    @param complaint_id: id жалобы
+    @param complaint: конкретная жалоба, взятая по id
+    @param answer_form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице написания ответа на жалобу
+    """
+
+    complaint = Complaint.objects.filter(id=complaint_id)
+
     if request.method == 'POST':
         answer_form = AnswerComplaintForm(request.POST)
-        comlaint = Complaint.objects.filter(id=id)
 
         if answer_form.is_valid():
-            comlaint.update(answer=answer_form.data["answer"])
+            complaint.update(answer=answer_form.data["answer"])
 
             return redirect(reverse('complaints'))
-        else:
-            answer_form = AnswerComplaintForm(initial={
-                'answer': comlaint.answer,
-            })
+    else:
+        answer_form = AnswerComplaintForm(initial={
+            'answer': complaint[0].answer,
+        })
 
-        context = {
-            'bar': get_bar_context(request),
-            'text': comlaint.text,
-            'author': comlaint.author,
-            'answer': comlaint.answer,
-            'data': comlaint.data,
-            'form': answer_form
-        }
+    context = {
+        'bar': get_bar_context(request),
+        'form': answer_form,
+        'complaint': Complaint.objects.get(id=complaint_id),
+        'url': reverse('complaint_answer', args=(complaint_id,))
+    }
 
-        return render(request, 'complaints.html', context)
+    return render(request, 'complaint_answer.html', context)

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from taggit.models import Tag
 
 from django import forms
 from .models import PrivateRoute, PrivateDot, Note, Complaint
@@ -110,6 +111,8 @@ class PrivateDotForm(forms.ModelForm):
 
 
 class PrivateRouteForm(forms.ModelForm):
+    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple,
+                                          required=False, label='Tags')
 
     def check(self):
         data_checked = super().clean()
@@ -122,7 +125,7 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -149,13 +152,43 @@ class NoteForm(forms.ModelForm):
         }
 
 
+class TagSelectMultiple(forms.SelectMultiple):
+    def render_options(self, *args, **kwargs):
+        """Override render_options to include selected attribute for selected tags."""
+        selected_choices = set([str(v) for v in self.value()])
+        output = []
+        for group in self.choices:
+            group_output = []
+            for value, label in group:
+                if str(value) in selected_choices:
+                    group_output.append(
+                        '<option value="%s" selected="selected">%s</option>' % (
+                            forms.html.escape(value), forms.html.escape(label)
+                        )
+                    )
+                else:
+                    group_output.append(
+                        '<option value="%s">%s</option>' % (
+                            forms.html.escape(value), forms.html.escape(label)
+                        )
+                    )
+            output.append('\n'.join(group_output))
+        return '\n'.join(output)
+
+
+class TagsField(forms.MultipleChoiceField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.queryset = Tag.objects.all()
+        self.widget = TagSelectMultiple()
+
 
 class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
         fields = ['text']
         widgets = {
-            'text': forms.TextInput(attrs={'class': 'form-control'}),
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 
@@ -164,5 +197,5 @@ class AnswerComplaintForm(forms.ModelForm):
         model = Complaint
         fields = ['answer']
         widgets = {
-            'answer': forms.TextInput(attrs={'class': 'form-control'}),
+            'answer': forms.Textarea(attrs={'class': 'form-control'}),
         }
