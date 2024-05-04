@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
-from .models import PrivateRoute, PrivateDot
+from .models import PrivateRoute, PrivateDot, Note, Complaint
 
 
 class UserRegisterForm(UserCreationForm):
@@ -78,17 +78,35 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'api_vision', 'note', 'information']
+        fields = ['name', 'date', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
-            'information': forms.TextInput(attrs={'class': 'form-control'})
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        date = cleaned_data.get('date')
+        route_start_date = cleaned_data.get('route_start_date')
+        route_end_date = cleaned_data.get('route_end_date')
+
+        if date and route_start_date and route_end_date:
+            if date < route_start_date or date > route_end_date:
+                raise forms.ValidationError('Дата точки должна быть в пределах дат маршрута.')
+
+        return cleaned_data
+
     def __init__(self, *args, **kwargs):
+        route_start_date = kwargs.pop('route_start_date', None)
+        route_end_date = kwargs.pop('route_end_date', None)
         super(PrivateDotForm, self).__init__(*args, **kwargs)
+        self.route_start_date = route_start_date
+        self.route_end_date = route_end_date
         self.fields['information'].required = False
         self.fields['note'].required = False
+        self.fields['date'].required = False
 
 
 class PrivateRouteForm(forms.ModelForm):
@@ -104,18 +122,47 @@ class PrivateRouteForm(forms.ModelForm):
 
     class Meta:
         model = PrivateRoute
-        fields = ['Name', 'date_in', 'date_out', 'baggage', 'note', 'dots']
+        fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
-            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '1', 'max': '10'}),
-            'dots': forms.HiddenInput(),
+            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
         }
 
     def __init__(self, *args, **kwargs):
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
-        self.fields['note'].required = False
-        self.fields['dots'].required = False
+        self.fields['comment'].required = False
+
+
+class NoteForm(forms.ModelForm):
+    text = forms.CharField(label='Заметка')
+
+    class Meta:
+        model = Note
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'class': 'form-control'}),
+            'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
+
+
+
+class ComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['text']
+        widgets = {
+            'text': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class AnswerComplaintForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['answer']
+        widgets = {
+            'answer': forms.TextInput(attrs={'class': 'form-control'}),
+        }

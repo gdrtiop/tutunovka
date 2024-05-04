@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complaints</title>
+</head>
+<body>
+    {% include 'bar.html' %}
+
+    {% if status == 0 %}
+    <h1>You`r complaints</h1>
+    {% else %}
+    <h1>User complaints</h1>
+    {% endif %}
+
+    {% if status == 0 %}
+        <a href="{% url 'creat_complaint' %}">Creat complaint</a>
+        <br>
+    {% endif %}
+
+    {% for complaint in data %}
+    <tr>
+        <th>Message: {{ complaint.text }}</th>
+        <br>
+        {% if status == 1 %}
+            <th>User: {{ complaint.author }}</th>
+            <br>
+            <th>
+                <a href="{% url 'complaint_answer/{{ complaint.id }}' %}">Answer</a>
+            </th>
+        {% endif %}
+        <th>Time: {{ complaint.data }}</th>
+        <br>
+        <br>
+    </tr>
+    {% endfor %}
+
+</body>
+</html>

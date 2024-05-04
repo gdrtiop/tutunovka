@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Routes</title>
+</head>
+<body>
+    <form action="{% url 'search_results_public' %}" method="get">
+        <input name="q" type="text" placeholder="Поиск...">
+    </form>
+
+    {% for route in routes_list %}
+        <li>
+            <th scope="row">{{ route.id }}</th>
+            <th>
+                <a href="{% url 'public_route_detail' route_id=route.id %}">{{ route.Name }}</a>
+            </th>
+            <th>{{ route.Name }}</th> <th>{{ route.author }}</th>
+            {% if route.tags.all %}
+                <div>
+                    Теги записи: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a>, {% endfor %}
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</body>
+</html>
