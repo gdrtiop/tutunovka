@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tutun_app', '0015_alter_privateroute_length_alter_privateroute_month_and_more'),
+        ('tutun_app', '0015_alter_privateroute_note'),
     ]
 
     operations = [

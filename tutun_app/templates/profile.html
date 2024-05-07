@@ -214,11 +214,10 @@
                     <div style="background-color: #FF5C00; padding: 5px; width:32%;height:15%; margin-left: 100px; border-radius: 20px;">
                         <li2>
 
-                            <li3><button2 href="{% url 'route_detail' route_id=route.id %}">🛨  {{ route.Name }}</button2></li3><br><br>
+                            <li3><a href="{% url 'route_detail' route_id=route.id %}" ><button2>{{ route.Name }}</button2><a></li3><br><br>
                             <li2>Дата прилёта: {{ route.date_in }}<br></li2>
                             <li2>Дата отлёта: {{ route.date_out }}<br></li2>
                             <li2>Колличество точек: {{ route.dots.count }}<br></li2>
-                            <li2>Заметка: {{ route.note }}<br></li2>
 
                             </li2>
                         </li2>
