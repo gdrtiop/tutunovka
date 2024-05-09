@@ -120,8 +120,8 @@
         border-radius: 15px;
     }
 
-    button3 {
-        background-color: #FFFFFF;
+    .button3 {
+        background-color: #F7941E;
         color: #222222;
         border: none;
         padding: 15px 30px;
@@ -131,10 +131,10 @@
         text-decoration: none;
         cursor: pointer;
         margin-top: 10px;
-        border-radius: 50px;
+        border-radius: 15px;
     }
 
-    buttons_poz{
+    .buttons_poz{
         margin-left: 850px;
     }
     buttons_poz2{
@@ -148,8 +148,8 @@
         background-color: #ABABAB;
     }
 
-    button3:hover {
-        background-color: #ABABAB;
+    .button3:hover {
+        background-color: #F15A29;
     }
 </style>
 <html lang="en">
@@ -175,16 +175,16 @@
     {% if stat == "editing" %}
     <div class="container" >
 
-        <form method="post" action="{{ url }}" enctype="multipart/form-data">
+        <form method="post" action="{{ url_back }}" enctype="multipart/form-data">
             {% csrf_token %}
             <h5>{{ form.as_p }}</h5>
             <br>
             <br>
             <br>
-            <buttons_poz><button3 type="submit" value="Применить">Применить</button3></buttons_poz>
+            <a input type="submit" value="Применить" href="{{url_back}}"><buttons_poz><button class="btn button3 buttons_poz">Применить</button></buttons_poz></a>
         </form>
         <br>
-        <buttons_poz2><a href="{{ url_back }}"><button class ="btn btn-secondary">Отменить</button></a></buttons_poz2>
+        <buttons_poz2><a href="{{ url_back }}"><button2>Отменить</button2></a></buttons_poz2>
         <br>
         <br>
         <br>
