@@ -268,7 +268,8 @@ def save_route(request, pk=None):
             pass
     else:
         route_form = PrivateRouteForm(instance=data)
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(2)]
+        print(data)
+        dot_forms = [PrivateDotForm(instance=data.dots[i]) for i in PublicDot.objects.all() if i in data.dots]
         note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
 
     context = {
