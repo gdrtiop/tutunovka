@@ -27,6 +27,16 @@
             </li>
         {% endfor %}
     </ul>
+    <h2>Точки</h2>
+    {% for dot in dots %}
+        <li>
+            <p><strong>Name:</strong> {{ dot.name }}</p>
+            <p><strong>Date:</strong> {{ dot.date }}</p>
+            <p><strong>Note:</strong> {{ dot.note }}</p>
+            <p><strong>Api_vision:</strong> {{ dot.api_vision }}</p>
+            <p><strong>Information:</strong> {{ dot.information }}</p>
+        </li>
+    {% endfor %}
 
     <a href="{% url 'editing_route' route_id=route.id %}"><button>Редактировать</button></a>
 

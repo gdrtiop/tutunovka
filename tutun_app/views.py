@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from taggit.models import Tag
 import calendar
-from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint,PublicDot
+from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
     AnswerComplaintForm
 
@@ -202,8 +202,8 @@ def create_route(request):
             pass
     else:
         route_form = PrivateRouteForm()
-        dot_forms = [PrivateDotForm(prefix=str(x)) for x in range(2)]
-        note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
+        dot_forms = []
+        note_forms = []
 
     context = {
         'bar': get_bar_context(request),
@@ -214,11 +214,13 @@ def create_route(request):
     }
     return render(request, 'new_route.html', context)
 
+
 @login_required
 def save_route(request, pk=None):
     error_text = ''
     data = get_object_or_404(PublicRoute, pk=pk)
     if request.method == 'POST':
+        print(request.POST)
         route_form = PrivateRouteForm(request.POST)
         dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
                      f'dots-{x}-name' in request.POST]
@@ -267,10 +269,21 @@ def save_route(request, pk=None):
         else:
             pass
     else:
-        route_form = PrivateRouteForm(instance=data)
-        print(data)
-        dot_forms = [PrivateDotForm(instance=data.dots[i]) for i in PublicDot.objects.all() if i in data.dots]
-        note_forms = [NoteForm(prefix=str(x)) for x in range(2)]
+        route = data
+        route_form = PrivateRouteForm(initial={
+            'Name': route.Name,
+            'comment': route.comment,
+            'rate': route.rate,
+        })
+        note_forms = []
+        dots = route.dots.all()
+        dot_forms = []
+        for dot in dots:
+            dot_forms.append(PrivateDotForm(initial={
+                'name': dot.name,
+                'api_vision': dot.api_vision,
+                'information': dot.information,
+            }))
 
     context = {
         'bar': get_bar_context(request),
@@ -280,6 +293,7 @@ def save_route(request, pk=None):
         'error_text': error_text,
     }
     return render(request, 'new_route.html', context)
+
 
 @login_required()
 def route_detail(request, route_id):
@@ -304,7 +318,7 @@ def public_route_detail(request, route_id):
         'route': route,
         'dots': dots,
     }
-    return render(request, 'public_route_detail.html', {'route': route, 'dots': dots})
+    return render(request, 'public_route_detail.html', context)
 
 
 @login_required()
@@ -322,6 +336,9 @@ def editing_route(request, route_id):
                                                             comment=route_form.data['comment'],
                                                             baggage=route_form.data['baggage'],
                                                             rate=route_form.data['rate'],
+                                                            length=(route.date_out - route.date_in).days,
+                                                            month=calendar.month_name[route.date_in.month],
+                                                            year=route.date_in.year
                                                             )
             new_notes = {"new_text": request.POST.getlist('text')}
             notes = route.note.all()
@@ -468,6 +485,7 @@ def comlaint_answer(request, id):
 
         return render(request, 'complaints.html', context)
 
+
 @login_required()
 def post_route(request, id):
     private_route = get_object_or_404(PrivateRoute, id=id)
@@ -478,6 +496,9 @@ def post_route(request, id):
         author=request.user,
         comment=private_route.comment,
         rate=private_route.rate,
+        length=private_route.length,
+        month=private_route.month,
+        year=private_route.year,
     )
     public_route.save()
 
@@ -488,7 +509,6 @@ def post_route(request, id):
             information=dot.information
         )
         public_dots.append(public_dot)
-
 
     public_route.dots.set(public_dots)
     public_route.tags.add(*private_route.tags.names())

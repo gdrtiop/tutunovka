@@ -65,6 +65,9 @@ class PublicRoute(models.Model):
     comment = models.CharField(max_length=700)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
+    length = models.CharField(max_length=10, default=None, null=True)
+    month = models.CharField(max_length=20, default=None, null=True)
+    year = models.CharField(max_length=20, default=None, null=True)
     tags = TaggableManager()
 
 

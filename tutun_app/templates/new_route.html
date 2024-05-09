@@ -16,11 +16,23 @@
     <form id="route-form" method="post">
         {% csrf_token %}
         {{ route_form.as_p }}
-        <div id="dots-container">
-        </div>
         <div id="notes-container">
+            {% for note_form in note_forms %}
+            <a>
+                {% csrf_token %}
+                {{ note_form.as_p }}
+            </a>
+            {% endfor %}
         </div>
         <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
+        <div id="dots-container">
+            {% for dot_form in dot_forms%}
+            <a>
+                {% csrf_token %}
+                {{ dot_form.as_p }}
+            </a>
+            {% endfor %}
+        </div>
         <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
         <input type="submit" value="Создать">
     </form>
