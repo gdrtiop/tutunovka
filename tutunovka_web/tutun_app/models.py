@@ -45,7 +45,6 @@ class PrivateRoute(models.Model):
     date_in = models.DateTimeField()
     date_out = models.DateTimeField()
     comment = models.CharField(max_length=700)
-    # baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
     note = models.ManyToManyField(to=Note)
     rate = models.IntegerField(default='-1')

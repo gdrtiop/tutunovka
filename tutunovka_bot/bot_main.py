@@ -1,9 +1,12 @@
+import datetime
 import os
-from dotenv import load_dotenv
-import telebot
-import time, datetime
 import threading
-from tutun.tutunovka_bot import tg_analytic, config
+import time
+
+import telebot
+from dotenv import load_dotenv
+import tg_analytic
+from models import PostgreSQLQueries
 
 load_dotenv('.env.bot')
 
@@ -12,14 +15,14 @@ TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 if TOKEN is None:
     raise ValueError("Telegram bot token is not defined. Please check your .env.bot file.")
 
+bot = telebot.TeleBot(TOKEN)
 
-bot = telebot.TeleBot(config.TOKEN)
-
+MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_HOST'), os.getenv('DB_PORT'))
 
 chat_id = None
 
-def tic_tac():
 
+def tic_tac():
     i = 0
 
     while True:
@@ -37,8 +40,13 @@ def tic_tac():
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
     global chat_id
+    data = MODEL.get_user_fields(1)
     chat_id = message.chat.id
-    bot.send_message(message.chat.id, 'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!', reply_to_message_id=message.message_id)
+    print(data)
+    bot.send_message(message.chat.id,
+                     f'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете! DATA{str(data)}',
+                     reply_to_message_id=message.message_id)
+
 
 @bot.message_handler(content_types=["text"])
 def send_text(message):
@@ -67,6 +75,7 @@ def send_text(message):
             + "\n"
             + "Чтобы продолжить разговор, нажми на серые кнопки выше.",
         )
+
 
 timThr = threading.Thread(target=tic_tac)
 timThr.start()
