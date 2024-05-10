@@ -79,10 +79,11 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'date', 'note', 'information']
+        fields = ['name', 'api_vision', 'date', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
+            'api_vision': forms.HiddenInput({'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
