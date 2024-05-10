@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <div class="container">
         <th>Message: {{ complaint.text }}</th>
         <form method="post" action="{{ url }}">

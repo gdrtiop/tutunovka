@@ -27,7 +27,7 @@ from tutun_app.views import UserRegisterView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index_page, name='index'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('login/', views.MyLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('register/', UserRegisterView.as_view(), name='register'),
     path('profile/<str:stat>', views.profile, name='profile'),

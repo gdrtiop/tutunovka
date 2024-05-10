@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <div class="container">
         <form method="post" action="/create_complaint">
             {% csrf_token %}
