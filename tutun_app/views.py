@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Q
 from taggit.models import Tag
 import calendar
@@ -275,9 +276,14 @@ def save_route(request, pk=None):
 
             route.tags.set(route_form.cleaned_data['tags'])
 
+            messages.success(request, "Вы успешно сохранили маршрут!")
+
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) + len(request.POST.getlist('date')) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
+
+            messages.error(request, error_text)
+
             return redirect(reverse('public_route_detail', kwargs={'route_id': pk}))
         else:
             pass
@@ -525,5 +531,7 @@ def post_route(request, id):
 
     public_route.dots.set(public_dots)
     public_route.tags.add(*private_route.tags.names())
+    
+    messages.success(request, "Вы успешно опубликоватли!")
 
     return redirect(reverse('public_route_detail', kwargs={'route_id': public_route.id}))
