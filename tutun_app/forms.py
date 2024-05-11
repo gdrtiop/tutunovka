@@ -79,6 +79,12 @@ class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
         fields = ['name', 'date', 'note', 'information']
+        labels = {
+            'name':'Название',
+            'note':'Примечание',
+            'date': 'Дата',
+            'information':'Информация',
+        }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
@@ -126,6 +132,9 @@ class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ['text',]
+        labels = {
+            'text':'Заметка',
+        }
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control '}),
             'done': forms.CheckboxInput(attrs={'class': 'form-check-input'})

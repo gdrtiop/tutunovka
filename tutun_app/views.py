@@ -262,6 +262,7 @@ def editing_route(request, route_id):
                 'note': dot.note,
                 'date': dot.date,
                 'information': dot.information,
+                'api_vision': dot.api_vision,
             }))
 
         return render(request, 'editing_route.html',

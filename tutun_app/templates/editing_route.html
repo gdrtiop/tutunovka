@@ -34,6 +34,11 @@
         border-radius: 30px;
         border: 1px solid #F7941E;
     }
+    label {
+        font-family: Arkhip;
+        margin-top: 10px;
+        font-size: 14pt;
+    }
 
     button {
         font-family: Arkhip;
@@ -41,7 +46,7 @@
         color: #222222;
         border: none;
         padding: 15px 30px;
-        font-size: 12pt;
+        font-size: 10pt;
         display: inline-block;
         text-decoration: none;
         cursor: pointer;
@@ -171,6 +176,25 @@
         align-items: right;
         border: none;
     }
+
+    .information {
+        color: #000000;
+        border-radius: 30px;
+        height: 1000px;
+        display: block;
+        height: auto;
+    }
+
+    .map {
+        color: #000000;
+        border-radius: 30px;
+        height: 1000px;
+        display: block;
+        height: auto;
+    }
+
+
+
     </style>
 </head>
 <body>
@@ -182,48 +206,48 @@
 <form id="route-form" method="post">
 
     {% csrf_token %}
-    <div>
-        <h1>Маршрут</h1>
-        <p class="route_name"><label>Название: </label> <input type="text" name="Name"></p>
-        <div class="container">
-            <p class="starting-date"><label>Дата начала: </label> <input type="date" name="date_in"></p>
-            <p class="ending-date"><label>Дата конца:</label> <input type="date" name="date_out"></p>
+    <div class="container">
+        <div class="map">
         </div>
-        <div class="container">
-            <p class="list_of_things"><label>Список вещей для путешествия:</label> <input type="text" name="baggage">
-            </p>
-            <p class="comment"><label>Комментарий:</label> <input type="text" name="comment"></p>
-        </div>
-        <div class="container">
-            <div class="dotes">
-                <div id="dots-container">
-                    {% for dot_form in dots_form%}
-                    <a>
-                        {% csrf_token %}
-                        {{ dot_form.as_p }}
-                    </a>
-                    {% endfor %}
-                </div>
-                <button type="button" id="add-dot-btn" onclick="addDotForm()"> Добавить точку</button>
+        <div class="information">
+            <h1>Маршрут</h1>
+            <p class="route_name"><label>Название: </label> {{route_form.Name}}</p>
+            <div class="container">
+                <p class="starting-date"><label>Дата начала: </label> {{route_form.date_in}}</p>
+                <p class="ending-date"><label>Дата конца:</label> {{route_form.date_out}}</p>
             </div>
-            <div class="notes">
-                <div id="notes-container">
-                    {% for note_form in notes_form%}
-                    <a>
-                        {% csrf_token %}
-                        <div><label for="name">Название:</label><input type="text" name="name" value={{note_form.name}} required></div>
-                        <div><label for="api_vision">Api Vision:</label><input type="text" name="api_vision" value={{note_form.api_vision}}></div>
-                        <div><label for="date">Дата:</label><input type="date" name="date" value={{note_form.date}}></div>
-                        <div><label for="note">Примечание:</label><textarea name="note" >{{note_form.note}}</textarea></div>
-                        <div><label for="information">Информация:</label><input type="text" name="information" value={{note_form.information}}></div>
-                        <br>
-                    </a>
-                    {% endfor %}
+            <div class="container">
+                <p class="list_of_things"><label>Список вещей для путешествия:</label> {{route_form.baggage}}
+                </p>
+                <p class="comment"><label>Комментарий:</label> {{route_form.comment}}</p>
+            </div>
+            <div class="container">
+                <div class="dotes">
+                    <div id="dots-container">
+                        {% for dot_form in dots_form%}
+                        <a>
+                            {% csrf_token %}
+                            {{dot_form.as_p}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-dot-btn" onclick="addDotForm()"> Добавить точку</button>
                 </div>
-                <button type="button" id="add-note-btn" onclick="addNoteForm()"> Добавить заметку</button>
+                <div class="notes">
+                    <div id="notes-container">
+                        {% for note_form in notes_form%}
+                        <a>
+                            {% csrf_token %}
+                            {{note_form.as_p}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-note-btn" onclick="addNoteForm()"> Добавить заметку</button>
+                </div>
             </div>
         </div>
     </div>
+    <input type="submit" value="Создать">
 </form>
 </body>
 <script>
@@ -280,6 +304,8 @@
         const dotFormHtml = createDotForm();
         dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
     }
+
+
 
 
 
