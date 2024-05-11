@@ -23,7 +23,7 @@ class PostgreSQLQueries:
         except psycopg2.Error as e:
             print("Unable to connect to the database:", e)
 
-    def get_user_fields(self, user_id):
+    def get_user_fields(self, password, username):
         conn = self.connect()
         if conn is not None:
             try:
@@ -32,7 +32,28 @@ class PostgreSQLQueries:
                     """
                     SELECT *
                     FROM auth_user
-                    WHERE id = %s
+                    WHERE (password = %s) AND (username = %s)
+                    """,
+                    (password, username,)
+                )
+                user_data = cursor.fetchone()
+                cursor.close()
+                conn.close()
+                return user_data
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return None
+
+    def get_route_fields(self, user_id):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM Private_Routes
+                    WHERE author_id = %s
                     """,
                     (user_id,)
                 )

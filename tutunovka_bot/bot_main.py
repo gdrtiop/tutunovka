@@ -2,15 +2,17 @@ import datetime
 import os
 import threading
 import time
+import jwt
 
 import telebot
 from dotenv import load_dotenv
 import tg_analytic
 from models import PostgreSQLQueries
 
-load_dotenv('.env.bot')
+# load_dotenv('.env.bot')
 
-TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+# TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TOKEN = "6899212190:AAH9ljFqfIZxcvgUfD4OqXPlQ9x7ERf2DNg"
 
 if TOKEN is None:
     raise ValueError("Telegram bot token is not defined. Please check your .env.bot file.")
@@ -19,7 +21,9 @@ bot = telebot.TeleBot(TOKEN)
 
 MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_HOST'), os.getenv('DB_PORT'))
 
-chat_id = None
+encoded_jwt = jwt.encode({"password": "password", "tg_username": "vasya"}, "auth_in_bot", algorithm="HS256")
+print(encoded_jwt)
+users = []
 
 
 def tic_tac():
@@ -28,10 +32,9 @@ def tic_tac():
     while True:
 
         this_moment = datetime.datetime.now()
-
-        if this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and this_moment.day == 12 and this_moment.month == 12 and this_moment.year == 2024:
-            if chat_id:
-                bot.send_message(chat_id, "Ваш вылет завтра!")
+        for user in users:
+            if this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and this_moment.day == user.date_in.day and this_moment.month == user.date_in.month and this_moment.year == user.date_in.year:
+                bot.send_message(user.tg_id, "Ваш вылет завтра!")
 
         i += 1
         time.sleep(1)
@@ -39,13 +42,12 @@ def tic_tac():
 
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
-    global chat_id
-    data = MODEL.get_user_fields(1)
-    chat_id = message.chat.id
-    print(data)
+    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button_flight = telebot.types.KeyboardButton(text="Следующий вылет?", callback_data="f")
+    keyboard.add(button_flight)
     bot.send_message(message.chat.id,
-                     f'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете! DATA{str(data)}',
-                     reply_to_message_id=message.message_id)
+                     'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!',
+                     reply_to_message_id=message.message_id, reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=["text"])
@@ -62,19 +64,18 @@ def send_text(message):
             messages = tg_analytic.analysis(st, message.chat.id)
             bot.send_message(message.chat.id, messages)
     else:
-        tg_analytic.statistics(message.chat.id, message.text)
-        bot.send_message(message.chat.id, "Ой, ой... Я тебя не понял. 😳")
-        bot.send_sticker(
-            message.chat.id,
-            "CAACAgIAAxkBAAIP4F92EYCC4n5T7uepsto0eIO_EAABqwACBAADll-TFeM60_pUapUTGwQ",
-        )
-        bot.send_message(
-            message.chat.id,
-            "Я обязательно ✍️ передам моим создателям твой запрос и смогу в будущем лучше тебя понимать. 👌"
-            + "\n"
-            + "\n"
-            + "Чтобы продолжить разговор, нажми на серые кнопки выше.",
-        )
+        payload = jwt.decode(jwt=encoded_jwt, key="auth_in_bot", algorithms=["HS256"])
+        data = MODEL.get_user_fields(payload["password"], payload["username"])
+        if data is not None:
+            data["tg_id"] = message.chat.id
+            users.append(data)
+
+@bot.callback_query_handler(func=lambda call: call.data == "f")
+def but1_pressed(call):
+    for user in users:
+        if user["tg_id"] == call.message.chat.id:
+            text = MODEL.get_route_fields(user['id'])
+    bot.send_message(call.message.chat.id, text)
 
 
 timThr = threading.Thread(target=tic_tac)
