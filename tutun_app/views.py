@@ -5,7 +5,8 @@ from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth import logout
+from django.contrib.auth import logout, views
+from django.contrib import messages
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.views import generic
@@ -34,10 +35,23 @@ def get_bar_context(request):
     return menu
 
 
+class MyLoginView(views.LoginView):
+    template_name = 'registration/login.html'
+    success_message = 'Вы успешно вошли на сайт!'
+
+    def form_valid(self, form):
+        user = form.get_user()
+
+        messages.success(self.request, f'Вы успешно вошли на сайт, {user}!')
+
+        return super().form_valid(form)
+
+
 class UserRegisterView(SuccessMessageMixin, CreateView):
     form_class = UserRegisterForm
     success_url = reverse_lazy('login')
     template_name = 'register.html'
+
     success_message = 'Вы успешно зарегистрировались. Можете войти на сайт!'
 
     def get_context_data(self, **kwargs):
@@ -46,9 +60,15 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
 
         return context
 
+    def get_success_message(self, cleaned_data):
+        return self.success_message
+
 
 def logout_view(request):
     logout(request)
+
+    messages.success(request, "Вы успешно вышли из учётной записи")
+
     return redirect('index')
 
 
@@ -123,7 +143,11 @@ def profile(request, stat):
                                                    first_name=form.data["first_name"], last_name=form.data["last_name"],
                                                    tg_username=form.data["tg_username"])
 
+            messages.success(request, "Вы успешно изменили профиль!")
+
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
+        else:
+            messages.error(request, "Во время изменения профиля, произошла ошибка")
     else:
         form = ProfileForm(initial={
             'username': user.username,
@@ -173,7 +197,7 @@ def create_route(request):
                 dot_data = dot_form.data
                 dot_date = datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
-                    messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
+                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
                         'route_form': route_form,
@@ -207,11 +231,13 @@ def create_route(request):
                 note.save()
                 route.note.add(note)
 
+            messages.success(request, 'Маршрут успешно создан.')
             route.tags.set(route_form.cleaned_data['tags'])
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) == 0:
-            messages.success(request, 'Необходимо добавить хотя бы одну точку.')
+            error_text = 'Необходимо добавить хотя бы одну точку.'
+            messages.error(request, error_text)
         else:
             pass
     else:
@@ -311,9 +337,12 @@ def save_route(request, pk=None):
 
             route.tags.set(route_form.cleaned_data['tags'])
 
+            messages.success(request, "Вы успешно сохранили маршрут!")
+
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) + len(request.POST.getlist('date')) == 0:
-            messages.success(request, 'Необходимо добавить хотя бы одну точку.')
+            messages.error(request, 'Необходимо добавить хотя бы одну точку.')
+
             return redirect(reverse('public_route_detail', kwargs={'route_id': pk}))
         else:
             pass
@@ -418,7 +447,12 @@ def editing_route(request, route_id):
                                  )
                 dot.save()
                 route.dots.add(dot)
+
+            messages.success(request, "Вы успешно изменили маршрут!")
+
             return redirect(reverse('route_detail', kwargs={'route_id': route_id}))
+        else:
+            messages.error(request, "Во время изменения маршрута, произошла ошибка")
     else:
         route = PrivateRoute.objects.get(id=route_id)
         route_form = PrivateRouteForm(initial={
@@ -464,6 +498,13 @@ def update_note(request, note_id):
 
 @login_required()
 def complaints(request):
+    """
+    @param request: запрос пользователя
+    @param status: яляется ли пользователь админом(superuser)
+    @param data: списком всех жалоб
+    @return: возвращает страницу со списком жалоб
+    """
+
     if request.user.is_superuser:
         status = 1
         data = Complaint.objects.filter().order_by('data')
@@ -483,20 +524,26 @@ def complaints(request):
 
 
 @login_required()
-def creat_complaint(request):
+def create_complaint(request):
+    """
+    @param request: запрос пользователя
+    @param form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице создания жалоб
+    """
+
     if request.method == 'POST':
         form = ComplaintForm(request.POST, request.FILES)
 
         if form.is_valid():
-            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
+            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.now())
             saver_form.save()
 
-            context = {
-                'bar': get_bar_context(request),
-                'form': form,
-                'text': form.data['text']
-            }
+            messages.success(request, "Вы успешно отправили жалобу!")
 
+            return redirect(reverse('complaints'))
+        else:
+            messages.error(request, "Во время отправки жалобы, произошла ошибка")
     else:
         form = ComplaintForm
 
@@ -505,34 +552,46 @@ def creat_complaint(request):
             'form': form
         }
 
-    return render(request, 'creat_complaint.html', context)
+    return render(request, 'create_complaint.html', context)
 
 
 @login_required()
-def comlaint_answer(request, id):
+def complaint_answer(request, complaint_id):
+    """
+    @param request: запрос пользователя
+    @param complaint_id: id жалобы
+    @param complaint: конкретная жалоба, взятая по id
+    @param answer_form: форма (для ввода)
+    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
+    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице написания ответа на жалобу
+    """
+
+    complaint = Complaint.objects.filter(id=complaint_id)
+
     if request.method == 'POST':
         answer_form = AnswerComplaintForm(request.POST)
-        comlaint = Complaint.objects.filter(id=id)
 
         if answer_form.is_valid():
-            comlaint.update(answer=answer_form.data["answer"])
+            complaint.update(answer=answer_form.data["answer"])
+
+            messages.success(request, "Вы успешно отправили ответ на жалобу!")
 
             return redirect(reverse('complaints'))
         else:
-            answer_form = AnswerComplaintForm(initial={
-                'answer': comlaint.answer,
-            })
+            messages.error(request, "Во время отправки ответа на жалобу, произошла ошибка")
+    else:
+        answer_form = AnswerComplaintForm(initial={
+            'answer': complaint[0].answer,
+        })
 
-        context = {
-            'bar': get_bar_context(request),
-            'text': comlaint.text,
-            'author': comlaint.author,
-            'answer': comlaint.answer,
-            'data': comlaint.data,
-            'form': answer_form
-        }
+    context = {
+        'bar': get_bar_context(request),
+        'form': answer_form,
+        'complaint': Complaint.objects.get(id=complaint_id),
+        'url': reverse('complaint_answer', args=(complaint_id,))
+    }
 
-        return render(request, 'complaints.html', context)
+    return render(request, 'complaint_answer.html', context)
 
 
 @login_required()
@@ -561,5 +620,7 @@ def post_route(request, id):
 
     public_route.dots.set(public_dots)
     public_route.tags.add(*private_route.tags.names())
+
+    messages.success(request, "Вы успешно опубликоватли!")
 
     return redirect(reverse('public_route_detail', kwargs={'route_id': public_route.id}))

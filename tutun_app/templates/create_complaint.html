@@ -5,13 +5,16 @@
     <title>Title</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <div class="container">
         <form method="post" action="/create_complaint">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" class="btn btn-first" value="Create">
         </form>
-        <form method="post" action="/complaints">
+        <form method="post" action="/complaints/">
             {% csrf_token %}
             <input type="submit" class="btn btn-first" value="Back">
         </form>

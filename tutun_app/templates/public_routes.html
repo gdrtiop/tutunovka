@@ -5,6 +5,9 @@
     <title>Public Routes</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <form action="{% url 'search_results_public' %}" method="get">
         <input name="q" type="text" placeholder="Поиск...">
     </form>
