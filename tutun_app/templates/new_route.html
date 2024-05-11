@@ -28,29 +28,29 @@
 </body>
 <script>
     function createDotForm(prefix) {
-        const dotFormHtml = `
-            <p>Точка</p>
-            <div>
-                <label for="id_dots-${prefix}-name">Название:</label>
-                <input type="text" name="dots-${prefix}-name" required>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
-                <input type="text" name="dots-${prefix}-api_vision">
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-date">Дата:</label>
-                <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-note">Примечание:</label>
-                <textarea name="dots-${prefix}-note"></textarea>
-            </div>
-            <div>
-                <label for="id_dots-${prefix}-information">Информация:</label>
-                <input type="text" name="dots-${prefix}-information">
-            </div>
-            <hr>
+    const dotFormHtml = `
+        <p>Точка</p>
+        <div>
+            <label for="id_dots-${prefix}-name">Название:</label>
+            <input type="text" name="dots-${prefix}-name" required>
+        </div>
+        <div>
+            <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
+            <input type="text" name="dots-${prefix}-api_vision">
+        </div>
+        <div>
+            <label for="id_dots-${prefix}-date">Дата:</label>
+            <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
+        </div>
+        <div>
+            <label for="id_dots-${prefix}-note">Примечание:</label>
+            <textarea name="dots-${prefix}-note"></textarea>
+        </div>
+        <div>
+            <label for="id_dots-${prefix}-information">Информация:</label>
+            <input type="text" name="dots-${prefix}-information">
+        </div>
+        <hr>
         `;
         return dotFormHtml;
     }

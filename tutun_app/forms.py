@@ -76,7 +76,7 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'date', 'note', 'information']
+        fields = ['name', 'date', 'api_vision', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
@@ -122,6 +122,7 @@ class PrivateRouteForm(forms.ModelForm):
     class Meta:
         model = PrivateRoute
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
+
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
