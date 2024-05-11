@@ -105,11 +105,17 @@
                 }
             }
         )
-        const clickCallback = () => alert('О, нажал!');
+        const clickHandler = (object, event) => {
+            if (event && event.coordinates) {
+                console.log('Координаты клика:', event.coordinates);
+            }
+        };
+
         const mapListener = new YMapListener({
-            layerId: 1,
-            onClick: clickCallback,
+           layer: 'any',
+           onClick: clickHandler
         });
+
         map.addChild(mapListener);
         map.addChild(new YMapDefaultSchemeLayer());
     }
