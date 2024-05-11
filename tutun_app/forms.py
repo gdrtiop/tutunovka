@@ -5,8 +5,17 @@ from django.contrib.auth.models import User
 from taggit.models import Tag
 
 from django import forms
+<<<<<<< HEAD
 from .models import PrivateRoute, PrivateDot, Note, Complaint
 
+=======
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+from django import forms
+from .models import PrivateRoute, PrivateDot, Note
+from django.contrib import messages
+>>>>>>> c896a86 (Update file forms.py)
 
 class UserRegisterForm(UserCreationForm):
     """
@@ -24,7 +33,7 @@ class UserRegisterForm(UserCreationForm):
         email = self.cleaned_data.get('email')
         username = self.cleaned_data.get('username')
         if email and User.objects.filter(email=email).exclude(username=username).exists():
-            raise forms.ValidationError('Такой email уже используется в системе')
+            messages.error(request, "Такой email уже используется в системе" )
         return email
 
     def __init__(self, *args, **kwargs):
@@ -76,7 +85,7 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'date', 'note', 'information']
+        fields = ['name', 'date', 'api_vision', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
@@ -112,16 +121,20 @@ class PrivateRouteForm(forms.ModelForm):
                                           required=False, label='Tags')
 
     def check(self):
+        """
+        Проверка корректности введенных дат
+        """
         data_checked = super().clean()
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
         if date_in >= date_out:
-            messages.error(request, "Дата возвращения должна быть позже даты прибытия.")
+            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
         return data_checked
 
     class Meta:
         model = PrivateRoute
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
+
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),

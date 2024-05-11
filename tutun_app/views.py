@@ -273,22 +273,6 @@ def create_route(request):
     return render(request, 'new_route.html', context)
 
 
-@login_required()
-def route_detail(request, route_id):
-    route = PrivateRoute.objects.get(id=route_id)
-
-    dots = route.dots.all()
-    notes = route.note.all()
-
-    context = {
-        'bar': get_bar_context(request),
-        'route': route,
-        'dots': dots,
-        'notes': notes,
-    }
-
-    return render(request, 'route_detail.html', context)
-
 
 @login_required()
 def public_route_detail(request, route_id):
