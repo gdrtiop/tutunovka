@@ -310,7 +310,7 @@ def save_route(request, pk=None):
                 #этот for позволяет обрабатывать точки, которые были до создания и сохранять их
                 dot_date = datetime.datetime.strptime(request.POST.getlist('date')[i], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
-                    messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
+                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
                         'route_form': route_form,
@@ -333,7 +333,7 @@ def save_route(request, pk=None):
                 dot_data = dot_form.data
                 dot_date = datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
-                    messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
+                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
                         'route_form': route_form,
