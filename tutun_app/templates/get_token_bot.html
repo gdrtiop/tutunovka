@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+    <form action="{% url 'tg_token' %}" method="post">
+        {% csrf_token %}
+        {{ token_form.as_p }}
+    </form>
+</body>
+</html>

@@ -44,5 +44,6 @@ urlpatterns = [
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
     path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
     path('public_route_detail/<int:route_id>/', views.public_route_detail, name='public_route_detail'),
-    path('post_route/<int:id>/', views.post_route, name='post_route')
+    path('post_route/<int:id>/', views.post_route, name='post_route'),
+    path('get_tg_bot_token/', views.get_tg_token, name='tg_token')
 ]

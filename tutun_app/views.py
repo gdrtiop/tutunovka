@@ -1,6 +1,6 @@
 import json
+import jwt
 import datetime
-from datetime import datetime
 from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -18,7 +18,7 @@ from taggit.models import Tag
 import calendar
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
-    AnswerComplaintForm
+    AnswerComplaintForm, AuthTokenBotForm
 
 
 def get_bar_context(request):
@@ -27,10 +27,12 @@ def get_bar_context(request):
         menu.append(dict(title=str(request.user), url=reverse('profile', kwargs={'stat': 'reading'})))
         menu.append(dict(title='все маршруты', url=reverse('public_routes')))
         menu.append(dict(title='новый маршрут', url=reverse('new_route')))
+        menu.append(dict(title='получить токен для тг авторизации', url=reverse('tg_token')))
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
         menu.append(dict(title=str(request.user), url='#'))
+        menu.append(dict(title='Приветсвенная страница', url=reverse('public_routes')))
 
     return menu
 
@@ -46,6 +48,14 @@ class MyLoginView(views.LoginView):
 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'bar': get_bar_context(self.request),
+            'title': 'Авторизация на сайте'
+        })
+        return context
+
 
 class UserRegisterView(SuccessMessageMixin, CreateView):
     form_class = UserRegisterForm
@@ -56,8 +66,10 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Регистрация на сайте'
-
+        context.update({
+            'bar': get_bar_context(self.request),
+            'title': 'Регистрация на сайте'
+        })
         return context
 
     def get_success_message(self, cleaned_data):
@@ -87,6 +99,15 @@ class PublicRoutesPage(generic.ListView):
     def get_queryset(self):
         return PublicRoute.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        routes = self.get_queryset()
+        context.update({
+            'bar': get_bar_context(self.request),
+            'routes_list': routes,
+        })
+        return context
+
 
 class PublicRoutesTagsPage(generic.ListView):
     template_name = 'public_routes.html'
@@ -102,7 +123,10 @@ class PublicRoutesTagsPage(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = f'Маршруты по тегу: {self.tag.name}'
+        context.update({
+            'bar': get_bar_context(self.request),
+            'title': f'Маршруты по тегу: {self.tag.name}'
+        })
         return context
 
 
@@ -116,6 +140,13 @@ class PublicRoutesSearchResults(generic.ListView):
             Q(Name__icontains=query)
         )
         return object_list
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'bar': get_bar_context(self.request),
+        })
+        return context
 
 
 @login_required()
@@ -195,7 +226,7 @@ def create_route(request):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                dot_date = datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
@@ -277,7 +308,7 @@ def save_route(request, pk=None):
 
             for i in range(len(request.POST.getlist('date'))):
                 #этот for позволяет обрабатывать точки, которые были до создания и сохранять их
-                dot_date = datetime.strptime(request.POST.getlist('date')[i], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(request.POST.getlist('date')[i], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
                     messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
@@ -624,3 +655,18 @@ def post_route(request, id):
     messages.success(request, "Вы успешно опубликоватли!")
 
     return redirect(reverse('public_route_detail', kwargs={'route_id': public_route.id}))
+
+
+@login_required()
+def get_tg_token(request):
+    user = User.objects.get(username=request.user)
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+    payload = {'username': user.username, 'password': user.password, 'exp': expiration_time}
+    secret_key = 'abcd'
+    jwt_token = jwt.encode(payload, secret_key, algorithm='HS256')
+    token_form = AuthTokenBotForm(initial={'token': jwt_token})
+    context = {
+        'bar': get_bar_context(request),
+        'token_form': token_form
+    }
+    return render(request, 'get_token_bot.html', context)

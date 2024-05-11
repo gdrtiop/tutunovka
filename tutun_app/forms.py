@@ -19,7 +19,7 @@ class UserRegisterForm(UserCreationForm):
     tg_username = forms.CharField(max_length=100)  # Add the tg_username field here
 
     class Meta(UserCreationForm.Meta):
-        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name', 'tg_username')
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
 
     def clean_email(self):
         """
@@ -38,12 +38,11 @@ class UserRegisterForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields['username'].widget.attrs.update({"placeholder": 'Придумайте свой логин'})
-            self.fields['email'].widget.attrs.update({"placeholder": 'Введите свой email'})
+            self.fields['email'].widget.attrs.update({"placeholder": 'Введите свой E-mail'})
             self.fields['first_name'].widget.attrs.update({"placeholder": 'Ваше имя'})
             self.fields["last_name"].widget.attrs.update({"placeholder": 'Ваша фамилия'})
             self.fields['password1'].widget.attrs.update({"placeholder": 'Придумайте свой пароль'})
             self.fields['password2'].widget.attrs.update({"placeholder": 'Повторите придуманный пароль'})
-            self.fields['tg_username'].widget.attrs.update({"placeholder": 'Введите ваш тг ник'})
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
 
 
@@ -52,28 +51,34 @@ class ProfileForm(forms.Form):
         label='Логин',
         max_length=100,
         min_length=4,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Введите свой логин'}
+        )
     )
     email = forms.EmailField(
         label='Email',
         max_length=100,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Введите свой E-mail'}
+        )
     )
     first_name = forms.CharField(
         label='Имя',
         max_length=100,
         min_length=2,
         required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Ваше имя'}
+        )
     )
     last_name = forms.CharField(
         label='Фамилия',
         max_length=100,
         min_length=2,
         required=False,
-    )
-    tg_username = forms.CharField(
-        label='TG логин',
-        max_length=100,
-        min_length=1,
-        required=False,
+        widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': 'Ваша фамилия'}
+        )
     )
 
 
@@ -121,9 +126,8 @@ class PrivateRouteForm(forms.ModelForm):
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
         if date_in >= date_out:
-            messages.error(self.request, "Дата возвращения должна быть позже даты прибытия." )
+            messages.error(self.request, "Дата возвращения должна быть позже даты прибытия.")
         return data_checked
-
 
     class Meta:
         model = PrivateRoute
@@ -201,3 +205,11 @@ class AnswerComplaintForm(forms.ModelForm):
         widgets = {
             'answer': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+
+class AuthTokenBotForm(forms.Form):
+    token = forms.CharField(
+        widget=forms.Textarea(
+            attrs={'class': 'form-control', 'placeholder': 'Ваш токен для авторизации в телеграмм боте'}
+        )
+    )
