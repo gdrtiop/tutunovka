@@ -331,7 +331,7 @@ def save_route(request, pk=None):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                dot_date = datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
