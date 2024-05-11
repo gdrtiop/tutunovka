@@ -101,8 +101,7 @@ class PrivateDotForm(forms.ModelForm):
 
         if date and route_start_date and route_end_date:
             if date < route_start_date or date > route_end_date:
-                raise forms.ValidationError('Дата точки должна быть в пределах дат маршрута.')
-
+                messages.error(request, "Дата точки должна быть в пределах дат маршрута." )
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
