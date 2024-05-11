@@ -1,51 +1,233 @@
 <!DOCTYPE html>
+<style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 35pt;
+        margin-left: 40px;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+
+    magicNoWrap {
+        white-space: nowrap;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 700;
+        margin-left: 100px;
+    }
+    li2 {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 20pt;
+        font-weight: 200;
+        margin-left: 45px;
+    }
+    li3 {
+        margin-bottom: 0px;
+        color: #000000;
+        font-size: 20pt;
+        font-weight: 600;
+    }
+
+    img {
+        position: bottom;
+        right: 0;
+        bottom: 0;
+    }
+
+    p {
+        margin-top: 50px;
+        margin-bottom: 10px;
+        margin-right: 650px;
+        margin-left: 800px;
+    }
+    p2 {
+        margin-right: 80px;
+
+    }
+    p3 {
+        margin-left: -3%;
+    }
+    p4 {
+        margin-bottom: -1px;
+    }
+    p5 {
+        margin-left: 30px;
+        margin-bottom: 50px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
+
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+
+    button2 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 15px;
+    }
+
+    .button3 {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 15px;
+    }
+
+    .buttons_poz{
+        margin-left: 850px;
+    }
+    buttons_poz2{
+        margin-left: 855px;
+    }
+
+    button:hover {
+        background-color: #F15A29;
+    }
+    button2:hover {
+        background-color: #ABABAB;
+    }
+
+    .button3:hover {
+        background-color: #F15A29;
+    }
+</style>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User Routes</title>
 </head>
 <body>
-{% include 'bar.html' %}
-    <h1>Ваш профиль:</h1>
+<header></header>
+<p4><h1>Тутуновка</h1></p4>
+<p3>
+    <p2>{% for item in bar %}</p2>
+    <a href="{{ item.url }}"><button>{{ item.title }}</button></a>
+    {% endfor %}
+</p3></header>
+{% include 'messages.html' %}
+<br>
+<br>
+<hr>
+<br>
+<br>
 
     {% if stat == "editing" %}
-    <div class="container">
-        <form method="post" action="{{ url }}">
+    <div class="container" >
+
+        <form method="post" action="{{ url_back }}" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" class="btn btn-first" value="Применить">
+            <h5>{{ form.as_p }}</h5>
+            <br>
+            <br>
+            <br>
+            <a type="submit"><buttons_poz><button class="btn button3 buttons_poz">Применить</button></buttons_poz></a>
         </form>
         <br>
-        <a href="{{ url_back }}"><button class ="btn btn-secondary">Отменить</button></a>
+        <buttons_poz2><a href="{{ url_back }}"><button2>Отменить</button2></a></buttons_poz2>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
     </div>
+
     {% else %}
-    <div class="container">
-        <ul>
-            <li>Username: {{ profile_info.username }}</li>
-            <li>Email: {{ profile_info.email }}</li>
-            <li>First Name: {{ profile_info.first_name }}</li>
-            <li>Last Name: {{ profile_info.last_name }}</li>
-            <li>TG username: {{ profile_info.tg_username }}</li>
-        </ul>
-        <a href="{{url}}"><button class ="btn btn-first">Редактировать</button></a>
-    </div>
-    {% endif %}
-    <div  class="container mt-4">
-        <h2>Ваши маршруты:</h2>
-        {% if routes %}
+        <div class="container">
             <ul>
-                {% for route in routes %}
-                    <li>
-                        <a href="{% url 'route_detail' route_id=route.id %}">{{ route.Name }}</a><br>
-                        Date In: {{ route.date_in }}<br>
-                        Date Out: {{ route.date_out }}<br>
-                        Number of Dots: {{ route.dots.count }}<br>
-                    </li>
-                {% endfor %}
+                <li>{{ profile_info.username }}</li>
+                <p5><a href="{{url}}"><button2 class ="btn btn-first">Редактировать профиль</button2></a></p5>
             </ul>
-        {% else %}
-            <p>No routes found for this user.</p>
-        {% endif %}
-    </div>
+            <br>
+
+        </div>
+        <hr>
+        <br>
+        <h1>Ваши маршруты:</h1>
+        <br>
+        <div  class="container mt-4">
+
+            {% if routes %}
+                <ul>
+                    {% for route in routes %}
+                    <div style="background-color: #FF5C00; padding: 5px; width:32%;height:15%; margin-left: 100px; border-radius: 20px;">
+                        <li2>
+
+                            <li3><a href="{% url 'route_detail' route_id=route.id %}" ><button2>{{ route.Name }}</button2><a></li3><br><br>
+                            <li2>Дата прилёта: {{ route.date_in }}<br></li2>
+                            <li2>Дата отлёта: {{ route.date_out }}<br></li2>
+                            <li2>Колличество точек: {{ route.dots.count }}<br></li2>
+
+                            </li2>
+                        </li2>
+                        <br></div><br><br>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No routes found for this user.</p>
+            {% endif %}
+        </div>
+    {% endif %}
 </body>
 </html>

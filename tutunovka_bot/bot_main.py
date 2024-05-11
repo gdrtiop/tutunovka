@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import tg_analytic
 from models import PostgreSQLQueries
 
-# load_dotenv('.env.bot')
+load_dotenv('.env.bot')
 
 # TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 TOKEN = "6899212190:AAH9ljFqfIZxcvgUfD4OqXPlQ9x7ERf2DNg"
@@ -19,7 +19,8 @@ if TOKEN is None:
 
 bot = telebot.TeleBot(TOKEN)
 
-MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_HOST'), os.getenv('DB_PORT'))
+MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv('DB_PASSWORD'), os.getenv('DB_HOST'),
+                          os.getenv('DB_PORT'))
 
 encoded_jwt = jwt.encode({"password": "password", "tg_username": "vasya"}, "auth_in_bot", algorithm="HS256")
 print(encoded_jwt)
@@ -43,8 +44,8 @@ def tic_tac():
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button_flight = telebot.types.KeyboardButton(text="Следующий вылет?", callback_data="f")
-    keyboard.add(button_flight)
+    #button_flight = telebot.types.KeyboardButton(text="Следующий вылет?", callback_data="f")
+    #keyboard.add(button_flight)
     bot.send_message(message.chat.id,
                      'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!',
                      reply_to_message_id=message.message_id, reply_markup=keyboard)
@@ -64,11 +65,16 @@ def send_text(message):
             messages = tg_analytic.analysis(st, message.chat.id)
             bot.send_message(message.chat.id, messages)
     else:
-        payload = jwt.decode(jwt=encoded_jwt, key="auth_in_bot", algorithms=["HS256"])
+        payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
+        #payload = jwt.decode(jwt=encoded_jwt, key="auth_in_bot", algorithms=["HS256"])
         data = MODEL.get_user_fields(payload["password"], payload["username"])
-        if data is not None:
-            data["tg_id"] = message.chat.id
-            users.append(data)
+        #if data is not None:
+        #    data["tg_id"] = message.chat.id
+        #    users.append(data)
+        bot.send_message(message.chat.id,
+                         f'{str(payload)} \n {str(data)}',
+                         reply_to_message_id=message.message_id)
+
 
 @bot.callback_query_handler(func=lambda call: call.data == "f")
 def but1_pressed(call):

@@ -5,6 +5,9 @@
     <title>Public Routes</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <form action="{% url 'search_results_public' %}" method="get">
         <input name="q" type="text" placeholder="Поиск...">
     </form>
@@ -13,7 +16,7 @@
         <li>
             <th scope="row">{{ route.id }}</th>
             <th>
-                <a href="#">Перейти</a>
+                <a href="{% url 'public_route_detail' route_id=route.id %}">{{ route.Name }}</a>
             </th>
             <th>{{ route.Name }}</th> <th>{{ route.author }}</th>
             {% if route.tags.all %}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Detail</title>
+</head>
+<body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
+    <h1>Маршрут</h1>
+    <p><strong>Author:</strong> {{ route.author.username }}</p>
+    <p><strong>Comment:</strong> {{ route.comment }}</p>
+    <p><strong>Rate:</strong> {{ route.rate }}</p>
+    <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
+
+    {% for dot in dots %}
+        <li>
+            <p><strong>Name:</strong> {{ dot.name }}</p>
+            <p><strong>Api_vision:</strong> {{ dot.api_vision }}</p>
+            <p><strong>Information:</strong> {{ dot.information }}</p>
+        </li>
+    {% endfor %}
+
+    <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
+</body>
+</html>

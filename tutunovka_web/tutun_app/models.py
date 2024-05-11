@@ -13,7 +13,7 @@ class PrivateDot(models.Model):
         db_table = "Private_Dots"
 
     name = models.CharField(max_length=125, default='Untitled dot')
-    api_vision = models.JSONField()
+    api_vision = models.JSONField(null=True)
     date = models.DateTimeField(default=None, null=True)
     note = models.CharField(max_length=700)
     information = models.CharField(max_length=700)
@@ -45,10 +45,15 @@ class PrivateRoute(models.Model):
     date_in = models.DateTimeField()
     date_out = models.DateTimeField()
     comment = models.CharField(max_length=700)
+    # baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
     note = models.ManyToManyField(to=Note)
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PrivateDot)
+    tags = TaggableManager()
+    length = models.CharField(max_length=10, default=None, null=True)
+    month = models.CharField(max_length=20, default=None, null=True)
+    year = models.CharField(max_length=20, default=None, null=True)
 
 
 class PublicRoute(models.Model):
@@ -61,6 +66,9 @@ class PublicRoute(models.Model):
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
     tags = TaggableManager()
+    length = models.CharField(max_length=10, default=None, null=True)
+    month = models.CharField(max_length=20, default=None, null=True)
+    year = models.CharField(max_length=20, default=None, null=True)
 
 
 class Complaint(models.Model):

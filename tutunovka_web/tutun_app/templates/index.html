@@ -5,17 +5,22 @@
     <meta charset="UTF-8">
     <title>Index page</title>
     <style>
+        @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
         body {
             background-color: #222222;
             color: #FFA500;
-            font-family: Bahnschrift SemiBold, sans-serif;
-            text-align: center;
+            font-family: Arial;
+            text-align: right;
             margin: 0;
             padding: 0;
         }
 
         h1 {
             color: #FFFFFF;
+            font-family: Arkhip;
+            font-size: 50pt;
+            text-align: left;
+            white-space: pre;
         }
 
         h5 {
@@ -31,6 +36,12 @@
             margin-bottom: 10px;
         }
 
+        img {
+            position: bottom;
+            right: 0;
+            bottom: 0;
+        }
+
         button {
             background-color: #F7941E;
             color: #222222;
@@ -41,7 +52,8 @@
             text-decoration: none;
             cursor: pointer;
             margin-top: 10px;
-            border-radius: 10px;
+            margin-right: 30px;
+            border-radius: 50px;
         }
 
         button:hover {
@@ -51,30 +63,19 @@
 </head>
 
 <body>
+    {% include 'messages.html' %}
+    <br>
+    <br>
 
-    <br>
-    <br>
-    <br>
-    <br>
-     <img src="https://imageup.ru/img297/4766978/logo.png" alt="Logo" class="logo" style="width:348px;height:62px;">
-    <h1 >Welcome to our site!</h1>
-    <br>
-    <br>
-    <p>Мы рады тебя видеть у нас в гостях =)</p>
-    <h5>Параметры этого сайта:</h5>
-    <ul>
-        <li>Автор:  author </li>
-        <li>Дата создания:  creation_date </li>
-        <li>Количество страниц:  pages_count </li>
-    </ul>
-
-    Текущий пользователь:  user  <br><br>
     <a href="{% url 'login' %}"><button style="font-size: 1.5rem">Авторизация</button></a>
-    <a href="{% url 'register' %}"><button style="font-size: 1.5rem">Регистрация</button></a>
+    <a href="{% url 'register' %}"><button style="font-size: 1.5rem">Регистрация</button>  </a>
+    <h1>        Добро пожаловать </h1>
+    <h1 >        В Тутуновку</h1>
+    <br>
+    <br>
 
 
-    <a href="https://imageup.ru/img197/4766976/background.png.html" ><img src="https://imageup.ru/img197/4766976/background.png" alt="background00c25132f9500e65.png" border="0" style="width:1904px;height:660px;"></a>
-    <a href="
+    <a><img src="https://iili.io/JhlkvWX.png" alt="JhlkvWX.png" border="0" style="width:100%;height:100%; "></a>
     <br>
     <a href="></a>
 
