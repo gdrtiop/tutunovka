@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib import messages
 from taggit.models import Tag
 
 from django import forms
@@ -88,8 +89,6 @@ class PrivateDotForm(forms.ModelForm):
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
-
-
     def clean(self):
         cleaned_data = super().clean()
         date = cleaned_data.get('date')
@@ -98,7 +97,7 @@ class PrivateDotForm(forms.ModelForm):
 
         if date and route_start_date and route_end_date:
             if date < route_start_date or date > route_end_date:
-                raise forms.ValidationError('Дата точки должна быть в пределах дат маршрута.')
+                messages.error(self.request, 'Дата точки должна быть в пределах дат маршрута.')
 
         return cleaned_data
 
@@ -122,7 +121,7 @@ class PrivateRouteForm(forms.ModelForm):
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
         if date_in >= date_out:
-            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
+            messages.error(self.request, "Дата возвращения должна быть позже даты прибытия." )
         return data_checked
 
 

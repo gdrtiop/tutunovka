@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <body>
+    {% include 'bar.html' %}
+    {% include 'messages.html' %}
+
     <div class="container">
         <th>Message: {{ complaint.text }}</th>
         <form method="post" action="{{ url }}">
@@ -12,7 +15,7 @@
             {{ form.as_p }}
             <input type="submit" class="btn btn-first" value="Apply">
         </form>
-        <form method="post" action="/complaints">
+        <form method="post" action="/complaints/">
             {% csrf_token %}
             <input type="submit" class="btn btn-first" value="Back">
         </form>
