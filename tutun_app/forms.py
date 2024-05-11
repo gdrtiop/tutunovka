@@ -79,13 +79,16 @@ class ProfileForm(forms.Form):
 class PrivateDotForm(forms.ModelForm):
     class Meta:
         model = PrivateDot
-        fields = ['name', 'date', 'note', 'information']
+        fields = ['name', 'api_vision', 'date', 'note', 'information']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'note': forms.Textarea(attrs={'class': 'form-control'}),
+            'api_vision': forms.TextInput({'class': 'form-control'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -107,7 +110,7 @@ class PrivateDotForm(forms.ModelForm):
         self.route_end_date = route_end_date
         self.fields['information'].required = False
         self.fields['note'].required = False
-        self.fields['date'].required = False
+        self.fields['date'].required = True
 
 
 class PrivateRouteForm(forms.ModelForm):

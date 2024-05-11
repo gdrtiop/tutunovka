@@ -66,6 +66,9 @@ class PublicRoute(models.Model):
     rate = models.IntegerField(default='-1')
     dots = models.ManyToManyField(to=PublicDot)
     tags = TaggableManager()
+    length = models.CharField(max_length=10, default=None, null=True)
+    month = models.CharField(max_length=20, default=None, null=True)
+    year = models.CharField(max_length=20, default=None, null=True)
 
 
 class Complaint(models.Model):
