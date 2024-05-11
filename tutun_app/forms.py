@@ -1,8 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-
-from django import forms
+from django.contrib.messages.views import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from taggit.models import Tag
@@ -15,7 +12,7 @@ class UserRegisterForm(UserCreationForm):
     """
     Переопределенная форма регистрации пользователей
     """
-    tg_username = forms.CharField(max_length=100)  # Add the tg_username field here
+    tg_username = forms.CharField(max_length=100)
 
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name', 'tg_username')
@@ -119,9 +116,8 @@ class PrivateRouteForm(forms.ModelForm):
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
         if date_in >= date_out:
-            messages.error(request, "Дата возвращения должна быть позже даты прибытия." )
+            messages.error(request, "Дата возвращения должна быть позже даты прибытия.")
         return data_checked
-
 
     class Meta:
         model = PrivateRoute

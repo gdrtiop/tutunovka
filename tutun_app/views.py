@@ -50,9 +50,6 @@ class MyLoginView(views.LoginView):
 
         return super().form_valid(form)
 
-    # def get_success_message(self, cleaned_data):
-    #     return self.success_message
-
 
 class UserRegisterView(SuccessMessageMixin, CreateView):
     form_class = UserRegisterForm
@@ -83,7 +80,8 @@ def index_page(request):
     context = {
         'bar': get_bar_context(request),
         'author': 'mother...', 'creation_date': '15.03.2024',
-        'user': request.user}
+        'user': request.user
+    }
 
     return render(request, 'index.html', context)
 
@@ -94,6 +92,15 @@ class PublicRoutesPage(generic.ListView):
 
     def get_queryset(self):
         return PublicRoute.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        routes = self.get_queryset()
+        context.update({
+            'bar': get_bar_context(self.request),
+            'routes_list': routes,
+        })
+        return context
 
 
 class PublicRoutesTagsPage(generic.ListView):
@@ -155,7 +162,7 @@ def profile(request, stat):
                                                    first_name=form.data["first_name"], last_name=form.data["last_name"],
                                                    tg_username=form.data["tg_username"])
 
-            messages.success(request, "Вы успешно изменили профилбь!")
+            messages.success(request, "Вы успешно изменили профиль!")
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         else:
@@ -240,7 +247,7 @@ def create_route(request):
 
             for note_form in note_forms:
                 note = note_form.save()
-                route.notes.add(note)
+                route.note.add(note)
 
             messages.success(request, 'Маршрут успешно создан.')
             route.tags.set(route_form.cleaned_data['tags'])
@@ -383,7 +390,12 @@ def editing_route(request, route_id):
                 'api_vision': dot.api_vision,
                 'information': dot.information,
             }))
-
+        context = {
+            'bar': get_bar_context(request),
+            'route_form': route_form,
+            'dots_form': dots_form,
+            'notes_form': notes_form
+        }
         return render(request, 'editing_route.html',
                       {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
 
