@@ -197,7 +197,7 @@ def create_route(request):
                 dot_data = dot_form.data
                 dot_date = datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
                 if dot_date > route.date_out.date() or dot_date < route.date_in.date():
-                    messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
+                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
                         'route_form': route_form,
@@ -237,7 +237,6 @@ def create_route(request):
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
-
             messages.error(request, error_text)
         else:
             pass
