@@ -65,15 +65,24 @@ def send_text(message):
             messages = tg_analytic.analysis(st, message.chat.id)
             bot.send_message(message.chat.id, messages)
     else:
-        payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
-        #payload = jwt.decode(jwt=encoded_jwt, key="auth_in_bot", algorithms=["HS256"])
-        data = MODEL.get_user_fields(payload["password"], payload["username"])
-        #if data is not None:
-        #    data["tg_id"] = message.chat.id
-        #    users.append(data)
-        bot.send_message(message.chat.id,
-                         f'{str(payload)} \n {str(data)}',
-                         reply_to_message_id=message.message_id)
+        try:
+            payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
+            # payload = jwt.decode(jwt=encoded_jwt, key="auth_in_bot", algorithms=["HS256"])
+            data = MODEL.get_user_fields(payload["password"], payload["username"])
+            # if data is not None:
+            #    data["tg_id"] = message.chat.id
+            #    users.append(data)
+            bot.send_message(message.chat.id,
+                             f'{str(payload)} \n {str(data)}',
+                             reply_to_message_id=message.message_id)
+        except jwt.ExpiredSignatureError:
+            bot.send_message(message.chat.id,
+                             f'Токен истёк',
+                             reply_to_message_id=message.message_id)
+        except jwt.InvalidTokenError:
+            bot.send_message(message.chat.id,
+                             f'Неверный токен',
+                             reply_to_message_id=message.message_id)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "f")
