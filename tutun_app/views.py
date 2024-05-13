@@ -198,56 +198,45 @@ def profile(request, stat):
 def create_route(request):
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
-
         dot_forms = [PrivateDotForm(request.POST, prefix=f'dots-{x}',
                                     initial={'route_start_date': route_form.data['date_in'],
                                              'route_end_date': route_form.data['date_out']}) for x in
                      range(len(request.POST)) if
                      f'dots-{x}-name' in request.POST]
-
         note_forms = [NoteForm(request.POST, prefix=f'notes-{x}') for x in range(len(request.POST)) if
                       f'notes-{x}-text' in request.POST]
 
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
-
             route.author = request.user
             route.length = (route.date_out - route.date_in).days  # Calculate length in days
             route.month = calendar.month_name[route.date_in.month]
             route.year = route.date_in.year  # Extract year from date_in
-
             route.save()
 
             ind = 0
-
             for dot_form in dot_forms:
                 if dot_form.is_valid():
                     dot_date = datetime.strptime(dot_form.data.get(f'dots-{ind}-date'), '%Y-%m-%d').date()
-
                     if dot_date > route.date_out.date() or dot_date < route.date_in.date():
                         messages.success(request, 'Даты точек должны находиться в пределах путешествия.')
-
                         context = {
                             'bar': get_bar_context(request),
                             'route_form': route_form,
                             'dot_forms': dot_forms,
                             'note_forms': note_forms,
                         }
-
                         route.delete()
-
                         return render(request, 'new_route.html', context)
-
                     dot = dot_form.save(commit=False)
                     dot.save()
-
                     route.dots.add(dot)
-
                 ind += 1
 
             for note_form in note_forms:
                 note = note_form.save()
                 route.note.add(note)
+
 
             messages.success(request, 'Маршрут успешно создан.')
             route.tags.set(route_form.cleaned_data['tags'])
@@ -255,7 +244,6 @@ def create_route(request):
             return redirect(reverse('profile', kwargs={'stat': 'reding'}))
         elif len(dot_forms) == 0:
             error_text = 'Необходимо добавить хотя бы одну точку.'
-
             messages.error(request, error_text)
         else:
             pass
@@ -272,6 +260,19 @@ def create_route(request):
     }
     return render(request, 'new_route.html', context)
 
+
+@login_required()
+def route_detail(request, route_id):
+    route = PrivateRoute.objects.get(id=route_id)
+    dots = route.dots.all()
+    notes = route.note.all()
+    context = {
+        'bar': get_bar_context(request),
+        'route': route,
+        'dots': dots,
+        'notes': notes,
+    }
+    return render(request, 'route_detail.html', context)
 
 
 @login_required()

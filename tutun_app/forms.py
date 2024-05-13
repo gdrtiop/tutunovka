@@ -5,17 +5,14 @@ from django.contrib.auth.models import User
 from taggit.models import Tag
 
 from django import forms
-<<<<<<< HEAD
 from .models import PrivateRoute, PrivateDot, Note, Complaint
 
-=======
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from django import forms
 from .models import PrivateRoute, PrivateDot, Note
 from django.contrib import messages
->>>>>>> c896a86 (Update file forms.py)
 
 class UserRegisterForm(UserCreationForm):
     """
