@@ -16,12 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from django.conf.urls.static import static
-from django.conf import settings
-
 from tutun_app import views
-from tutun_app.views import UserRegisterView
 
 
 urlpatterns = [
@@ -29,7 +24,7 @@ urlpatterns = [
     path('', views.index_page, name='index'),
     path('login/', views.MyLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('register/', UserRegisterView.as_view(), name='register'),
+    path('register/', views.UserRegisterView.as_view(), name='register'),
     path('profile/<str:stat>', views.profile, name='profile'),
     path('new_route', views.create_route, name='new_route'),
     path('save_route/<int:pk>', views.save_route, name='save_route'),
@@ -40,10 +35,14 @@ urlpatterns = [
     path('create_complaint', views.create_complaint, name='create_complaint'),
     path('complaint_answer/<int:complaint_id>', views.complaint_answer, name='complaint_answer'),
     path('public_routes/', views.PublicRoutesPage.as_view(), name='public_routes'),
-    path('public_routes/tags/<str:tag>/', views.PublicRoutesTagsPage.as_view(), name='public_routes_by_tags'),
-    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
-    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(), name='search_results_public'),
-    path('public_route_detail/<int:route_id>/', views.public_route_detail, name='public_route_detail'),
+    path('public_routes/tags/<str:tag>/', views.PublicRoutesTagsPage.as_view(),
+         name='public_routes_by_tags'),
+    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(),
+         name='search_results_public'),
+    path('public_routes_search/', views.PublicRoutesSearchResults.as_view(),
+         name='search_results_public'),
+    path('public_route_detail/<int:route_id>/', views.public_route_detail,
+         name='public_route_detail'),
     path('post_route/<int:id>/', views.post_route, name='post_route'),
     path('get_tg_bot_token/', views.get_tg_token, name='tg_token')
 ]
