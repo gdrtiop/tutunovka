@@ -31,7 +31,6 @@ def get_bar_context(request):
         menu.append(dict(title='Обратная связь', url=reverse('complaints')))
         menu.append(dict(title='Выйти', url=reverse('logout')))
     else:
-        menu.append(dict(title=str(request.user), url='#'))
         menu.append(dict(title='Приветсвенная страница', url=reverse('public_routes')))
 
     return menu
@@ -508,9 +507,13 @@ def editing_route(request, route_id):
                 'api_vision': dot.api_vision,
                 'information': dot.information,
             }))
-
-        return render(request, 'editing_route.html',
-                      {'route_form': route_form, 'dots_form': dots_form, 'notes_form': notes_form})
+        context = {
+            'bar': get_bar_context(request),
+            'route_form': route_form,
+            'dots_form': dots_form,
+            'notes_form': notes_form
+        }
+        return render(request, 'editing_route.html', context)
 
 
 def update_note(request, note_id):
@@ -665,6 +668,7 @@ def get_tg_token(request):
     secret_key = 'abcd'
     jwt_token = jwt.encode(payload, secret_key, algorithm='HS256')
     token_form = AuthTokenBotForm(initial={'token': jwt_token})
+    messages.success(request, 'Токен успешно сгенерирован')
     context = {
         'bar': get_bar_context(request),
         'token_form': token_form

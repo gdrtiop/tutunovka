@@ -7,6 +7,7 @@
 <body>
     {% include 'bar.html' %}
     {% include 'messages.html' %}
+    <p>Данный токен используется для безопасной авторизации в Telegram боте. Он действует только 5 минут и генерируется заново при обновлении страницы.</p>
     <form action="{% url 'tg_token' %}" method="post">
         {% csrf_token %}
         {{ token_form.as_p }}

@@ -16,7 +16,6 @@ class UserRegisterForm(UserCreationForm):
     """
     Переопределенная форма регистрации пользователей
     """
-    tg_username = forms.CharField(max_length=100)  # Add the tg_username field here
 
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
@@ -42,7 +41,7 @@ class UserRegisterForm(UserCreationForm):
             self.fields['first_name'].widget.attrs.update({"placeholder": 'Ваше имя'})
             self.fields["last_name"].widget.attrs.update({"placeholder": 'Ваша фамилия'})
             self.fields['password1'].widget.attrs.update({"placeholder": 'Придумайте свой пароль'})
-            self.fields['password2'].widget.attrs.update({"placeholder": 'Повторите придуманный пароль'})
+            self.fields['password2'].widget.attrs.update({"placeholder": 'Повторите пароль'})
             self.fields[field].widget.attrs.update({"class": "form-control", "autocomplete": "off"})
 
 
@@ -211,5 +210,6 @@ class AuthTokenBotForm(forms.Form):
     token = forms.CharField(
         widget=forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': 'Ваш токен для авторизации в телеграмм боте'}
-        )
+        ),
+        label='Ваш токен:'
     )
