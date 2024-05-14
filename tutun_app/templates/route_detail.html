@@ -1,48 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h2 {
+        color: #000000;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h3 {
+        color: #000000;
+        font-size: 20pt;
+        white-space: pre;
+    }
+    strong{
+        white-space: pre;
+    }
+
+    p2 {
+        margin-right: 80px;
+    }
+
+
+    .route_name {
+        color: #FFFFFF;
+        background-color: #464646;
+        font-size: 30pt;
+        width: 1835px;
+        border-radius: 20px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        padding-bottom: 7px;
+        margin-left: 20px;
+    }
+
+    .container {
+        display: flex;
+        margin-top: -30px;
+        margin-bottom: 20px;
+    }
+
+    .route_length {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 600px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-right: 105px;
+        margin-left: 20px;
+    }
+
+    .route_month {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 600px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-right: 105px;
+        margin-left: 20px;
+    }
+
+    .route_year{
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 600px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-right: 27px;
+        margin-left: 20px;
+    }
+
+    .starting-date {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 869px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .ending-date {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 869px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .notes {
+        color: #000000;
+        background-color: #FFD84C;
+        font-size: 20pt;
+        width: 869px;
+        border-radius: 30px;
+        height: auto;
+        padding-top: 10px;
+        padding-left: 20px;
+        margin-left: 80px;
+        margin-top: 20px;
+    }
+
+    .comment {
+        color: #ffffff;
+        background-color: #FF9900;
+        font-size: 20pt;
+        width: 869px;
+        border-radius: 30px;
+        height: 140px;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .list_of_things {
+        color: #ffffff;
+        background-color: #FF9900;
+        font-size: 20pt;
+        width: 869px;
+        border-radius: 30px;
+        height: 140px;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .edit_btn{
+        color: #ffffff;
+        background-color: #FF4D00;
+        font-size: 20pt;
+        width: 326px;
+        border-radius: 30px;
+        height: 60px;
+        margin-left: 790px;
+        margin-top: 40px;
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
+        border: none;
+    }
+
+    .edit_btn:hover{
+        background-color: #C22800;
+    }
+
+    .post_btn{
+        color: #0000000;
+        background-color: #ffffff;
+        font-size: 20pt;
+        width: 326px;
+        border-radius: 30px;
+        height: 60px;
+        margin-left: 790px;
+        margin-top: 40px;
+        display: inline-block;
+        justify-content: center;
+        align-items: center;
+        border: none;
+    }
+
+    .post_btn:hover{
+        background-color: #C0C0C0;
+    }
+
+    .map{
+        width: 889px;
+        height: 606px;
+        background-color: green;
+        border-radius: 30px;
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+    .topnav {
+      overflow: hidden;
+      background-color: #222222;
+    }
+
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .topnav a:hover {
+      background-color: #F7941E;
+      border-radius: 50px;
+      color: #000000;
+    }
+
+    .topnav a.active {
+      background-color: #04AA6D;
+    }
+
+    .footer {
+            background-color: #FFFFFF;
+            font-family: "Courier Prime", sans-serif;
+            height: 300px;
+            justify-content: space-between;
+            color:#000000;
+        }
+</style>
 <head>
     <meta charset="UTF-8">
     <title>Route Detail</title>
 </head>
 <body>
-    {% include 'bar.html' %}
-    {% include 'messages.html' %}
-    <h1>Маршрут</h1>
-    <p><strong>Name:</strong> {{ route.Name }}</p>
-    <p><strong>Date In:</strong> {{ route.date_in }}</p>
-    <p><strong>Date Out:</strong> {{ route.date_out }}</p>
-    <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
-    <p><strong>Comment:</strong> {{ route.comment }}</p>
-    <p><strong>length of Trip:</strong> {{ route.length }}</p>
-    <p><strong>month of Trip:</strong> {{ route.month }}</p>
-    <p><strong>year of Trip:</strong> {{ route.year }}</p>
+<a><h1>  Тутуновка</h1></a>
+<div class="topnav">
 
-    <h2>Заметки</h2>
-    <ul>
-        {% for note in notes %}
-            <li>
-                <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
-                <label for="note_{{ note.id }}" {% if note.done %}style="text-decoration: line-through;"{% endif %}>
-                    {{ note.text }}
-                </label>
-            </li>
-        {% endfor %}
-    </ul>
-    <h2>Точки</h2>
-    {% for dot in dots %}
-        <li>
-            <p><strong>Name:</strong> {{ dot.name }}</p>
-            <p><strong>Date:</strong> {{ dot.date }}</p>
-            <p><strong>Note:</strong> {{ dot.note }}</p>
-            <p><strong>Api_vision:</strong> {{ dot.api_vision }}</p>
-            <p><strong>Information:</strong> {{ dot.information }}</p>
-        </li>
+    <p2>{% for item in bar %}</p2>
+    <a href="{{ item.url }}">{{ item.title }}</a>
     {% endfor %}
+</div>
+<hr>
+{% include 'messages.html' %}
+<br>
+<br>
+    <h1>  Маршрут</h1>
+    <p class="route_name">{{ route.Name }}</p>
+    <div class="container">
+        <p class="route_length"><strong>Длина поездки: </strong> {{ route.length }}</p>
+        <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
+        <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
+    </div>
+    <div class="container">
+        <p class="starting-date"><strong>Дата начала: </strong> {{ route.date_in }}</p>
+        <p class="ending-date"><strong>Дата конца: </strong> {{ route.date_out }}</p>
+    </div>
+    <div class="container">
+        <p class="list_of_things"><strong>Список вещей для путешествия: </strong> {{ route.baggage }}</p>
+        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+    </div>
 
-    <a href="{% url 'editing_route' route_id=route.id %}"><button>Редактировать</button></a>
+    <div class="container">
+        <div class="map"></div>
+        <div class="notes">
+            <p><strong>Заметки</strong></p>
+            <ul>
+                {% for note in notes %}
+                <li>
+                    <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
+                    <label for="note_{{ note.id }}" {% if note.done %}style="text-decoration: line-through;"{% endif %}>
+                        {{ note.text }}
+                    </label>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
+    <div class="container"><a href="{% url 'editing_route' route_id=route.id %}"><button class="edit_btn">Редактировать</button></a></div>
+    <a href="{% url 'post_route' id=route.id %}"><button class="post_btn">Опубликовать</button></a>
     <br><br>
-    <a href="{% url 'post_route' id=route.id %}"><button>Опубликовать</button>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -84,5 +334,16 @@
             return cookieValue;
         }
     </script>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
+<footer>
+    <div class = "footer">
+        <div class = "footer_container">
+            <br><br>
+            <h2>    Тутуновка</h2>
+            <h3>      Команда "Алгоритмический шик"</h3>
+            <h3>      2024</h3>
+        </div>
+    </div>
+</footer>
 </html>

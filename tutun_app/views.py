@@ -570,7 +570,7 @@ def create_complaint(request):
         form = ComplaintForm(request.POST, request.FILES)
 
         if form.is_valid():
-            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.now())
+            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
             saver_form.save()
 
             messages.success(request, "Вы успешно отправили жалобу!")
@@ -655,7 +655,7 @@ def post_route(request, id):
     public_route.dots.set(public_dots)
     public_route.tags.add(*private_route.tags.names())
 
-    messages.success(request, "Вы успешно опубликоватли!")
+    messages.success(request, "Вы успешно опубликоватли маршрут!")
 
     return redirect(reverse('public_route_detail', kwargs={'route_id': public_route.id}))
 

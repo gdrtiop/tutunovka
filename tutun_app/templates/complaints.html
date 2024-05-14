@@ -1,42 +1,281 @@
 <!DOCTYPE html>
+<style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+
+    h2 {
+        color: #000000;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h3 {
+        color: #000000;
+        font-size: 20pt;
+        white-space: pre;
+    }
+    h4 {
+        color: #FFFFFF;
+        font-size: 20pt;
+        white-space: pre;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+    h0{
+        color: #000000;
+    }
+
+    magicNoWrap {
+        white-space: nowrap;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+
+    li {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 700;
+        margin-left: 40px;
+    }
+    li2 {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 20pt;
+        font-weight: 200;
+        margin-left: 45px;
+    }
+    li3 {
+        margin-bottom: 0px;
+        color: #000000;
+        font-size: 20pt;
+        font-weight: 600;
+    }
+    li4{
+        color: #FFFFFF;
+        font-size: 20pt;
+        text-align: center;
+    }
+
+    img {
+        position: bottom;
+        right: 0;
+        bottom: 0;
+    }
+
+    p {
+        margin-top: 50px;
+        margin-bottom: 10px;
+        margin-right: 650px;
+        margin-left: 800px;
+    }
+    p2 {
+        margin-right: 80px;
+
+    }
+    p3 {
+        margin-left: -3%;
+    }
+    p4 {
+        margin-bottom: -1px;
+    }
+    p5 {
+        margin-left: 30px;
+        margin-bottom: 50px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
+
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 10px 20px;
+        font-size: 14pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+
+    .button2 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-left: 750px;
+        border-radius: 15px;
+    }
+
+    button3 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        margin-left: 850px;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+    buttons_poz{
+        margin-left: 850px;
+    }
+    buttons_poz2{
+        margin-left: 880px;
+    }
+
+    button:hover {
+        background-color: #F15A29;
+    }
+    .button2:hover {
+        background-color: #ABABAB;
+    }
+
+    button3:hover {
+        background-color: #ABABAB;
+    }
+    .topnav {
+      overflow: hidden;
+      background-color: #222222;
+    }
+
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .topnav a:hover {
+      background-color: #F7941E;
+      border-radius: 50px;
+      color: #000000;
+    }
+
+    .topnav a.active {
+      background-color: #04AA6D;
+    }
+
+    .footer {
+            background-color: #FFFFFF;
+            font-family: "Courier Prime", sans-serif;
+            height: 300px;
+            justify-content: space-between;
+            color:#000000;
+        }
+
+</style>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Complaints</title>
 </head>
 <body>
-    {% include 'bar.html' %}
-    {% include 'messages.html' %}
+    <a><h1>  Тутуновка</h1></a>
+    <div class="topnav">
 
+      <p2>{% for item in bar %}</p2>
+        <a href="{{ item.url }}">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+    <hr>
+    {% include 'messages.html' %}
+    <br>
+    <br>
+    <br>
     {% if status == 0 %}
-        <h1>You`r complaints</h1>
-        <a href="{% url 'create_complaint' %}"><input type="button", value="Create complaint" /></a>
+        <h1>  Ваши жалобы:</h1>
         <br>
+        <h4>    Техническая поддержка:    https://t.me/Kjkjgi    https://t.me/Jarvis_047</h4>
+        <br>
+        <br>
+        <br>
+        <a href="{% url 'create_complaint' %}"><input class="button2", value="Написать жалобу" /></a>
+
     {% else %}
         <h1>User complaints</h1>
     {% endif %}
 
-    {% if data %}
+    {% if data.count %}
     {% else %}
-        <p>у вас пока нету жалоб</p>
+        <br>
+        <br>
+        <br>
+        <br>
     {% endif %}
 
     {% for complaint in data %}
-        <tr>
-            <th>Message: {{ complaint.text }}</th>
-            <br>
-            <th>User: {{ complaint.author }}</th>
-            <br>
-            <th>Answer: {{ complaint.answer }}</th>
-            <br>
-            {% if status == 1 and complaint.answer == '' %}
-                <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
-            {% endif %}
-            <th>Time: {{ complaint.data }}</th>
-            <br>
-            <br>
+        <br>
+        <br>
+        <hr>
+
+        <h4>    Жалоба: {{ complaint.text }}</h4>
+
+        <h4>    Пользователь: {{ complaint.author }}</h4>
+
+        <h4>    Ответ: {{ complaint.answer }}</h4>
+        {% if status == 1 and complaint.answer == '' %}
+            <a href="{% url 'complaint_answer' complaint_id=complaint.id %}"><button class="btn btn-first">Ответить на жалобу</button></a>
+        {% endif %}
+        <h4>    Time: {{ complaint.data }}</h4>
+        <hr>
         </tr>
     {% endfor %}
 
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <div class = "footer">
+        <div class = "footer_container">
+            <br><br>
+            <h2>    Тутуновка</h2>
+            <h3>      Команда "Алгоритмический шик"</h3>
+            <h3>      2024</h3>
+        </div>
 </body>
 </html>
