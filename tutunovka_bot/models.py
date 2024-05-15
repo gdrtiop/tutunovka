@@ -13,11 +13,7 @@ class PostgreSQLQueries:
     def connect(self):
         try:
             conn = psycopg2.connect(
-                dbname=self.dbname,
-                user=self.user,
-                password=self.password,
-                host=self.host,
-                port=self.port
+                "postgres://gampayff:vgD1z59fxABGyAN-GLkjNB_YGPL0G0Im@abul.db.elephantsql.com/gampayff"
             )
             return conn
         except psycopg2.Error as e:
@@ -31,7 +27,7 @@ class PostgreSQLQueries:
                 cursor.execute(
                     """
                     SELECT *
-                    FROM auth_user
+                    FROM "public"."auth_user"
                     WHERE (password = %s) AND (username = %s)
                     """,
                     (password, username,)
@@ -52,10 +48,29 @@ class PostgreSQLQueries:
                 cursor.execute(
                     """
                     SELECT *
-                    FROM Private_Routes
-                    WHERE author_id = %s
+                    FROM "public"."Private_Routes"
+                    WHERE author_id = %s AND date_in = (select min(date_in) from "public"."Private_Routes" )
                     """,
                     (user_id,)
+                )
+                user_data = cursor.fetchone()
+                cursor.close()
+                conn.close()
+                return user_data
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return None
+
+    def get_routes(self):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM "public"."Private_Routes"
+                    """,
                 )
                 user_data = cursor.fetchone()
                 cursor.close()
