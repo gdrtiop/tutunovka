@@ -33,7 +33,8 @@ def tic_tac():
         this_moment = datetime.datetime.now()
         routes = MODEL.get_routes()
         for route in list(routes):
-            if this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and this_moment.day == (route.date_in.day - 1) and this_moment.month == route.date_in.month and this_moment.year == route.date_in.year:
+            if this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and this_moment.day == (
+                    route.date_in.day - 1) and this_moment.month == route.date_in.month and this_moment.year == route.date_in.year:
                 for user in users:
                     if route.author_id == user.id:
                         bot.send_message(user.tg_id, "Ваш вылет завтра!")
@@ -42,15 +43,35 @@ def tic_tac():
         time.sleep(1)
 
 
+def login_checker(chat_id):
+    user = MODEL.get_user_by_tg_username(chat_id)
+    if user is None:
+        return False
+    else:
+        return True
+
+
+def get_keyboard(chat_id):
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    if login_checker(chat_id):
+        button_flight = telebot.types.InlineKeyboardButton(text="Ближайший вылет",
+                                                           callback_data='flight')
+        button_logout = telebot.types.InlineKeyboardButton(text="Выйти",
+                                                           callback_data='logout')
+        keyboard.add(button_flight)
+        keyboard.add(button_logout)
+    else:
+        button_auth = telebot.types.InlineKeyboardButton(text="авторизаться",
+                                                         callback_data='auth')
+        keyboard.add(button_auth)
+    return keyboard
+
+
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
-    keyboard = telebot.types.InlineKeyboardMarkup()
-    button_flight = telebot.types.InlineKeyboardButton(text="Вылет?",
-                                                     callback_data='flight')
-    keyboard.add(button_flight)
     bot.send_message(message.chat.id,
-                     'Здравствуйте, вы зарегестрировались на проекте Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!',
-                     reply_to_message_id=message.message_id, reply_markup=keyboard)
+                     f'Здравствуйте, я бот Tutuorist! Я здесь, чтобы напоминать вам о ваших вылетах и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!{message.chat.id}',
+                     reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id))
 
 
 @bot.message_handler(content_types=["text"])
@@ -68,15 +89,18 @@ def send_text(message):
             bot.send_message(message.chat.id, messages)
     else:
         try:
-            payload = jwt.decode(jwt=message.text, key='abc', algorithms=["HS256"])
+            payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
             data = MODEL.get_user_fields(payload["password"], payload["username"])
-            if data is not None: # Если данные не пустые
-                user = {"tg_id":message.chat.id, "data":data}
-                users.append(user) # Пока сохраняем пользователя в массив
+            if data is not None:  # Если данные не пустые
+                user = {"tg_id": message.chat.id, "data": data}
+                users.append(user)
+                MODEL.update_tg_username(data[0], message.chat.id)
             bot.send_message(message.chat.id,
-                             "Спасибо за регистрацию!",
+                             "ВЫ авторизованы!",
                              # f'{str(payload)} \n {str(data)}',
-                             reply_to_message_id=message.message_id)
+                             reply_to_message_id=message.message_id,
+                             reply_markup=get_keyboard(message.chat.id)
+                             )
         except jwt.ExpiredSignatureError:
             bot.send_message(message.chat.id,
                              f'Токен истёк',
@@ -88,37 +112,60 @@ def send_text(message):
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
-def but1_pressed(call):
+def but_flight_pressed(call):
     for user in users:
         tg_id = user["tg_id"]
         if tg_id == call.message.chat.id:
             text = MODEL.get_route_fields(user["data"][0])
             if text[5] is None and text[4] is None:
                 bot.send_message(call.message.chat.id,
-                    "Ваш следующий вылет:" + str(text[1]) + "\n"
-                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
-                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
-                    + "Вы не записали что хотите взять с собой" + "\n"
-                    + "Вы не оставили дополнительных сведений о маршруте"
-                ),
+                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
+                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
+                                     text[2].year) + "\n"
+                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
+                                     text[3].year) + "\n"
+                                 + "Вы не записали что хотите взять с собой" + "\n"
+                                 + "Вы не оставили дополнительных сведений о маршруте"
+                                 ),
             elif text[5] is not None and text[4] is None:
                 bot.send_message(call.message.chat.id,
-                    "Ваш следующий вылет:" + str(text[1]) + "\n"
-                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
-                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
-                    + "Вы хотели взять:" + text[5] + "\n"
-                    + "Вы не оставили дополнительных сведений о маршруте"
-                    ),
+                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
+                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
+                                     text[2].year) + "\n"
+                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
+                                     text[3].year) + "\n"
+                                 + "Вы хотели взять:" + text[5] + "\n"
+                                 + "Вы не оставили дополнительных сведений о маршруте"
+                                 ),
             else:
                 bot.send_message(call.message.chat.id,
-                    "Ваш следующий вылет:" + str(text[1]) + "\n"
-                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
-                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
-                    + "Вы хотели взять:" + text[5] + "\n"
-                    + "Вы оставили комментарий:" + text[4]
-                    ),
+                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
+                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
+                                     text[2].year) + "\n"
+                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
+                                     text[3].year) + "\n"
+                                 + "Вы хотели взять:" + text[5] + "\n"
+                                 + "Вы оставили комментарий:" + text[4]
+                                 ),
         else:
             bot.send_message(call.message.chat.id, "Прости, я тебя не знаю(")
+
+
+@bot.callback_query_handler(func=lambda call: call.data == "auth")
+def but_auth_pressed(call):
+    bot.send_message(call.message.chat.id, "Пришли токен для автоизации, получить его можно на нашем сайте")
+
+
+@bot.callback_query_handler(func=lambda call: call.data == "logout")
+def but_logout_pressed(call):
+    status = MODEL.delete_tg_username(call.message.chat.id)
+    if status:
+        bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта, ждём вас снова!",
+                         reply_markup=get_keyboard(call.message.chat.id))
+    else:
+        bot.send_message(call.message.chat.id, "произошшла непредвиденная ошибка, попробуйте позже",
+                         reply_markup=get_keyboard(call.message.chat.id))
+
 
 
 timThr = threading.Thread(target=tic_tac)

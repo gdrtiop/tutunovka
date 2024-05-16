@@ -13,7 +13,11 @@ class PostgreSQLQueries:
     def connect(self):
         try:
             conn = psycopg2.connect(
-                "postgres://gampayff:vgD1z59fxABGyAN-GLkjNB_YGPL0G0Im@abul.db.elephantsql.com/gampayff"
+                dbname=self.dbname,
+                user=self.user,
+                password=self.password,
+                host=self.host,
+                port=self.port
             )
             return conn
         except psycopg2.Error as e:
@@ -79,3 +83,66 @@ class PostgreSQLQueries:
             except psycopg2.Error as e:
                 print("Error executing SQL statement:", e)
                 return None
+
+    def get_user_by_tg_username(self, tg_username):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM "auth_user"
+                    WHERE tg_username = %s
+                    """,
+                    (tg_username,)
+                )
+                user_data = cursor.fetchone()
+                cursor.close()
+                conn.close()
+                return user_data
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return None
+
+    def update_tg_username(self, user_id, new_tg_username):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    UPDATE "auth_user"
+                    SET tg_username = %s
+                    WHERE id = %s
+                    """,
+                    (new_tg_username, user_id)
+                )
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return True
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return False
+
+    def delete_tg_username(self, tg_user_id):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    UPDATE "auth_user"
+                    SET tg_username = NULL
+                    WHERE tg_username = %s
+                    """,
+                    (tg_user_id,)
+                )
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return True
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return False
