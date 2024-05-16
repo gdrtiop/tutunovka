@@ -32,7 +32,7 @@ def tic_tac():
 
         this_moment = datetime.datetime.now()
         routes = MODEL.get_routes()
-        for route in routes:
+        for route in list(routes):
             if this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and this_moment.day == (route.date_in.day - 1) and this_moment.month == route.date_in.month and this_moment.year == route.date_in.year:
                 for user in users:
                     if route.author_id == user.id:
@@ -74,7 +74,8 @@ def send_text(message):
                 user = {"tg_id":message.chat.id, "data":data}
                 users.append(user) # Пока сохраняем пользователя в массив
             bot.send_message(message.chat.id,
-                             f'{str(payload)} \n {str(data)}',
+                             "Спасибо за регистрацию!",
+                             # f'{str(payload)} \n {str(data)}',
                              reply_to_message_id=message.message_id)
         except jwt.ExpiredSignatureError:
             bot.send_message(message.chat.id,
@@ -88,21 +89,34 @@ def send_text(message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but1_pressed(call):
-    print(users)
-    print(call.message.from_user)
-    print(call.message.chat.id)
     for user in users:
         tg_id = user["tg_id"]
         if tg_id == call.message.chat.id:
             text = MODEL.get_route_fields(user["data"][0])
-            print(text)
-            bot.send_message(call.message.chat.id,
-                "Ваш следующий вылет:" + str(text[1]) + "\n"
-                + "Дата вылета: " + str(text[2].date.day) + str(text[2].date.month) + str(text[2].date.year) + "\n"
-                + "Дата прилета: " + str(text[3].date.day) + str(text[3].date.month) + str(text[3].date.year) + "\n"
-                + "Вы хотели взять: " + str(text[5]) if str(text[5]) is not None else "Вы не записали что хотите взять с собой" + "\n"
-                + "Вы оставили комментарий: " + str(text[4]) if str(text[4]) is not None else "Вы не оставили дополнительных сведений о маршруте"
-            ),
+            if text[5] is None and text[4] is None:
+                bot.send_message(call.message.chat.id,
+                    "Ваш следующий вылет:" + str(text[1]) + "\n"
+                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
+                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
+                    + "Вы не записали что хотите взять с собой" + "\n"
+                    + "Вы не оставили дополнительных сведений о маршруте"
+                ),
+            elif text[5] is not None and text[4] is None:
+                bot.send_message(call.message.chat.id,
+                    "Ваш следующий вылет:" + str(text[1]) + "\n"
+                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
+                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
+                    + "Вы хотели взять:" + text[5] + "\n"
+                    + "Вы не оставили дополнительных сведений о маршруте"
+                    ),
+            else:
+                bot.send_message(call.message.chat.id,
+                    "Ваш следующий вылет:" + str(text[1]) + "\n"
+                    + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(text[2].year) + "\n"
+                    + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(text[3].year) + "\n"
+                    + "Вы хотели взять:" + text[5] + "\n"
+                    + "Вы оставили комментарий:" + text[4]
+                    ),
         else:
             bot.send_message(call.message.chat.id, "Прости, я тебя не знаю(")
 
