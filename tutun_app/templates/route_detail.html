@@ -36,7 +36,9 @@
     p2 {
         margin-right: 80px;
     }
+    .container2 {
 
+    }
 
     .route_name {
         color: #FFFFFF;
@@ -211,6 +213,7 @@
     }
     .topnav {
       overflow: hidden;
+      margin-left: 0.5%;
       background-color: #222222;
     }
 
@@ -258,41 +261,43 @@
 <br>
 <br>
     <h1>  Маршрут</h1>
-    <p class="route_name">{{ route.Name }}</p>
-    <div class="container">
-        <p class="route_length"><strong>Длина поездки: </strong> {{ route.length }}</p>
-        <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
-        <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
-    </div>
-    <div class="container">
-        <p class="starting-date"><strong>Дата начала: </strong> {{ route.date_in }}</p>
-        <p class="ending-date"><strong>Дата конца: </strong> {{ route.date_out }}</p>
-    </div>
-    <div class="container">
-        <p class="list_of_things"><strong>Список вещей для путешествия: </strong> {{ route.baggage }}</p>
-        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
-    </div>
-
-    <div class="container">
-        <div class="map"></div>
-        <div class="notes">
-            <p><strong>Заметки</strong></p>
-            <ul>
-                {% for note in notes %}
-                <li>
-                    <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
-                    <label for="note_{{ note.id }}" {% if note.done %}style="text-decoration: line-through;"{% endif %}>
-                        {{ note.text }}
-                    </label>
-                </li>
-                {% endfor %}
-            </ul>
+    <div class="container2">
+        <p class="route_name">{{ route.Name }}</p>
+        <div class="container">
+            <p class="route_length"><strong>Длина поездки: </strong> {{ route.length }}</p>
+            <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
+            <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
         </div>
-    </div>
+        <div class="container">
+            <p class="starting-date"><strong>Дата начала: </strong> {{ route.date_in }}</p>
+            <p class="ending-date"><strong>Дата конца: </strong> {{ route.date_out }}</p>
+        </div>
+        <div class="container">
+            <p class="list_of_things"><strong>Список вещей для путешествия: </strong> {{ route.baggage }}</p>
+            <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+        </div>
 
-    <div class="container"><a href="{% url 'editing_route' route_id=route.id %}"><button class="edit_btn">Редактировать</button></a></div>
-    <a href="{% url 'post_route' id=route.id %}"><button class="post_btn">Опубликовать</button></a>
-    <br><br>
+        <div class="container">
+            <div class="map"></div>
+            <div class="notes">
+                <p><strong>Заметки</strong></p>
+                <ul>
+                    {% for note in notes %}
+                    <li>
+                        <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
+                        <label for="note_{{ note.id }}" {% if note.done %}style="text-decoration: line-through;"{% endif %}>
+                            {{ note.text }}
+                        </label>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="container"><a href="{% url 'editing_route' route_id=route.id %}"><button class="edit_btn">Редактировать</button></a></div>
+        <a href="{% url 'post_route' id=route.id %}"><button class="post_btn">Опубликовать</button></a>
+        <br><br>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
