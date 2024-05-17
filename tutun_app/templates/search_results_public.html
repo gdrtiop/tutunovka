@@ -12,21 +12,22 @@
     </form>
 
     <div>
-        Категории: {% for tag in tags %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a>{% endfor %} <a href="{% url 'public_routes' %}"> Сбросить фильтры </a>
+        Категории: {% for tag in tags %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %} <a href="{% url 'public_routes' %}"> Сбросить фильтры </a>
     </div>
+
 
     {% for route in routes_list %}
         <li>
             <th scope="row">{{ route.id }}</th>
             <th>
-                <a href="#">Перейти</a>
+                <a href="{% url 'public_route_detail' route_id=route.id %}">{{ route.Name }}</a>
             </th>
-            <th>{{ route.Name }}</th> <th>{{ route.author }}</th>
+            Автор: {{ route.author }}
             {% if route.tags.all %}
-	        <div>
-		        Теги: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a>{% endfor %}
-	        </div>
-	        {% endif %}
+                <div>
+                    Теги: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %}
+                </div>
+            {% endif %}
         </li>
     {% endfor %}
 </body>

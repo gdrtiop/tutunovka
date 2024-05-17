@@ -13,7 +13,7 @@
     </form>
 
     <div>
-        Категории: {% for tag in tags %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %}
+        Категории: {% for tag in tags %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %} <a href="{% url 'public_routes' %}"> Сбросить фильтры </a>
     </div>
 
 
@@ -23,7 +23,7 @@
             <th>
                 <a href="{% url 'public_route_detail' route_id=route.id %}">{{ route.Name }}</a>
             </th>
-            <th>{{ route.author }}</th>
+            Автор: {{ route.author }}
             {% if route.tags.all %}
                 <div>
                     Теги: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %}
