@@ -1,24 +1,31 @@
-import json
-import jwt
+import calendar
 import datetime
-from django.http import Http404, JsonResponse
-from django.shortcuts import render
-from django.urls import reverse
-from django.shortcuts import redirect, get_object_or_404
+import json
+import os
+
+from dotenv import load_dotenv
+import requests
+
+import jwt
 from django.contrib.auth import logout, views
-from django.contrib import messages
-from django.views.generic import CreateView
-from django.urls import reverse_lazy
-from django.views import generic
+from django.contrib.auth.decorators import login_required
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.messages.views import messages
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.views import generic
+from django.views.generic import CreateView
 from taggit.models import Tag
-import calendar
-from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
+
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
     AnswerComplaintForm, AuthTokenBotForm
+from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
+
+load_dotenv('.env')
 
 
 def get_bar_context(request):
@@ -224,9 +231,9 @@ def create_route(request):
         if route_form.is_valid() and len(dot_forms) != 0:
             route = route_form.save(commit=False)
             route.author = request.user
-            route.length = (route.date_out - route.date_in).days  # Calculate length in days
+            route.length = (route.date_out - route.date_in).days
             route.month = calendar.month_name[route.date_in.month]
-            route.year = route.date_in.year  # Extract year from date_in
+            route.year = route.date_in.year
             route.save()
 
             for dot_form in dot_forms:
@@ -245,7 +252,6 @@ def create_route(request):
 
                 dot = PrivateDot(
                     name=dot_data[f'dots-{dot_form.prefix}-name'],
-                    api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
                     date=None,
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
                     information=dot_data.get(f'dots-{dot_form.prefix}-information'),
@@ -326,7 +332,6 @@ def save_route(request, pk=None):
                     return render(request, 'new_route.html', context)
                 dot = PrivateDot(
                     name=request.POST.getlist('name')[i],
-                    api_vision=request.POST.getlist('api_vision')[i],
                     date=request.POST.getlist('date')[i],
                     note=request.POST.getlist('note')[i],
                     information=request.POST.getlist('information')[i],
@@ -349,7 +354,6 @@ def save_route(request, pk=None):
                     return render(request, 'new_route.html', context)
                 dot = PrivateDot(
                     name=dot_data[f'dots-{dot_form.prefix}-name'],
-                    api_vision=dot_data.get(f'dots-{dot_form.prefix}-api_vision'),
                     date=None,
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
                     information=dot_data.get(f'dots-{dot_form.prefix}-information'),
@@ -395,7 +399,6 @@ def save_route(request, pk=None):
         for dot in dots:
             dot_forms.append(PrivateDotForm(initial={
                 'name': dot.name,
-                'api_vision': dot.api_vision,
                 'information': dot.information,
             }))
 
@@ -414,11 +417,44 @@ def route_detail(request, route_id):
     route = PrivateRoute.objects.get(id=route_id)
     dots = route.dots.all()
     notes = route.note.all()
+
+    url = 'https://geocode-maps.yandex.ru/1.x/'
+    apikey = os.getenv('API-KEY')
+    getparams = {
+        'lang': 'ru_RU',
+        'apikey': apikey,
+        'format': 'json'
+    }
+    dots_vis = []
+    for dot in dots:
+        getparams['geocode'] = dot.information
+        try:
+            response = requests.get(url=url, params=getparams)
+            data = response.json()
+            print(data)
+            try:
+                geo_object = data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
+                point = geo_object['Point']['pos'].split()
+
+                long = point[0]
+                lat = point[1]
+                inf = geo_object['name']
+                dots_vis.append({
+                    'long': long,
+                    'lat': lat,
+                    'inf': inf,
+                })
+            except KeyError as error:
+                messages.error(request, 'Произошла непредведенная ошибка.')
+
+        except ConnectionError as con_er:
+            messages.error(request, 'Эта страница в данный момент не достпуна, попробуйте позже.')
     context = {
         'bar': get_bar_context(request),
         'route': route,
         'dots': dots,
         'notes': notes,
+        'dots_vis': dots_vis,
     }
     return render(request, 'route_detail.html', context)
 
@@ -427,10 +463,36 @@ def route_detail(request, route_id):
 def public_route_detail(request, route_id):
     route = get_object_or_404(PublicRoute, id=route_id)
     dots = route.dots.all()
+    url = 'https://geocode-maps.yandex.ru/1.x/'
+    apikey = os.getenv('API-KEY')
+    getparams = {
+        'lang': 'ru_RU',
+        'apikey': apikey,
+        'format': 'json'
+    }
+    dots_vis = []
+    for dot in dots:
+        getparams['geocode'] = dot.information
+        try:
+            response = requests.get(url=url, params=getparams)
+            data = response.json()
+            print(data)
+            try:
+                dots_vis.append({
+                    'long': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0],
+                    'lat': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1],
+                    'inf': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name']
+                })
+            except KeyError as error:
+                messages.error(request, 'Произошла непредведенная ошибка.')
+
+        except ConnectionError as con_er:
+            messages.error(request, 'Эта страница в данный момент не достпуна, попробуйте позже.')
     context = {
         'bar': get_bar_context(request),
         'route': route,
         'dots': dots,
+        'dots_vis': dots_vis,
     }
     return render(request, 'public_route_detail.html', context)
 
@@ -510,7 +572,6 @@ def editing_route(request, route_id):
                 'name': dot.name,
                 'note': dot.note,
                 'date': dot.date,
-                'api_vision': dot.api_vision,
                 'information': dot.information,
             }))
         context = {
@@ -653,7 +714,6 @@ def post_route(request, id):
     for dot in private_route.dots.all():
         public_dot, created = PublicDot.objects.get_or_create(
             name=dot.name,
-            api_vision=dot.api_vision,
             information=dot.information
         )
         public_dots.append(public_dot)

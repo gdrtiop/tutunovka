@@ -40,28 +40,24 @@
     </form>
 </body>
 <script>
-    function createDotForm() {
+    function createDotForm(prefix) {
         const dotFormHtml = `
             <p>Точка</p>
             <div>
-                <label for="name">Название:</label>
-                <input type="text" name="name" required>
+                <label for="id_dots-${prefix}-name">Название:</label>
+                <input type="text" name="dots-${prefix}-name" required>
             </div>
             <div>
-                <label for="api_vision">Api Vision:</label>
-                <input type="text" name="api_vision">
+                <label for="id_dots-${prefix}-information">Место(название или адрес):</label>
+                <input type="text" name="dots-${prefix}-information">
             </div>
             <div>
-                <label for="date">Дата:</label>
-                <input type="date" name="date">
+                <label for="id_dots-${prefix}-date">Дата:</label>
+                <input type="date" name="dots-${prefix}-date">
             </div>
             <div>
-                <label for="note">Примечание:</label>
-                <textarea name="note"></textarea>
-            </div>
-            <div>
-                <label for="information">Информация:</label>
-                <input type="text" name="information">
+                <label for="id_dots-${prefix}-note">Примечание:</label>
+                <textarea name="dots-${prefix}-note"></textarea>
             </div>
             <hr>
         `;

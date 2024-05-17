@@ -13,7 +13,6 @@ class PrivateDot(models.Model):
         db_table = "Private_Dots"
 
     name = models.CharField(max_length=125, default='Untitled dot')
-    api_vision = models.JSONField(null=True)
     date = models.DateField(default=None, null=True)
     note = models.CharField(max_length=700)
     information = models.CharField(max_length=700)
@@ -24,7 +23,6 @@ class PublicDot(models.Model):
         db_table = "Public_Dots"
 
     name = models.CharField(max_length=125, default='Untitled dot')
-    api_vision = models.JSONField()
     information = models.CharField(max_length=700)
 
 
