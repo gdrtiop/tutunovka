@@ -54,7 +54,7 @@ def login_checker(chat_id):
 def get_keyboard(chat_id):
     keyboard = telebot.types.InlineKeyboardMarkup()
     if login_checker(chat_id):
-        button_flight = telebot.types.InlineKeyboardButton(text="Ближайший вылет",
+        button_flight = telebot.types.InlineKeyboardButton(text="Ближайшее путешествие",
                                                            callback_data='flight')
         button_logout = telebot.types.InlineKeyboardButton(text="Выйти",
                                                            callback_data='logout')
@@ -91,13 +91,10 @@ def send_text(message):
         try:
             payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
             data = MODEL.get_user_fields(payload["password"], payload["username"])
-            if data is not None:  # Если данные не пустые
-                user = {"tg_id": message.chat.id, "data": data}
-                users.append(user)
+            if data is not None:
                 MODEL.update_tg_username(data[0], message.chat.id)
             bot.send_message(message.chat.id,
                              "ВЫ авторизованы!",
-                             # f'{str(payload)} \n {str(data)}',
                              reply_to_message_id=message.message_id,
                              reply_markup=get_keyboard(message.chat.id)
                              )
@@ -113,42 +110,75 @@ def send_text(message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but_flight_pressed(call):
-    for user in users:
-        tg_id = user["tg_id"]
-        if tg_id == call.message.chat.id:
-            text = MODEL.get_route_fields(user["data"][0])
-            if text[5] is None and text[4] is None:
-                bot.send_message(call.message.chat.id,
-                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
-                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
-                                     text[2].year) + "\n"
-                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
-                                     text[3].year) + "\n"
-                                 + "Вы не записали что хотите взять с собой" + "\n"
-                                 + "Вы не оставили дополнительных сведений о маршруте"
-                                 ),
-            elif text[5] is not None and text[4] is None:
-                bot.send_message(call.message.chat.id,
-                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
-                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
-                                     text[2].year) + "\n"
-                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
-                                     text[3].year) + "\n"
-                                 + "Вы хотели взять:" + text[5] + "\n"
-                                 + "Вы не оставили дополнительных сведений о маршруте"
-                                 ),
-            else:
-                bot.send_message(call.message.chat.id,
-                                 "Ваш следующий вылет:" + str(text[1]) + "\n"
-                                 + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
-                                     text[2].year) + "\n"
-                                 + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
-                                     text[3].year) + "\n"
-                                 + "Вы хотели взять:" + text[5] + "\n"
-                                 + "Вы оставили комментарий:" + text[4]
-                                 ),
+    context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    if context is None:
+        bot.send_message(call.message.chat.id, 'У вса нет предстоящих путешествий(',
+                         reply_markup=get_keyboard(call.message.chat.id))
+    else:
+        if context[5] == '' and context[4] == '':
+            bot.send_message(call.message.chat.id,
+                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             + "Дата вылета: " + str(context[2]) + "\n"
+                             + "Дата прилета: " + str(context[3]) + "\n"
+                             + "Вы не записали что хотите взять с собой" + "\n"
+                             + "Вы не оставили дополнительных сведений о маршруте",
+                             reply_markup=get_keyboard(call.message.chat.id)
+                             )
+        elif context[5] != '' and context[4] == '':
+            bot.send_message(call.message.chat.id,
+                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             + "Дата вылета: " + str(context[2]) + "\n"
+                             + "Дата прилета: " + str(context[3]) + "\n"
+                             + "Вы хотели взять: " + str(context[5]) + "\n"
+                             + "Вы не оставили дополнительных сведений о маршруте",
+                             reply_markup=get_keyboard(call.message.chat.id)
+                             )
+        elif context[5] == '' and context[4] != '':
+            bot.send_message(call.message.chat.id,
+                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             + "Дата вылета: " + str(context[2]) + "\n"
+                             + "Дата прилета: " + str(context[3]) + "\n"
+                             + "Вы не оставили дополнительных сведений о маршруте" + "\n"
+                             + "Комментарий: " + str(context[4]),
+                             reply_markup=get_keyboard(call.message.chat.id)
+                             )
         else:
-            bot.send_message(call.message.chat.id, "Прости, я тебя не знаю(")
+            bot.send_message(call.message.chat.id,
+                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             + "Дата вылета: " + str(context[2]) + "\n"
+                             + "Дата прилета: " + str(context[3]) + "\n"
+                             + "Вы хотели взять: " + str(context[5]) + "\n"
+                             + "Комментарий: " + str(context[4]),
+                             reply_markup=get_keyboard(call.message.chat.id)
+                             )
+    # for user in users:
+    #     tg_id = user["tg_id"]
+    #     if tg_id == call.message.chat.id:
+    #         text = MODEL.get_route_fields(user["data"][0])
+    #         if text[5] is None and text[4] is None:
+    #             bot.send_message(call.message.chat.id,
+    #                              "Ваш следующий вылет:" + str(text[1]) + "\n"
+    #                              + "Дата вылета: " + str(text[2]) + "\n"
+    #                              + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
+    #                                  text[3].year) + "\n"
+    #                              + "Вы не записали что хотите взять с собой" + "\n"
+    #                              + "Вы не оставили дополнительных сведений о маршруте"
+    #                              ),
+    #         elif text[5] is not None and text[4] is None:
+    #             bot.send_message(call.message.chat.id,
+    #                              "Ваш следующий вылет:" + str(text[1]) + "\n"
+    #                              + "Дата вылета: " + str(text[2].day) + "." + str(text[2].month) + "." + str(
+    #                                  text[2].year) + "\n"
+    #                              + "Дата прилета: " + str(text[3].day) + "." + str(text[3].month) + "." + str(
+    #                                  text[3].year) + "\n"
+    #                              + "Вы хотели взять:" + text[5] + "\n"
+    #                              + "Вы не оставили дополнительных сведений о маршруте"
+    #                              ),
+    #         else:
+    #             bot.send_message(call.message.chat.id,
+    #                              text)
+    #     else:
+    #         bot.send_message(call.message.chat.id, "Прости, я тебя не знаю(")
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "auth")

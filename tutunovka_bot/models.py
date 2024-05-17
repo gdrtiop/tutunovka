@@ -53,14 +53,19 @@ class PostgreSQLQueries:
                     """
                     SELECT *
                     FROM "public"."Private_Routes"
-                    WHERE author_id = %s AND date_in = (select min(date_in) from "public"."Private_Routes" )
+                    WHERE author_id = %s
+                    AND date_in = (
+                        SELECT min(date_in)
+                        FROM "public"."Private_Routes"
+                        WHERE date_in >= CURRENT_DATE
+                    )
                     """,
                     (user_id,)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
-                return user_data
+                return user_data if user_data else None
             except psycopg2.Error as e:
                 print("Error executing SQL statement:", e)
                 return None
