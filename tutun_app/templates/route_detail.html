@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<script src="https://api-maps.yandex.ru/v3/?apikey=871c45f9-726b-4202-bf74-0decb2a77698&lang=ru_RU" type="text/javascript"></script>
 <style>
     @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
 
@@ -242,7 +243,18 @@
             height: 300px;
             justify-content: space-between;
             color:#000000;
-        }
+    }
+    #map {
+        width: 885px;
+        height: 580px;
+        border-radius: 30px;
+
+    }
+    #coordinates {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
 </style>
 <head>
     <meta charset="UTF-8">
@@ -278,7 +290,7 @@
         </div>
 
         <div class="container">
-            <div class="map"></div>
+            <div class="map"><div style="height: 5px"></div><div id="map"></div></div>
             <div class="notes">
                 <p><strong>Заметки</strong></p>
                 <ul>
@@ -301,6 +313,46 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        var dots_vis = {{ dots_vis|safe }};
+        console.log(dots_vis);
+
+        initMap();
+        async function initMap() {
+            await ymaps3.ready;
+            const {YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer, YMapMarker} = ymaps3;
+            const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers@0.0.1');
+            const map = new YMap(
+                document.getElementById('map'),
+                {
+                    location: {
+                        center: [37.589873, 55.733293],
+                        zoom: 15
+                    },
+                }
+            )
+            map.addChild(new YMapDefaultSchemeLayer());
+            map.addChild(new YMapDefaultFeaturesLayer());
+            map.addChild(new YMapDefaultFeaturesLayer());
+
+            const markerElement = document.createElement('div');
+            markerElement.className = 'marker-class';
+            markerElement.innerText = "I'm marker!";
+
+            const marker = new YMapMarker(
+              {
+                source: 'markerSource',
+                coordinates: [37.588144, 55.733842],
+                draggable: true,
+                mapFollowsOnDrag: true
+              },
+              markerElement
+            );
+
+            map.addChild(marker);
+
+        }
+
+
         function toggleNoteDone(noteId) {
             const checkbox = document.getElementById(`note_${noteId}`);
             const noteText = document.querySelector(`label[for="note_${noteId}"]`);
