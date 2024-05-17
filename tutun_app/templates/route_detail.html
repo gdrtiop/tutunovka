@@ -252,7 +252,7 @@
 <a><h1>  Тутуновка</h1></a>
 <div class="topnav">
 
-    <p2>{% for item in bar %}</p2>
+    {% for item in bar %}
     <a href="{{ item.url }}">{{ item.title }}</a>
     {% endfor %}
 </div>

@@ -101,9 +101,11 @@ class PublicRoutesPage(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         routes = self.get_queryset()
+        tags = Tag.objects.all()
         context.update({
             'bar': get_bar_context(self.request),
             'routes_list': routes,
+            'tags': tags,
         })
         return context
 
@@ -122,9 +124,11 @@ class PublicRoutesTagsPage(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        tags = Tag.objects.all()
         context.update({
             'bar': get_bar_context(self.request),
-            'title': f'Маршруты по тегу: {self.tag.name}'
+            'title': f'Маршруты по тегу: {self.tag.name}',
+            'tags': tags,
         })
         return context
 
@@ -226,7 +230,7 @@ def create_route(request):
             for dot_form in dot_forms:
                 dot_data = dot_form.data
                 dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
-                if dot_date > route.date_out.date() or dot_date < route.date_in.date():
+                if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
@@ -308,7 +312,7 @@ def save_route(request, pk=None):
             for i in range(len(request.POST.getlist('date'))):
                 #этот for позволяет обрабатывать точки, которые были до создания и сохранять их
                 dot_date = datetime.datetime.strptime(request.POST.getlist('date')[i], '%Y-%m-%d').date()
-                if dot_date > route.date_out.date() or dot_date < route.date_in.date():
+                if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),
@@ -331,7 +335,7 @@ def save_route(request, pk=None):
             for dot_form in dot_forms:
                 dot_data = dot_form.data
                 dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
-                if dot_date > route.date_out.date() or dot_date < route.date_in.date():
+                if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
                     context = {
                         'bar': get_bar_context(request),

@@ -14,7 +14,7 @@ class PrivateDot(models.Model):
 
     name = models.CharField(max_length=125, default='Untitled dot')
     api_vision = models.JSONField(null=True)
-    date = models.DateTimeField(default=None, null=True)
+    date = models.DateField(default=None, null=True)
     note = models.CharField(max_length=700)
     information = models.CharField(max_length=700)
 
@@ -42,8 +42,8 @@ class PrivateRoute(models.Model):
 
     Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    date_in = models.DateTimeField()
-    date_out = models.DateTimeField()
+    date_in = models.DateField()
+    date_out = models.DateField()
     comment = models.CharField(max_length=700)
     # baggage = ArrayField(models.CharField(max_length=20))
     baggage = models.CharField(max_length=3000)
@@ -78,4 +78,4 @@ class Complaint(models.Model):
     text = models.CharField(max_length=1000, default='')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     answer = models.CharField(max_length=1000, default='')
-    data = models.DateTimeField()
+    data = models.DateField()
