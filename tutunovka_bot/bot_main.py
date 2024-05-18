@@ -22,8 +22,6 @@ MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv(
 
 
 def tic_tac():
-    i = 0
-
     while True:
 
         this_moment = datetime.datetime.now()
@@ -37,6 +35,7 @@ def tic_tac():
 
 
 def run_schedule():
+    schedule.every().day.at("12:00").do(tic_tac)
     while True:
         schedule.run_pending()
         time.sleep(1)
