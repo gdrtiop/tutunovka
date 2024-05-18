@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Route Detail</title>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=871c45f9-726b-4202-bf74-0decb2a77698&lang=ru_RU" type="text/javascript"></script>
+    <style>
+        #map {
+            width: 889px;
+            height: 606px;
+            border-radius: 30px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        #coordinates {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     {% include 'bar.html' %}
@@ -14,14 +28,40 @@
     <p><strong>Rate:</strong> {{ route.rate }}</p>
     <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
 
-    {% for dot in dots %}
-        <li>
-            <p><strong>Name:</strong> {{ dot.name }}</p>
-            <p><strong>Api_vision:</strong> {{ dot.api_vision }}</p>
-            <p><strong>Information:</strong> {{ dot.information }}</p>
-        </li>
-    {% endfor %}
+    <div id="map"></div>
 
     <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
+    <script>
+        var dots_vis = {{ dots_vis|safe }};
+        console.log(dots_vis);
+
+        initMap()
+        async function initMap() {
+            await ymaps3.ready;
+            const {YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer} = ymaps3;
+            const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers@0.0.1');
+
+            const map = new YMap(
+                document.getElementById('map'),
+                {
+                    location: {
+                        center: [37.589873, 55.733293],
+                        zoom: 7
+                    }
+                }
+            );
+            map.addChild(new YMapDefaultSchemeLayer());
+            map.addChild(new YMapDefaultFeaturesLayer());
+            dots_vis.forEach((source) =>{
+                const marker = new YMapDefaultMarker({
+                    coordinates: source['coords'],
+                    title: source['name'],
+                    subtitle: `(${source['inf']})`,
+                    color: '#FF2400'
+                });
+                map.addChild(marker);
+            });
+        }
+    </script>
 </body>
 </html>

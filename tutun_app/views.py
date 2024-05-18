@@ -431,18 +431,15 @@ def route_detail(request, route_id):
         try:
             response = requests.get(url=url, params=getparams)
             data = response.json()
-            print(data)
             try:
                 geo_object = data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
-                point = geo_object['Point']['pos'].split()
-
-                long = point[0]
-                lat = point[1]
+                coords = geo_object['Point']['pos'].split()
                 inf = geo_object['name']
                 dots_vis.append({
-                    'long': long,
-                    'lat': lat,
+                    'name': dot.name,
+                    'coords': coords,
                     'inf': inf,
+                    'date': str(dot.date)
                 })
             except KeyError as error:
                 messages.error(request, 'Произошла непредведенная ошибка.')
@@ -476,12 +473,14 @@ def public_route_detail(request, route_id):
         try:
             response = requests.get(url=url, params=getparams)
             data = response.json()
-            print(data)
             try:
+                geo_object = data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
+                coords = geo_object['Point']['pos'].split()
+                inf = geo_object['name']
                 dots_vis.append({
-                    'long': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[0],
-                    'lat': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['Point']['pos'].split()[1],
-                    'inf': data['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['name']
+                    'name': dot.name,
+                    'coords': coords,
+                    'inf': inf,
                 })
             except KeyError as error:
                 messages.error(request, 'Произошла непредведенная ошибка.')
