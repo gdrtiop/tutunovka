@@ -1,9 +1,16 @@
+"""
+models for application of tutunovka_bot
+"""
+
 import psycopg2
-from psycopg2 import sql
 
 
 class PostgreSQLQueries:
     def __init__(self, dbname, user, password, host, port):
+        """
+        Конструктор класса
+        """
+
         self.dbname = dbname
         self.user = user
         self.password = password
@@ -11,6 +18,10 @@ class PostgreSQLQueries:
         self.port = port
 
     def connect(self):
+        """
+        Соединение
+        """
+
         try:
             conn = psycopg2.connect(
                 dbname=self.dbname,
@@ -19,34 +30,51 @@ class PostgreSQLQueries:
                 host=self.host,
                 port=self.port
             )
+
             return conn
         except psycopg2.Error as e:
             print("Unable to connect to the database:", e)
 
     def get_users(self):
+        """
+        Получение пользователей
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     SELECT *
                     FROM "public"."auth_user"
                     """,
                 )
+
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
+
                 return user_data
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return None
 
     def get_user_fields(self, password, username):
+        """
+        Получить поля пользователя
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     SELECT *
@@ -55,19 +83,29 @@ class PostgreSQLQueries:
                     """,
                     (password, username,)
                 )
+
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
+
                 return user_data
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return None
 
     def get_route_fields(self, user_id):
+        """
+        Получить поля маршрута
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     SELECT *
@@ -81,38 +119,58 @@ class PostgreSQLQueries:
                     """,
                     (user_id,)
                 )
+
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
+
                 return user_data if user_data else None
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return None
 
     def get_routes(self):
+        """
+        Получить маршруты
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     SELECT *
                     FROM "public"."Private_Routes"
                     """,
                 )
+
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
+
                 return user_data
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return None
 
     def get_user_by_tg_username(self, tg_username):
+        """
+        Получить пользователя по telegram логину
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     SELECT *
@@ -121,19 +179,29 @@ class PostgreSQLQueries:
                     """,
                     (tg_username,)
                 )
+
                 user_data = cursor.fetchone()
                 cursor.close()
                 conn.close()
+
                 return user_data
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return None
 
     def update_tg_username(self, user_id, new_tg_username):
+        """
+        Обновить telegram логин
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     UPDATE "auth_user"
@@ -142,19 +210,29 @@ class PostgreSQLQueries:
                     """,
                     (new_tg_username, user_id)
                 )
+
                 conn.commit()
                 cursor.close()
                 conn.close()
+
                 return True
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return False
 
     def delete_tg_username(self, tg_user_id):
+        """
+        Удалить telegram логин
+        """
+
         conn = self.connect()
+
         if conn is not None:
             try:
                 cursor = conn.cursor()
+
                 cursor.execute(
                     """
                     UPDATE "auth_user"
@@ -163,10 +241,14 @@ class PostgreSQLQueries:
                     """,
                     (tg_user_id,)
                 )
+
                 conn.commit()
                 cursor.close()
                 conn.close()
+
                 return True
             except psycopg2.Error as e:
+
                 print("Error executing SQL statement:", e)
+
                 return False

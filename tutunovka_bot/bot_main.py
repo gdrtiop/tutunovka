@@ -1,3 +1,7 @@
+"""
+main fail of bot
+"""
+
 import datetime
 import os
 import threading
@@ -22,10 +26,14 @@ MODEL = PostgreSQLQueries(os.getenv('DB_NAME'), os.getenv('DB_USER'), os.getenv(
 
 
 def tic_tac():
-    while True:
+    """
+    Уведомление о поездке
+    """
 
+    while True:
         this_moment = datetime.datetime.now()
         routes = MODEL.get_routes()
+
         for route in list(routes):
             if (this_moment.hour == 12 and this_moment.minute == 0 and this_moment.second == 0 and
                     this_moment - datetime.timedelta(days=1) == route[2].day):
@@ -35,14 +43,24 @@ def tic_tac():
 
 
 def run_schedule():
+    """
+    запуск программы
+    """
+
     schedule.every().day.at("12:00").do(tic_tac)
+
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 
 def login_checker(chat_id):
+    """
+    Проверка на наличие логина
+    """
+
     user = MODEL.get_user_by_tg_username(chat_id)
+
     if user is None:
         return False
     else:
@@ -50,7 +68,12 @@ def login_checker(chat_id):
 
 
 def get_keyboard(chat_id):
+    """
+    Получение панель с кнопками(keybord)
+    """
+
     keyboard = telebot.types.InlineKeyboardMarkup()
+
     if login_checker(chat_id):
         button_flight = telebot.types.InlineKeyboardButton(text="Ближайшее путешествие",
                                                            callback_data='flight')
@@ -62,11 +85,16 @@ def get_keyboard(chat_id):
         button_auth = telebot.types.InlineKeyboardButton(text="Авторизоваться",
                                                          callback_data='auth')
         keyboard.add(button_auth)
+
     return keyboard
 
 
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
+    """
+    Отправка сообщения-начала
+    """
+
     bot.send_message(message.chat.id,
                      f'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!{message.chat.id}',
                      reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id))
@@ -77,8 +105,10 @@ def send_text(message):
     try:
         payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
         data = MODEL.get_user_fields(payload["password"], payload["username"])
+
         if data is not None:
             MODEL.update_tg_username(data[0], message.chat.id)
+
         bot.send_message(message.chat.id,
                          "Вы авторизованы!",
                          reply_to_message_id=message.message_id,
@@ -96,7 +126,12 @@ def send_text(message):
 
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but_flight_pressed(call):
+    """
+    панель маршрута
+    """
+
     context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+
     if context is None:
         bot.send_message(call.message.chat.id, 'У Вас нет предстоящих путешествий(',
                          reply_markup=get_keyboard(call.message.chat.id))
@@ -141,12 +176,21 @@ def but_flight_pressed(call):
 
 @bot.callback_query_handler(func=lambda call: call.data == "auth")
 def but_auth_pressed(call):
+    """
+    Авторизация по токену
+    """
+
     bot.send_message(call.message.chat.id, "Пришлите токен для автоизации, получить его Вы можете на нашем сайте.")
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "logout")
 def but_logout_pressed(call):
+    """
+    проверка авторизации по токену
+    """
+
     status = MODEL.delete_tg_username(call.message.chat.id)
+
     if status:
         bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта, ждём Вас снова!",
                          reply_markup=get_keyboard(call.message.chat.id))
