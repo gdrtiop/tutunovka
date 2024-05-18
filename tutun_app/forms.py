@@ -1,14 +1,15 @@
+"""
+forms for the tutun_app application
+"""
+
 from django import forms
+
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.contrib import messages
 from taggit.models import Tag
 
-from django import forms
 from .models import PrivateRoute, PrivateDot, Note, Complaint
 
 
@@ -18,23 +19,40 @@ class UserRegisterForm(UserCreationForm):
     """
 
     class Meta(UserCreationForm.Meta):
+        """
+        Метамодель
+
+        @param: fields: поля пользователя при регистрации
+        @type: fields: list
+
+        """
         fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
 
     def clean_email(self):
         """
         Проверка email на уникальность
+
+        @return: значение email
+        @rtype: basestring
+
+        @raise: :class:'django.core.exceptions.ValidationError' если email уже есть в базе данных
         """
+
         email = self.cleaned_data.get('email')
         username = self.cleaned_data.get('username')
+
         if email and User.objects.filter(email=email).exclude(username=username).exists():
             raise forms.ValidationError('Такой email уже используется в системе')
+
         return email
 
     def __init__(self, *args, **kwargs):
         """
-        Обновление стилей формы регистрации
+        Конструктор класса
         """
+
         super().__init__(*args, **kwargs)
+
         for field in self.fields:
             self.fields['username'].widget.attrs.update({"placeholder": 'Придумайте свой логин'})
             self.fields['email'].widget.attrs.update({"placeholder": 'Введите свой E-mail'})
@@ -46,6 +64,22 @@ class UserRegisterForm(UserCreationForm):
 
 
 class ProfileForm(forms.Form):
+    """
+    Форма профиля
+
+    @param: username: Логин
+    @type: username: basestring
+
+    @param: email: Почта
+    @type: email: basestring
+
+    @param: first_name: Имя
+    @type: first_name: basestring
+
+    @param: second_name: Фимлия
+    @type: second_name: basestring
+    """
+
     username = forms.CharField(
         label='Логин',
         max_length=100,
@@ -82,7 +116,24 @@ class ProfileForm(forms.Form):
 
 
 class PrivateDotForm(forms.ModelForm):
+    """
+    Форма точки для приватного маршрута
+    """
+
     class Meta:
+        """
+        Метамодель
+
+        @param: model: модель точки маршрута
+        @type: model: :class:'PrivateDot'
+
+        @param: fields: поля точки маршрута
+        @type: fields: list
+
+        @param: widgets: словарь полей ввода для точки маршрута
+        @type: widgets: dict
+        """
+
         model = PrivateDot
         fields = ['name', 'date', 'information', 'note']
         widgets = {
@@ -93,6 +144,16 @@ class PrivateDotForm(forms.ModelForm):
         }
 
     def clean(self):
+        """
+        Обработка данных
+
+        @param: cleaned_data: словарь данных
+        @type: cleaned_data: dict
+
+        @return: словрь обработанных данных
+        @rtype: dict
+        """
+
         cleaned_data = super().clean()
         date = cleaned_data.get('date')
         route_start_date = cleaned_data.get('route_start_date')
@@ -105,6 +166,10 @@ class PrivateDotForm(forms.ModelForm):
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
+
         route_start_date = kwargs.pop('route_start_date', None)
         route_end_date = kwargs.pop('route_end_date', None)
         super(PrivateDotForm, self).__init__(*args, **kwargs)
@@ -116,18 +181,53 @@ class PrivateDotForm(forms.ModelForm):
 
 
 class PrivateRouteForm(forms.ModelForm):
+    """
+    Форма приватного маршрута
+
+    @param: tags: теги маршрута
+    @type: tags: list
+    """
+
     tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple,
                                           required=False, label='Tags')
 
     def check(self):
+        """
+        Проверка дат начала и окончания маршрута
+
+        @param: data_checked: словарь данных
+        @type: tags: dict
+
+        @param: data_checked: словарь данных
+        @type: tags: dict
+
+        @param: data_checked: словарь данных
+        @type: tags: dict
+        """
+
         data_checked = super().clean()
         date_in = data_checked.get('date_in')
         date_out = data_checked.get('date_out')
+
         if date_in >= date_out:
             messages.error(self.request, "Дата возвращения должна быть позже даты прибытия.")
+
         return data_checked
 
     class Meta:
+        """
+        Метамодель
+
+        @param: model: модель приватного маршрута
+        @type: model: :class:'PrivateRoute'
+
+        @param: fields: поля приватного маршрута
+        @type: fields: list
+
+        @param: widgets: словарь полей ввода для приватного маршрута
+        @type: widgets: dict
+        """
+
         model = PrivateRoute
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
         widgets = {
@@ -139,15 +239,39 @@ class PrivateRouteForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
+
         super(PrivateRouteForm, self).__init__(*args, **kwargs)
         self.fields['baggage'].required = False
         self.fields['comment'].required = False
 
 
 class NoteForm(forms.ModelForm):
+    """
+    Форма заметок
+
+    @param: text: текст заметок
+    @type: text: basestring
+    """
+
     text = forms.CharField(label='Заметка')
 
     class Meta:
+        """
+        Метамодель
+
+        @param: model: модель заметок
+        @type: model: :class:'Note'
+
+        @param: fields: поля заметок
+        @type: fields: list
+
+        @param: widgets: словарь полей ввода для заметок
+        @type: widgets: dict
+        """
+
         model = Note
         fields = ['text']
         widgets = {
@@ -157,12 +281,24 @@ class NoteForm(forms.ModelForm):
 
 
 class TagSelectMultiple(forms.SelectMultiple):
+    """
+    Выбор тэгов
+    """
+
     def render_options(self, *args, **kwargs):
-        """Override render_options to include selected attribute for selected tags."""
+        """
+        Override render_options to include selected attribute for selected tags.
+
+        @return: строку тэгов
+        @rtype: basestring
+        """
+
         selected_choices = set([str(v) for v in self.value()])
         output = []
+
         for group in self.choices:
             group_output = []
+
             for value, label in group:
                 if str(value) in selected_choices:
                     group_output.append(
@@ -176,11 +312,17 @@ class TagSelectMultiple(forms.SelectMultiple):
                             forms.html.escape(value), forms.html.escape(label)
                         )
                     )
+
             output.append('\n'.join(group_output))
+
         return '\n'.join(output)
 
 
 class TagsField(forms.MultipleChoiceField):
+    """
+    Конструктор класса
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.queryset = Tag.objects.all()
@@ -189,6 +331,19 @@ class TagsField(forms.MultipleChoiceField):
 
 class ComplaintForm(forms.ModelForm):
     class Meta:
+        """
+        Метамодель
+
+        @param: model: модель жалоб
+        @type: model: :class:'Complaint'
+
+        @param: fields: поля жалоб
+        @type: fields: list
+
+        @param: widgets: словарь полей ввода для жалоб
+        @type: widgets: dict
+        """
+
         model = Complaint
         fields = ['text']
         widgets = {
@@ -197,6 +352,19 @@ class ComplaintForm(forms.ModelForm):
 
 
 class AnswerComplaintForm(forms.ModelForm):
+    """
+    Метамодель
+
+    @param: model: модель жалоб
+    @type: model: :class:'Complaint'
+
+    @param: fields: поля ответа на жалобу
+    @type: fields: list
+
+    @param: widgets: словарь полей ввода для ответа на жалобу
+    @type: widgets: dict
+    """
+
     class Meta:
         model = Complaint
         fields = ['answer']
@@ -206,6 +374,13 @@ class AnswerComplaintForm(forms.ModelForm):
 
 
 class AuthTokenBotForm(forms.Form):
+    """
+    Форма токена
+
+    @param: token: telegram токен для телеграмм бота
+    @type: token: basestring
+    """
+
     token = forms.CharField(
         widget=forms.Textarea(
             attrs={'class': 'form-control', 'placeholder': 'Ваш токен для авторизации в телеграмм боте'}
