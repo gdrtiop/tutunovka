@@ -26,7 +26,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView
 
-from tutun.settings import API_YANDEX_MAPS_KEY
+from tutun.settings import API_YANDEX_MAPS_KEY, SECRET_JWT_KEY
 from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, \
     NoteForm, ComplaintForm, AnswerComplaintForm, AuthTokenBotForm
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
@@ -1088,7 +1088,7 @@ def get_tg_token(request):
 
     payload = {'username': user.username, 'exp': expiration_time}
 
-    secret_key = 'abcd'
+    secret_key = SECRET_JWT_KEY
     jwt_token = jwt.encode(payload, secret_key, algorithm='HS256')
 
     token_form = AuthTokenBotForm(initial={'token': jwt_token})
