@@ -68,7 +68,8 @@ def get_keyboard(chat_id):
 @bot.message_handler(commands=['start'])
 def save_chat_id(message):
     bot.send_message(message.chat.id,
-                     f'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!{message.chat.id}',
+                     'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже,'
+                     ' который вы хотели взять с собой. Со мной вы точно ничего не забудуете!',
                      reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id))
 
 
