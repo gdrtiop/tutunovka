@@ -7,7 +7,12 @@ from django.contrib.auth.models import User
 
 from taggit.managers import TaggableManager
 
-User.add_to_class('tg_username', models.CharField(max_length=75, default=None, unique=True, null=True))
+User.add_to_class('tg_username', models.CharField(
+    max_length=75,
+    default=None,
+    unique=True,
+    null=True
+))
 
 
 class PrivateDot(models.Model):

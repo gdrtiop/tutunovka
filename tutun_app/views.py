@@ -5,16 +5,14 @@ views for the tutun_app application
 import calendar
 import datetime
 import json
-import os
 
 import requests
 import jwt
-from dotenv import load_dotenv
 
 from taggit.models import Tag
 
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from django.contrib.auth import logout, views
 from django.contrib.auth.decorators import login_required
@@ -28,25 +26,21 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView
 
-from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, NoteForm, ComplaintForm, \
-    AnswerComplaintForm, AuthTokenBotForm
+from tutun.settings import API_YANDEX_MAPS_KEY
+from .forms import UserRegisterForm, PrivateRouteForm, PrivateDotForm, ProfileForm, \
+    NoteForm, ComplaintForm, AnswerComplaintForm, AuthTokenBotForm
 from .models import User, PrivateRoute, PublicRoute, PrivateDot, Note, Complaint, PublicDot
-
-load_dotenv('.env')
 
 
 def get_bar_context(request):
     """
-    Инициализация bar(меню)
+    Инициализация bar(навбар)
+
+    Генерирует нужный навбар в зависимости
+    от статуса пользователя авторизован или нет
 
     @param request: запрос на страницу
     @type request: :class:`django.http.HttpRequest`
-
-    @param menu: список названий разделов для меню вместе со ссылками
-    @type menu: list
-
-    @return: массив связок Название/ссылка для меню
-    @rtype: list
     """
 
     if request.user.is_authenticated:
@@ -68,15 +62,6 @@ def get_bar_context(request):
 class MyLoginView(views.LoginView):
     """
     Переопределенние view авторизации
-
-    @param request: запрос на страницу
-    @type request: :class:`django.http.HttpRequest`
-
-    @param template_name: путь до html логина
-    @type template_name: basestring
-
-    @param success_message: текст сообщения, в случаи успешной авторизации
-    @type success_message: basestring
     """
 
     template_name = 'registration/login.html'
@@ -96,8 +81,9 @@ class MyLoginView(views.LoginView):
 
     def get_context_data(self, **kwargs):
         """
-        @return: get_context_data - словарь, представляющий контекст шаблона, предоставленные аргументы ключевого слова будут составлять возвращаемый контекст
-        @rtype: dict
+        @return: get_context_data - словарь, представляющий контекст шаблона,
+        предоставленные аргументы ключевого
+        слова будут составлять возвращаемый контекст @rtype: dict
         """
 
         context = super().get_context_data(**kwargs)
@@ -113,9 +99,6 @@ class MyLoginView(views.LoginView):
 class UserRegisterView(SuccessMessageMixin, CreateView):
     """
     Переопределенние view регистрации
-
-    @param request: запрос на страницу
-    @type request: :class:`django.http.HttpRequest`
 
     @param form_class: форма регистрации
     @type form_class: :class:`django.contrib.auth.forms.BaseUserCreationForm`
@@ -137,7 +120,7 @@ class UserRegisterView(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         """
-        @return: get_context_data - возвращает словарь, представляющий контекст шаблона, предоставленные аргументы ключевого слова будут составлять возвращаемый контекст
+        @return Возвращает контекст для генерации страницы регистрации
         @rtype : dict
         """
 
@@ -165,7 +148,7 @@ def logout_view(request):
     @param request: запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @return: возвращает объект ответа сервера с url, на который перенаправить пользователя
+    @return: Возвращает объект ответа сервера с url, на который перенаправить пользователя
     @rtype: object
     """
 
@@ -183,14 +166,12 @@ def index_page(request):
     @param request: запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @return: возвращает объект  ответа сервера с html-кодом внутри
-    @rtype: object
+    @return: возвращает массив с контекстом для приветсвенной страницы
+    @rtype: list
     """
 
     context = {
         'bar': get_bar_context(request),
-        'author': 'mother...', 'creation_date': '15.03.2024',
-        'user': request.user
     }
 
     return render(request, 'index.html', context)
@@ -202,9 +183,9 @@ class PublicRoutesPage(generic.ListView):
 
     def get_queryset(self):
         """
-        Получение списка открытых маршрутов
+        Получение списка публичных маршрутов
 
-        @return: список всех объектов из базы данных
+        @return: список всех маршрутов из базы данных
         """
         return PublicRoute.objects.all()
 
@@ -212,7 +193,7 @@ class PublicRoutesPage(generic.ListView):
         """
 
         @param kwargs:
-        @return:
+        @return: Возвращает контекст для генерации страниы публичных маршрутов
         """
 
         context = super().get_context_data(**kwargs)
@@ -229,6 +210,27 @@ class PublicRoutesPage(generic.ListView):
 
 
 class PublicRoutesTagsPage(generic.ListView):
+    """
+    Отображение страницы маршрутов по тегу
+
+    @type template_name: str
+    @param template_name: Имя шаблона для рендеринга страницы
+
+    @type context_object_name: str
+    @param context_object_name: Имя контекстного объекта
+
+    @type model: :class:`django.db.models.Model`
+    @param model: Модель данных для маршрутов
+
+    @type paginate_by: int
+    @param paginate_by: Количество элементов на страницу
+
+    @type tag: :class:`Tag`
+    @param tag: Текущий тег для фильтрации маршрутов
+
+    @return: Возвращает объект  ответа сервера с html-кодом внутри
+    @rtype: object
+    """
     template_name = 'public_routes.html'
     context_object_name = 'routes_list'
     model = PublicRoute
@@ -236,71 +238,95 @@ class PublicRoutesTagsPage(generic.ListView):
     tag = None
 
     def get_queryset(self):
+        """
+        Получение списка маршрутов по тегу
+
+        @return: QuerySet с отфильтрованными маршрутами
+        @rtype: :class:`django.db.models.QuerySet`
+        """
         self.tag = Tag.objects.get(slug=self.kwargs['tag'])
         queryset = PublicRoute.objects.all().filter(tags__slug=self.tag.slug)
-
         return queryset
 
     def get_context_data(self, **kwargs):
+        """
+        Обновление контекста для шаблона
+
+        @param kwargs: Дополнительные аргументы контекста
+        @return: Обновленный контекст
+        @rtype: dict
+        """
         context = super().get_context_data(**kwargs)
         tags = Tag.objects.all()
-
         context.update({
             'bar': get_bar_context(self.request),
             'title': f'Маршруты по тегу: {self.tag.name}',
             'tags': tags,
         })
-
         return context
 
 
 class PublicRoutesSearchResults(generic.ListView):
+    """
+    Отображение страницы результатов поиска маршрутов
+
+    @type template_name: str
+    @param template_name: Имя шаблона для рендеринга страницы
+
+    @type context_object_name: str
+    @param context_object_name: Имя контекстного объекта
+
+    @return: Возвращает объект  ответа сервера с html-кодом внутри
+    @rtype: object
+    """
     template_name = 'search_results_public.html'
     context_object_name = 'routes_list'
 
     def get_queryset(self):
-        query = self.request.GET.get('q')
+        """
+        Получение списка маршрутов по запросу поиска
 
+        @return: QuerySet с найденными маршрутами
+        @rtype: :class:`django.db.models.QuerySet`
+        """
+        query = self.request.GET.get('q')
         object_list = PublicRoute.objects.filter(
             Q(Name__icontains=query)
         )
-
         return object_list
 
     def get_context_data(self, **kwargs):
+        """
+        Обновление контекста для шаблона
+
+        @param kwargs: Дополнительные аргументы контекста
+        @return: Возвращает Обновленный контекст
+        @rtype: dict
+        """
         context = super().get_context_data(**kwargs)
         tags = Tag.objects.all()
-
         context.update({
             'bar': get_bar_context(self.request),
             'tags': tags,
         })
-
         return context
 
 
-@login_required()
+@login_required
 def profile(request, stat):
     """
-    Отображенеие профиля
-
+    Отображенеие профиля.
+    Отображает профиль, также позволяет редактировать,
+    обрабатывая формы и сохраняя данные в базу данных.
     @param: request: запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @param: stat: админ ли пользователь (1 - да, 0 - нет)
-    @return: int
+    @param: stat: Человек просматривает профиль или редактирует
+    @return: str
 
-    @param: user: текущий пользователь
-    @type: user: :class:`django.http.HttpRequest.user`
-
-    @param: routes: список маршрутов конкретного пользователся
-    @type: routes: list
-
-    @param: profile_info: словарь параметров профиля
-    @type: profile_info: dict
-
-    @return: возвращает объект  ответа сервера с html-кодом внутри
-    @rtype: object
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+     который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     user = request.user
@@ -322,9 +348,13 @@ def profile(request, stat):
         form = ProfileForm(request.POST)
 
         if form.is_valid():
-            User.objects.filter(id=user.id).update(username=form.data["username"], email=form.data["email"],
-                                                   first_name=form.data["first_name"], last_name=form.data["last_name"],
-                                                   tg_username=form.data["tg_username"])
+            User.objects.filter(id=user.id).update(
+                username=form.data["username"],
+                email=form.data["email"],
+                first_name=form.data["first_name"],
+                last_name=form.data["last_name"],
+                tg_username=form.data["tg_username"]
+            )
 
             messages.success(request, "Вы успешно изменили профиль!")
 
@@ -360,12 +390,25 @@ def profile(request, stat):
 
 @login_required
 def create_route(request):
+    """
+    Создание нового маршрута.
+    Обрабатывает формы проверяет данные на валидность и сохраняет их в базу данных.
+    Тагже генерирует формы для их последующего заполнения пользователем.
+
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+     который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
+    """
     error_text = ''
 
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
 
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+        dot_forms = [PrivateDotForm(request.POST,
+                                    prefix=str(x)) for x in range(len(request.POST)) if
                      f'dots-{x}-name' in request.POST]
         note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
                       f'notes-{x}-text' in request.POST]
@@ -382,7 +425,9 @@ def create_route(request):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(
+                    dot_data[f'dots-{dot_form.prefix}-date'],
+                    '%Y-%m-%d').date()
 
                 if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
@@ -403,10 +448,10 @@ def create_route(request):
                     date=None,
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
                     information=dot_data.get(f'dots-{dot_form.prefix}-information'),
-
                 )
 
-                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+                if (f'dots-{dot_form.prefix}-date' in dot_data and
+                        dot_data[f'dots-{dot_form.prefix}-date']):
                     dot.date = dot_data[f'dots-{dot_form.prefix}-date']
 
                 dot.save()
@@ -447,12 +492,29 @@ def create_route(request):
 
 @login_required
 def save_route(request, pk=None):
+    """
+    Сохранение существующего маршрута
+
+    Сохраняет публичный маршрут к маршрутам пользователя и
+    даёт возможность его изменить перед сохраненим в базу данных.
+
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param pk: индекс маршрута, который необходимо сохранить
+    @type pk: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
+    """
     data = get_object_or_404(PublicRoute, pk=pk)
 
     if request.method == 'POST':
         route_form = PrivateRouteForm(request.POST)
 
-        dot_forms = [PrivateDotForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
+        dot_forms = [PrivateDotForm(request.POST,
+                                    prefix=str(x)) for x in range(len(request.POST)) if
                      f'dots-{x}-name' in request.POST]
         note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
                       f'notes-{x}-text' in request.POST]
@@ -468,8 +530,9 @@ def save_route(request, pk=None):
             route.save()
 
             for i in range(len(request.POST.getlist('date'))):
-                #этот for позволяет обрабатывать точки, которые были до создания и сохранять их
-                dot_date = datetime.datetime.strptime(request.POST.getlist('date')[i], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(
+                    request.POST.getlist('date')[i],
+                    '%Y-%m-%d').date()
 
                 if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
@@ -497,7 +560,9 @@ def save_route(request, pk=None):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                dot_date = datetime.datetime.strptime(dot_data[f'dots-{dot_form.prefix}-date'], '%Y-%m-%d').date()
+                dot_date = datetime.datetime.strptime(
+                    dot_data[f'dots-{dot_form.prefix}-date'],
+                    '%Y-%m-%d').date()
 
                 if dot_date > route.date_out or dot_date < route.date_in:
                     messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
@@ -518,10 +583,10 @@ def save_route(request, pk=None):
                     date=None,
                     note=dot_data.get(f'dots-{dot_form.prefix}-note'),
                     information=dot_data.get(f'dots-{dot_form.prefix}-information'),
-
                 )
 
-                if f'dots-{dot_form.prefix}-date' in dot_data and dot_data[f'dots-{dot_form.prefix}-date']:
+                if (f'dots-{dot_form.prefix}-date' in dot_data and
+                        dot_data[f'dots-{dot_form.prefix}-date']):
                     dot.date = dot_data[f'dots-{dot_form.prefix}-date']
 
                 dot.save()
@@ -579,12 +644,25 @@ def save_route(request, pk=None):
 
 @login_required()
 def route_detail(request, route_id):
+    """
+    Демонстрация конкретного приватного маршрута.
+    Функция получате из базы данных данные, а также
+    получает от yandex api geocoder координаты точек по их адресу илил названию.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param route_id: id маршрута, который должен отобразиться
+    @type route_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
+    """
     route = PrivateRoute.objects.get(id=route_id)
     dots = route.dots.all()
     notes = route.note.all()
 
     url = 'https://geocode-maps.yandex.ru/1.x/'
-    apikey = os.getenv('API-KEY')
+    apikey = API_YANDEX_MAPS_KEY
 
     getparams = {
         'lang': 'ru_RU',
@@ -611,12 +689,10 @@ def route_detail(request, route_id):
                     'inf': inf,
                     'date': str(dot.date)
                 })
-            # as error
             except KeyError:
                 messages.error(request, 'Произошла непредведенная ошибка.')
-        # as con_er
         except ConnectionError:
-            messages.error(request, 'Эта страница в данный момент не достпуна, попробуйте позже.')
+            messages.error(request, 'Эта страница в данный момент не доступна, попробуйте позже.')
 
     context = {
         'bar': get_bar_context(request),
@@ -624,6 +700,7 @@ def route_detail(request, route_id):
         'dots': dots,
         'notes': notes,
         'dots_vis': dots_vis,
+        'API_YANDEX_MAPS_KEY': f"https://api-maps.yandex.ru/v3/?apikey={API_YANDEX_MAPS_KEY}&lang=ru_RU"
     }
 
     return render(request, 'route_detail.html', context)
@@ -631,12 +708,24 @@ def route_detail(request, route_id):
 
 @login_required()
 def public_route_detail(request, route_id):
+    """
+    Демонстрация конкретного публичного маршрута.
+    Функция получате из базы данных данные, а также
+    получает от yandex api geocoder координаты точек по их адресу илил названию.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param route_id: id маршрута, который должен отобразиться
+    @type route_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
+    """
     route = get_object_or_404(PublicRoute, id=route_id)
     dots = route.dots.all()
 
     url = 'https://geocode-maps.yandex.ru/1.x/'
-    apikey = os.getenv('API-KEY')
-
+    apikey = API_YANDEX_MAPS_KEY
     getparams = {
         'lang': 'ru_RU',
         'apikey': apikey,
@@ -660,25 +749,38 @@ def public_route_detail(request, route_id):
                     'coords': coords,
                     'inf': inf,
                 })
-            # as error
             except KeyError:
                 messages.error(request, 'Произошла непредведенная ошибка.')
-        # as con_er
         except ConnectionError:
-            messages.error(request, 'Эта страница в данный момент не достпуна, попробуйте позже.')
+            messages.error(request, 'Эта страница в данный момент не доступна, попробуйте позже.')
 
     context = {
         'bar': get_bar_context(request),
         'route': route,
         'dots': dots,
         'dots_vis': dots_vis,
+        'API_YANDEX_MAPS_KEY': API_YANDEX_MAPS_KEY
     }
 
     return render(request, 'public_route_detail.html', context)
 
 
-@login_required()
+@login_required
 def editing_route(request, route_id):
+    """
+    Редактирование маршрута
+    Функция, сохраняющая изменения в параметрах уже существующих точек, заметок и самого маршурта,
+     а также обрабатывает добавление новых точек и заметок.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param route_id: id маршрута, к которому нужно применить изменения
+    @type route_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
+    """
     if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
 
@@ -687,22 +789,24 @@ def editing_route(request, route_id):
         route_form = PrivateRouteForm(request.POST)
 
         if route_form.is_valid():
-            PrivateRoute.objects.filter(id=route_id).update(Name=route_form.data['Name'],
-                                                            date_in=route_form.data['date_in'],
-                                                            date_out=route_form.data['date_out'],
-                                                            comment=route_form.data['comment'],
-                                                            baggage=route_form.data['baggage'],
-                                                            rate=route_form.data['rate'],
-                                                            length=(route.date_out - route.date_in).days,
-                                                            month=calendar.month_name[route.date_in.month],
-                                                            year=route.date_in.year
-                                                            )
+            PrivateRoute.objects.filter(id=route_id).update(
+                Name=route_form.data['Name'],
+                date_in=route_form.data['date_in'],
+                date_out=route_form.data['date_out'],
+                comment=route_form.data['comment'],
+                baggage=route_form.data['baggage'],
+                rate=route_form.data['rate'],
+                length=(route.date_out - route.date_in).days,
+                month=calendar.month_name[route.date_in.month],
+                year=route.date_in.year
+            )
 
             new_notes = {"new_text": request.POST.getlist('text')}
             notes = route.note.all()
 
             for index_note in range(len(notes)):
-                Note.objects.filter(id=notes[index_note].id).update(text=new_notes["new_text"][index_note])
+                Note.objects.filter(id=notes[index_note].id).update(
+                    text=new_notes["new_text"][index_note])
 
             for index_note in range(len(notes), len(new_notes["new_text"])):
                 note = Note(text=new_notes["new_text"][index_note])
@@ -719,12 +823,12 @@ def editing_route(request, route_id):
             dots = route.dots.all()
 
             for index_note in range(len(dots)):
-                PrivateDot.objects.filter(id=dots[index_note].id).update(name=new_dots['new_name'][index_note],
-                                                                         note=new_dots['new_note'][index_note],
-                                                                         information=new_dots['new_information'][
-                                                                             index_note],
-                                                                         date=new_dots['new_date'][index_note],
-                                                                         )
+                PrivateDot.objects.filter(id=dots[index_note].id).update(
+                    name=new_dots['new_name'][index_note],
+                    note=new_dots['new_note'][index_note],
+                    information=new_dots['new_information'][index_note],
+                    date=new_dots['new_date'][index_note],
+                )
 
             for index_note in range(len(dots), len(new_dots["new_name"])):
                 dot = PrivateDot(name=new_dots['new_name'][index_note],
@@ -780,16 +884,31 @@ def editing_route(request, route_id):
         return render(request, 'editing_route.html', context)
 
 
+@login_required
 def update_note(request, note_id):
+    """
+    Обновление состояния заметки.
+    Функция изменяет состояние заметки (выполненная/невыполненная)
+
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param note_id: id заметки, статус которой необходимо изменить
+    @type note_id: int
+
+    @return: Возвращает объект JSON ответа сервера
+    @rtype: :class:`django.http.JsonResponse`
+    """
     if request.method == 'PATCH':
         try:
             note = Note.objects.get(id=note_id)
-            done = json.loads(request.body.decode('utf-8')).get('done')  # Преобразование в булево значение
+            done = json.loads(request.body.decode('utf-8')).get('done')
             note.done = done
 
             note.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Состояние задачи успешно обновлено'})
+            return JsonResponse({'status': 'success',
+                                 'message': 'Состояние задачи успешно обновлено'})
         except Note.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': 'Задача не найдена'})
     else:
@@ -799,12 +918,13 @@ def update_note(request, note_id):
 @login_required()
 def complaints(request):
     """
-    @param request: запрос на страницу
-    @param status: яляется ли пользователь админом(superuser)
-    @param data: списком всех жалоб
-    @return: возвращает страницу со списком жалоб
-    """
+    Отображение жалоб.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
 
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
+    """
     if request.user.is_superuser:
         status = 1
         data = Complaint.objects.filter().order_by('data')
@@ -826,17 +946,26 @@ def complaints(request):
 @login_required()
 def create_complaint(request):
     """
+    Создание Жалоб.
+    Функция создаёт формы для их заполнения,
+    а также обрабатывает заполненные и сохраняет данные в базу данных.
+
     @param request: запрос на страницу
-    @param form: форма (для ввода)
-    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
-    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице создания жалоб сообщая об ошибке
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     if request.method == 'POST':
         form = ComplaintForm(request.POST, request.FILES)
 
         if form.is_valid():
-            saver_form = Complaint(text=form.data['text'], author=request.user, data=datetime.datetime.now())
+            saver_form = Complaint(
+                text=form.data['text'],
+                author=request.user,
+                data=datetime.datetime.now())
             saver_form.save()
 
             messages.success(request, "Вы успешно отправили жалобу!")
@@ -858,12 +987,18 @@ def create_complaint(request):
 @login_required()
 def complaint_answer(request, complaint_id):
     """
+    Ответ на жалобу.
+    Функция создаёт формы для их заполнения,
+    а также обрабатывает заполненные и сохраняет данные в базу данных.
     @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
     @param complaint_id: id жалобы
-    @param complaint: конкретная жалоба, взятая по id
-    @param answer_form: форма (для ввода)
-    @param saver_form: новый экземпляр модели (жалоба), в который мы записываем введённый текст жалобы, а так же автора и дату написания
-    @return: либо переносит на страницу жалоб (список жалоб), либо оставляет на странице ответа на жалобу сообщая об ошибке
+    @type complaint_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     complaint = Complaint.objects.filter(id=complaint_id)
@@ -896,8 +1031,16 @@ def complaint_answer(request, complaint_id):
 
 @login_required()
 def post_route(request, id):
+    """
+    Публикайия маршрута.
+    Копирует маршрут без приватных данных в публичные маршруты.
 
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
 
+    @return: HTTP ответ, который перенаправляет клиента на указанный URL
+    @rtype: :class:`HttpResponseRedirect`
+    """
     private_route = get_object_or_404(PrivateRoute, id=id)
     public_dots = []
 
@@ -931,6 +1074,16 @@ def post_route(request, id):
 
 @login_required()
 def get_tg_token(request):
+    """
+    Страница с токеном для авторизации в телеграмм боте.
+    Генерирует форму с JWT-токеном, который отправляется боту для авторизации.
+
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
+    """
     user = User.objects.get(username=request.user)
     expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
 
@@ -949,3 +1102,29 @@ def get_tg_token(request):
     }
 
     return render(request, 'get_token_bot.html', context)
+
+
+def yandex_maps(request):
+    """
+    Функция подключения к яндекс карте.
+    Отправляет запрос к API и передаёт ответ.
+
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри,
+    либо json в котом указывается какая ошибка именно ошибка произошла
+    @rtype: :class:`django.http.HttpResponse` / `django.http.JsonResponse`
+    """
+    url = "https://api-maps.yandex.ru/v3/"
+    params = {
+        "apikey": API_YANDEX_MAPS_KEY,
+        "lang": "ru_RU"
+    }
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        safe_response = response.text.replace(API_YANDEX_MAPS_KEY, "api_key_hidden")
+        return HttpResponse(safe_response, content_type="application/x-javascript")
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=400)

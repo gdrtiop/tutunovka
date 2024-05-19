@@ -44,5 +44,6 @@ urlpatterns = [
     path('public_route_detail/<int:route_id>/', views.public_route_detail,
          name='public_route_detail'),
     path('post_route/<int:id>/', views.post_route, name='post_route'),
-    path('get_tg_bot_token/', views.get_tg_token, name='tg_token')
+    path('get_tg_bot_token/', views.get_tg_token, name='tg_token'),
+    path('api_yn_map/', views.yandex_maps, name='api_yn_map')
 ]

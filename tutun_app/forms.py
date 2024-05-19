@@ -188,8 +188,11 @@ class PrivateRouteForm(forms.ModelForm):
     @type: tags: list
     """
 
-    tags = forms.ModelMultipleChoiceField(queryset=Tag.objects.all(), widget=forms.CheckboxSelectMultiple,
-                                          required=False, label='Tags')
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False, label='Tags'
+    )
 
     def check(self):
         """
@@ -232,10 +235,12 @@ class PrivateRouteForm(forms.ModelForm):
         fields = ['Name', 'comment', 'date_in', 'date_out', 'baggage', 'rate', 'tags']
         widgets = {
             'comment': forms.TextInput(attrs={'class': 'form-control'}),
-            'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'date_in': forms.DateInput(attrs={'class': 'form-control',
+                                              'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'baggage': forms.Textarea(attrs={'class': 'form-control'}),
-            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
+            'rate': forms.NumberInput(attrs={'class': 'form-control',
+                                             'type': 'number', 'min': '-1', 'max': '10'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -320,16 +325,21 @@ class TagSelectMultiple(forms.SelectMultiple):
 
 class TagsField(forms.MultipleChoiceField):
     """
-    Конструктор класса
+    Поле для выбора тегов
     """
-
     def __init__(self, *args, **kwargs):
+        """
+        Конструктор класса
+        """
         super().__init__(*args, **kwargs)
         self.queryset = Tag.objects.all()
         self.widget = TagSelectMultiple()
 
 
 class ComplaintForm(forms.ModelForm):
+    """
+    Форма для записи жалобы
+    """
     class Meta:
         """
         Метамодель
@@ -383,7 +393,8 @@ class AuthTokenBotForm(forms.Form):
 
     token = forms.CharField(
         widget=forms.Textarea(
-            attrs={'class': 'form-control', 'placeholder': 'Ваш токен для авторизации в телеграмм боте'}
+            attrs={'class': 'form-control',
+                   'placeholder': 'Ваш токен для авторизации в телеграмм боте'}
         ),
         label='Ваш токен:'
     )
