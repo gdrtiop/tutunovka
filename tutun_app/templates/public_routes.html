@@ -30,6 +30,18 @@
             font-size: 20pt;
             white-space: pre;
         }
+        h9 {
+            color: #FFFFFF;
+            font-size: 20pt;
+            white-space: pre;
+            margin-left: 4%;
+        }
+        h10 {
+            color: #FFFFFF;
+            font-size: 20pt;
+            white-space: pre;
+            margin-left: 0%;
+        }
         strong{
             white-space: pre;
         }
@@ -37,7 +49,7 @@
             margin-right: 80px;
         }
         label {
-            margin-top: 10px;
+            margin-top: 0px;
             font-size: 18pt;
             font-weight: 600;
             white-space: pre;
@@ -146,6 +158,9 @@
             padding-left: 20px;
             margin-left: 80px;
         }
+        marg{
+         margin-left: 2%;
+        }
         .list_of_things {
             color: #ffffff;
             background-color: #FF9900;
@@ -196,6 +211,7 @@
             margin-left: 0.5%;
             background-color: #222222;
         }
+
         .topnav a {
             float: left;
             color: #f2f2f2;
@@ -243,6 +259,50 @@
             margin-top: 10px;
             font-weight: bold;
         }
+        input {
+            font-weight: 700;
+            height: 15px;
+            padding: 10px;
+            font-size: 10pt;
+            margin-left: 25px;
+            width: 772px;
+            border-radius: 30px;
+            border: 1px solid #F7941E;
+        }
+        button {
+            background-color: #FFFFFF;
+            color: #222222;
+            border: none;
+            padding: 15px 30px;
+            font-weight: 500;
+            font-size: 14pt;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 30px;
+            margin-left: 2%;
+        }
+        button:hover {
+            background-color: #ABABAB;
+        }
+
+        button2 {
+            background-color: #F7941E;
+            color: #222222;
+            border: none;
+            padding: 15px 40px;
+            font-size: 14pt;
+            text-align: center;
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 30px;
+            border-radius: 50px;
+        }
+
+        button2:hover {
+            background-color: #F15A29;
+        }
     </style>
 </head>
 <body>
@@ -256,19 +316,30 @@
     {% include 'messages.html' %}
 
     <form action="{% url 'search_results_public' %}" method="get">
-        <p class="search"><label>🔍 </label> <input name="q" type="text" placeholder="Поиск по навзаванию"></p>
+        <p class="search"><label>🔍   </label> <input name="q" type="text" placeholder="Поиск по навзаванию"></p>
     </form>
-
+    <br>
+    <br>
     <div>
-        Категории: {% for tag in tags %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %} <a href="{% url 'public_routes' %}"> Сбросить фильтры </a>
+        <h9>Категории:</h9>
+        {% for tag in tags %}
+            <a href="{% url 'public_routes_by_tags' tag.slug %}"><button>{{ tag }}</button></a>
+        {% endfor %}
+        <br>
+        <br>
+        <hr>
+        <br>
+
+        <marg><a href="{% url 'public_routes' %}"> <button>Сбросить фильтры</button> </a></marg>
     </div>
 
-
+    <br>
+    <br>
     {% for route in routes_list %}
         <li>
-            <th scope="row">{{ route.id }}</th>
+            <th scope="row"><h10>        {{ route.id }}</h10></th>
             <th>
-                <a href="{% url 'public_route_detail' route_id=route.id %}">{{ route.Name }}</a>
+                <marg><a href="{% url 'public_route_detail' route_id=route.id %}"><button2>{{ route.Name }}</button2></a></marg>
             </th>
             Автор: {{ route.author }}
             {% if route.tags.all %}

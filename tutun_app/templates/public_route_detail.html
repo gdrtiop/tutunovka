@@ -230,7 +230,7 @@
             margin-top: 20px;
         }
         #map {
-            width: 889px;
+            width: 1855px;
             height: 606px;
             background-color: green;
             border-radius: 30px;
@@ -241,34 +241,50 @@
             margin-top: 10px;
             font-weight: bold;
         }
-        #map {
-            width: 889px;
-            height: 606px;
+        button {
+            background-color: #FFFFFF;
+            color: #222222;
+            border: none;
+            padding: 15px 30px;
+            font-weight: 500;
+            font-size: 14pt;
+            text-decoration: none;
+            cursor: pointer;
             border-radius: 30px;
-            margin-left: 20px;
-            margin-top: 20px;
+            margin-left: 47%;
         }
-        #coordinates {
-            margin-top: 10px;
-            font-weight: bold;
+        button:hover {
+            background-color: #ABABAB;
         }
     </style>
 </head>
 <body>
-    {% include 'navbar.html' %}
-    {% include 'messages.html' %}
+{% include 'navbar.html' %}
+<br>
+<br>
+<p class="route_name">Автор: {{ route.author.username }}</p>
+<br>
+<hr>
+<h1>  Маршрут</h1>
+<div class="container2">
+    <p class="route_name">{{ route.Name }}</p>
 
-    <h1>Маршрут</h1>
-    <p><strong>Author:</strong> {{ route.author.username }}</p>
-    <p><strong>Comment:</strong> {{ route.comment }}</p>
-    <p><strong>Rate:</strong> {{ route.rate }}</p>
-    <p><strong>Number of Dots:</strong> {{ route.dots.count }}</p>
+    <div class="container">
+        <p class="route_length"><strong>Продолжительность поездки: </strong> {{ route.length }}</p>
+        <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
+        <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
+    </div>
+    <div class="container">
+        <p class="list_of_things"><strong>Оценка: </strong> {{ route.rate }}</p>
+        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+    </div>
 
     <div id="map"></div>
 
+    <br>
+    <br>
     <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
-
-    {% include 'footer.html' %}
+    
     <script>
         var dots_vis = {{ dots_vis|safe }};
         console.log(dots_vis);
@@ -294,12 +310,13 @@
                 const marker = new YMapDefaultMarker({
                     coordinates: source['coords'],
                     title: source['name'],
-                    subtitle: `(${source['inf']})`,
+                    subtitle: (${source['inf']}),
                     color: '#FF2400'
                 });
                 map.addChild(marker);
             });
         }
     </script>
+    {% include 'footer.html' %}
 </body>
 </html>
