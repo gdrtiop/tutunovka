@@ -1087,7 +1087,7 @@ def get_tg_token(request):
     user = User.objects.get(username=request.user)
     expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
 
-    payload = {'username': user.username, 'password': user.password, 'exp': expiration_time}
+    payload = {'username': user.username, 'exp': expiration_time}
 
     secret_key = 'abcd'
     jwt_token = jwt.encode(payload, secret_key, algorithm='HS256')
