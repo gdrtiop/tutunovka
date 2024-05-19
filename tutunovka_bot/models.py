@@ -42,7 +42,7 @@ class PostgreSQLQueries:
                 print("Error executing SQL statement:", e)
                 return None
 
-    def get_user_fields(self, password, username):
+    def get_user_fields(self, username):
         conn = self.connect()
         if conn is not None:
             try:
@@ -51,9 +51,9 @@ class PostgreSQLQueries:
                     """
                     SELECT *
                     FROM "public"."auth_user"
-                    WHERE (password = %s) AND (username = %s)
+                    WHERE (username = %s)
                     """,
-                    (password, username,)
+                    (username,)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()

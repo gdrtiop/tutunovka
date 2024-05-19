@@ -665,7 +665,7 @@ def post_route(request, id):
 def get_tg_token(request):
     user = User.objects.get(username=request.user)
     expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
-    payload = {'username': user.username, 'password': user.password, 'exp': expiration_time}
+    payload = {'username': user.username, 'exp': expiration_time}
     jwt_token = jwt.encode(payload, os.environ.get('SECRET_KEY_JWT'), algorithm='HS256')
     token_form = AuthTokenBotForm(initial={'token': jwt_token})
     context = {

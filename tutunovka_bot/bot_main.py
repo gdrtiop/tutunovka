@@ -76,7 +76,7 @@ def save_chat_id(message):
 def send_text(message):
     try:
         payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
-        data = MODEL.get_user_fields(payload["password"], payload["username"])
+        data = MODEL.get_user_fields(payload["username"])
         if data is not None:
             MODEL.update_tg_username(data[0], message.chat.id)
         bot.send_message(message.chat.id,
