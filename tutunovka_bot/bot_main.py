@@ -56,7 +56,13 @@ def run_schedule():
 
 def login_checker(chat_id):
     """
-    Проверка на наличие логина
+    Проверка на то авторизован пользователь иои нет.
+
+    @param chat_id: id польователя
+    @type chat_id: int
+
+    @return авторизован или нет
+    @rtype bool
     """
 
     user = MODEL.get_user_by_tg_username(chat_id)
@@ -70,6 +76,11 @@ def login_checker(chat_id):
 def get_keyboard(chat_id):
     """
     Получение панель с кнопками(keybord)
+
+    @param chat_id: id польователя
+    @type chat_id: int
+
+    @return панель с кнопками(keybord)
     """
 
     keyboard = telebot.types.InlineKeyboardMarkup()
@@ -93,15 +104,27 @@ def get_keyboard(chat_id):
 def save_chat_id(message):
     """
     Отправка сообщения-начала
+
+    Отправляет приветсвенное сообщение пользователю
+    с инструкциями что делать дальше
+
+    @param message: сообщение, которое небходимо обработать
     """
 
     bot.send_message(message.chat.id,
-                     f'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже, который вы хотели взять с собой. Со мной вы точно ничего не забудуете!{message.chat.id}',
+                     f'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже, '
+                     f'который вы хотели взять с собой. Со мной вы точно ничего не забудуете!{message.chat.id}',
                      reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id))
 
 
 @bot.message_handler(content_types=["text"])
 def send_text(message):
+    """
+    Проверка валидности и токена и дальнейшая авторизация пользователя
+    и сохранение в базу данных tg id
+
+    @param message: сообщение, которое небходимо обработать
+    """
     try:
         payload = jwt.decode(jwt=message.text, key=os.getenv('SECRET_KEY_JWT'), algorithms=["HS256"])
         data = MODEL.get_user_fields(payload["password"], payload["username"])
@@ -127,7 +150,9 @@ def send_text(message):
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but_flight_pressed(call):
     """
-    панель маршрута
+    Присылает пользователю полученный из базы данных предстоящий маршрут
+
+    @param call: сообщение, которое небходимо обработать
     """
 
     context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
@@ -177,7 +202,9 @@ def but_flight_pressed(call):
 @bot.callback_query_handler(func=lambda call: call.data == "auth")
 def but_auth_pressed(call):
     """
-    Авторизация по токену
+    Сообщает что необходимо сделать пользователю, чтобы авторизоваться
+
+    @param call: сообщение, которое небходимо обработать
     """
 
     bot.send_message(call.message.chat.id, "Пришлите токен для автоизации, получить его Вы можете на нашем сайте.")
@@ -186,7 +213,9 @@ def but_auth_pressed(call):
 @bot.callback_query_handler(func=lambda call: call.data == "logout")
 def but_logout_pressed(call):
     """
-    проверка авторизации по токену
+    разлогинивает пользователя удля соответствующий tg id и базы данных
+
+    @param call: сообщение, которое небходимо обработать
     """
 
     status = MODEL.delete_tg_username(call.message.chat.id)

@@ -6,6 +6,9 @@ import psycopg2
 
 
 class PostgreSQLQueries:
+    """
+    класс модели базы данных
+    """
     def __init__(self, dbname, user, password, host, port):
         """
         Конструктор класса
@@ -37,7 +40,7 @@ class PostgreSQLQueries:
 
     def get_users(self):
         """
-        Получение пользователей
+        Получение всех пользователей
         """
 
         conn = self.connect()
@@ -66,7 +69,7 @@ class PostgreSQLQueries:
 
     def get_user_fields(self, password, username):
         """
-        Получить поля пользователя
+        Получить поля пользователя по никнейму
         """
 
         conn = self.connect()
@@ -97,7 +100,8 @@ class PostgreSQLQueries:
 
     def get_route_fields(self, user_id):
         """
-        Получить поля маршрута
+        Получить поля предстоящего маршрута пользователя
+        @param user_id: id пользователя
         """
 
         conn = self.connect()
@@ -133,7 +137,7 @@ class PostgreSQLQueries:
 
     def get_routes(self):
         """
-        Получить маршруты
+        Получить все маршруты
         """
 
         conn = self.connect()
@@ -162,7 +166,7 @@ class PostgreSQLQueries:
 
     def get_user_by_tg_username(self, tg_username):
         """
-        Получить пользователя по telegram логину
+        Получить пользователя по telegram id
         """
 
         conn = self.connect()
@@ -193,7 +197,9 @@ class PostgreSQLQueries:
 
     def update_tg_username(self, user_id, new_tg_username):
         """
-        Обновить telegram логин
+        Обновить telegram id у пользователя
+        @param user_id:
+        @param new_tg_username: новый tg id пользователя
         """
 
         conn = self.connect()
@@ -225,6 +231,7 @@ class PostgreSQLQueries:
     def delete_tg_username(self, tg_user_id):
         """
         Удалить telegram логин
+        @param tg_user_id: tg id пользователя, у которого удаляем
         """
 
         conn = self.connect()
