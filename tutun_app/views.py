@@ -183,7 +183,7 @@ class PublicRoutesPage(generic.ListView):
 
     def get_queryset(self):
         """
-        Получение списка открытых маршрутов
+        Получение списка публичных маршрутов
 
         @return: список всех маршрутов из базы данных
         """
@@ -315,16 +315,18 @@ class PublicRoutesSearchResults(generic.ListView):
 @login_required
 def profile(request, stat):
     """
-    Отображенеие профиля
-
+    Отображенеие профиля.
+    Отображает профиль, также позволяет редактировать,
+    обрабатывая формы и сохраняя данные в базу данных.
     @param: request: запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @param: stat: админ ли пользователь
-    @return: int
+    @param: stat: Человек просматривает профиль или редактирует
+    @return: str
 
-    @return: Возвращает контекст для генерации страницы профля
-    @rtype: dict
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+     который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     user = request.user
@@ -391,13 +393,14 @@ def create_route(request):
     """
     Создание нового маршрута.
     Обрабатывает формы проверяет данные на валидность и сохраняет их в базу данных.
-    Тагже генерирует формы для их последующего заполнения пользователем
+    Тагже генерирует формы для их последующего заполнения пользователем.
 
     @param request: Запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @return: Возвращает либо ссылку для дальнейшей переадресации пользователя,
-    либо контекст для генеарции страницы создания маршрута
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+     который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
     error_text = ''
 
@@ -492,11 +495,18 @@ def save_route(request, pk=None):
     """
     Сохранение существующего маршрута
 
-    Сохраняет публичный маршрут к маршрутам пользователя и даёт возможность его изменить.
+    Сохраняет публичный маршрут к маршрутам пользователя и
+    даёт возможность его изменить перед сохраненим в базу данных.
 
-    @param request:
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
     @param pk: индекс маршрута, который необходимо сохранить
-    @return: Либо контекст для загрузки страницы сохранения, либо ссылку для дальнейшей переадресации
+    @type pk: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
     data = get_object_or_404(PublicRoute, pk=pk)
 
@@ -635,7 +645,17 @@ def save_route(request, pk=None):
 @login_required()
 def route_detail(request, route_id):
     """
-    Демонстрация конкретного маршрута
+    Демонстрация конкретного приватного маршрута.
+    Функция получате из базы данных данные, а также
+    получает от yandex api geocoder координаты точек по их адресу илил названию.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @param route_id: id маршрута, который должен отобразиться
+    @type route_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
     """
     route = PrivateRoute.objects.get(id=route_id)
     dots = route.dots.all()
@@ -689,31 +709,14 @@ def route_detail(request, route_id):
 @login_required()
 def public_route_detail(request, route_id):
     """
-    Просмотр деталей публичного маршрута
-
+    Демонстрация конкретного публичного маршрута.
+    Функция получате из базы данных данные, а также
+    получает от yandex api geocoder координаты точек по их адресу илил названию.
     @param request: Запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @param route_id: Идентификатор маршрута
+    @param route_id: id маршрута, который должен отобразиться
     @type route_id: int
-
-    @param route: Объект маршрута
-    @type route: :class:`PublicRoute`
-
-    @param dots: Точки маршрута
-    @type dots: QuerySet
-
-    @param url: URL для API Яндекс Карт
-    @type url: str
-
-    @param apikey: API ключ для Яндекс Карт
-    @type apikey: str
-
-    @param getparams: Параметры запроса для API Яндекс Карт
-    @type getparams: dict
-
-    @param dots_vis: Визуализированные точки маршрута
-    @type dots_vis: list
 
     @return: Возвращает объект ответа сервера с html-кодом внутри
     @rtype: :class:`django.http.HttpResponse`
@@ -766,30 +769,17 @@ def public_route_detail(request, route_id):
 def editing_route(request, route_id):
     """
     Редактирование маршрута
-
+    Функция, сохраняющая изменения в параметрах уже существующих точек, заметок и самого маршурта,
+     а также обрабатывает добавление новых точек и заметок.
     @param request: Запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @param route_id: Идентификатор маршрута
+    @param route_id: id маршрута, к которому нужно применить изменения
     @type route_id: int
 
-    @param route_form: Форма для редактирования маршрута
-    @type route_form: :class:`PrivateRouteForm`
-
-    @param new_notes: Словарь с новыми заметками
-    @type new_notes: dict
-
-    @param notes: Заметки маршрута
-    @type notes: QuerySet
-
-    @param new_dots: Словарь с новыми точками
-    @type new_dots: dict
-
-    @param dots: Точки маршрута
-    @type dots: QuerySet
-
-    @return: Возвращает объект ответа сервера с html-кодом внутри
-    @rtype: :class:`django.http.HttpResponse`
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
     if request.user != PrivateRoute.objects.get(id=route_id).author:
         return redirect(reverse('main_menu'))
@@ -897,19 +887,14 @@ def editing_route(request, route_id):
 @login_required
 def update_note(request, note_id):
     """
-    Обновление состояния заметки
+    Обновление состояния заметки.
+    Функция изменяет состояние заметки (выполненная/невыполненная)
 
     @param request: Запрос на страницу
     @type request: :class:`django.http.HttpRequest`
 
-    @param note_id: Идентификатор заметки
+    @param note_id: id заметки, статус которой необходимо изменить
     @type note_id: int
-
-    @param note: Объект заметки
-    @type note: :class:`Note`
-
-    @param done: Состояние выполнения заметки
-    @type done: bool
 
     @return: Возвращает объект JSON ответа сервера
     @rtype: :class:`django.http.JsonResponse`
@@ -933,9 +918,12 @@ def update_note(request, note_id):
 @login_required()
 def complaints(request):
     """
+    Отображение жалоб.
+    @param request: Запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
 
-    @param request:
-    @return:
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
     """
     if request.user.is_superuser:
         status = 1
@@ -958,13 +946,16 @@ def complaints(request):
 @login_required()
 def create_complaint(request):
     """
+    Создание Жалоб.
+    Функция создаёт формы для их заполнения,
+    а также обрабатывает заполненные и сохраняет данные в базу данных.
+
     @param request: запрос на страницу
-    @param form: форма (для ввода)
-    @param saver_form: новый экземпляр модели (жалоба),
-    в который мы записываем введённый текст жалобы,
-    а так же автора и дату написания
-    @return: либо переносит на страницу жалоб (список жалоб),
-    либо оставляет на странице создания жалоб сообщая об ошибке
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     if request.method == 'POST':
@@ -996,15 +987,18 @@ def create_complaint(request):
 @login_required()
 def complaint_answer(request, complaint_id):
     """
+    Ответ на жалобу.
+    Функция создаёт формы для их заполнения,
+    а также обрабатывает заполненные и сохраняет данные в базу данных.
     @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
     @param complaint_id: id жалобы
-    @param complaint: конкретная жалоба, взятая по id
-    @param answer_form: форма (для ввода)
-    @param saver_form: новый экземпляр модели (жалоба),
-    в который мы записываем введённый текст жалобы,
-    а так же автора и дату написания
-    @return: либо переносит на страницу жалоб (список жалоб),
-    либо оставляет на странице ответа на жалобу сообщая об ошибке
+    @type complaint_id: int
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
+    который перенаправляет клиента на указанный URL
+    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
     """
 
     complaint = Complaint.objects.filter(id=complaint_id)
@@ -1037,6 +1031,16 @@ def complaint_answer(request, complaint_id):
 
 @login_required()
 def post_route(request, id):
+    """
+    Публикайия маршрута.
+    Копирует маршрут без приватных данных в публичные маршруты.
+
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: HTTP ответ, который перенаправляет клиента на указанный URL
+    @rtype: :class:`HttpResponseRedirect`
+    """
     private_route = get_object_or_404(PrivateRoute, id=id)
     public_dots = []
 
@@ -1070,6 +1074,16 @@ def post_route(request, id):
 
 @login_required()
 def get_tg_token(request):
+    """
+    Страница с токеном для авторизации в телеграмм боте.
+    Генерирует форму с JWT-токеном, который отправляется боту для авторизации.
+
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри
+    @rtype: :class:`django.http.HttpResponse`
+    """
     user = User.objects.get(username=request.user)
     expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
 
@@ -1093,6 +1107,14 @@ def get_tg_token(request):
 def yandex_maps(request):
     """
     Функция подключения к яндекс карте.
+    Отправляет запрос к API и передаёт ответ.
+
+    @param request: запрос на страницу
+    @type request: :class:`django.http.HttpRequest`
+
+    @return: Возвращает объект ответа сервера с html-кодом внутри,
+    либо json в котом указывается какая ошибка именно ошибка произошла
+    @rtype: :class:`django.http.HttpResponse` / `django.http.JsonResponse`
     """
     url = "https://api-maps.yandex.ru/v3/"
     params = {
