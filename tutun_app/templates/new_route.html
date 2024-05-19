@@ -51,7 +51,7 @@
             </div>
             <div>
                 <label for="id_dots-${prefix}-date">Дата:</label>
-                <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
+                <input type="date" name="dots-${prefix}-date">
             </div>
             <div>
                 <label for="id_dots-${prefix}-note">Примечание:</label>
@@ -65,7 +65,6 @@
         `;
         return dotFormHtml;
     }
-
 
     function createNoteForm(prefix) {
         const noteFormHtml = `
@@ -95,7 +94,7 @@
     initMap();
     async function initMap() {
         await ymaps3.ready;
-        const {YMap, YMapDefaultSchemeLayer, YMapListener} = ymaps3;
+        const {YMap, YMapDefaultSchemeLayer, YMapMarker, YMapListener, YMapDefaultFeaturesLayer} = ymaps3;
         const map = new YMap(
             document.getElementById('map'),
             {
@@ -104,21 +103,40 @@
                     zoom: 10
                 }
             }
-        )
+        );
+
+        const coordinatesArray = [];
+
         const clickHandler = (object, event) => {
             if (event && event.coordinates) {
                 console.log('Координаты клика:', event.coordinates);
+                coordinatesArray.push(event.coordinates);
+
+                // Добавляем красную точку на карту
+                const marker = new YMapMarker({
+                    geometry: {
+                        type: 'Point',
+                        coordinates: event.coordinates
+                    },
+                    style: {
+                        icon: {
+                            preset: 'islands#redDotIcon'
+                        }
+                    }
+                });
+
+                map.addChild(marker);
             }
         };
 
         const mapListener = new YMapListener({
-           layer: 'any',
-           onClick: clickHandler
+            layer: 'any',
+            onClick: clickHandler
         });
 
         map.addChild(mapListener);
         map.addChild(new YMapDefaultSchemeLayer());
+        map.addChild(new YMapDefaultFeaturesLayer()); // Добавляем слой для отображения объектов
     }
-
 </script>
 </html>
