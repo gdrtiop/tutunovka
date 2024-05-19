@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Маршрут</title>
+    <style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h2 {
+        color: #000000;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h3 {
+        color: #000000;
+        font-size: 20pt;
+        white-space: pre;
+    }
+
+    zero_size{
+        font-size: 0pt;
+    }
+
+    label {
+        margin-top: 10px;
+        font-size: 18pt;
+        font-weight: 600;
+    }
+
+    input {
+        font-weight: 700;
+        height: 15px;
+        padding: 10px;
+        font-size: 14pt;
+        margin-left: 25px;
+        margin-top: 6px;
+        width: 200px;
+        border-radius: 30px;
+        border: 1px solid #F7941E;
+    }
+
+    button {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-weight: 500;
+        font-size: 14pt;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 30px;
+        margin: 0 auto;
+        display: block;
+    }
+    button:hover {
+        background-color: #ABABAB;
+    }
+
+    Textarea{
+        font-size: 13pt;
+        width: 200px;
+        height:50px
+    }
+
+    .route_name {
+        color: #FFFFFF;
+        background-color: #464646;
+        font-size: 30pt;
+        width: 1850px;
+        border-radius: 20px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding-left: 20px;
+        padding-bottom: 7px;
+        margin-left: 20px;
+    }
+
+    .container {
+        display: flex;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .starting-date {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 14pt;
+        width: 874px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: right;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .ending-date {
+        color: #ffffff;
+        background-color: #FF5C00;
+        font-size: 14pt;
+        width: 874px;
+        border-radius: 30px;
+        height: 50px;
+        display: flex;
+        align-items: right;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .notes {
+        color: #FFFFFF;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        width: 874px;
+        border-radius: 30px;
+        height: auto;
+        display: flex;
+        padding-top: 20px;
+        align-items: center;
+        border-radius: 30px;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+
+    .dotes {
+        color: #FFFFFF;
+        align-items: center;
+        background-color: #FF5C00;
+        font-size: 15pt;
+        padding-top: 15px;
+        width: 874px;
+        border-radius: 30px;
+        height: auto;
+        display: flex;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .comment {
+        color: #ffffff;
+        background-color: #FF9900;
+        align-items: center;
+        font-size: 20pt;
+        width: 874px;
+        border-radius: 30px;
+        height: 140px;;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 80px;
+    }
+    .rating {
+        color: #000000;
+        background-color: #FFD84C;
+        align-items: center;
+        font-size: 20pt;
+        width: 1850px;
+        border-radius: 30px;
+        height: 140px;;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .list_of_things {
+        color: #ffffff;
+        background-color: #FF9900;
+        align-items: center;
+        font-size: 20pt;
+        width: 874px;
+        border-radius: 30px;
+        height: 140px;
+        padding-top: 20px;
+        padding-left: 20px;
+        margin-left: 20px;
+    }
+
+    .edit_btn{
+        color: #ffffff;
+        background-color: #FF4D00;
+        font-size: 10pt;
+        width: 246px;
+        border-radius: 30px;
+        height: 40px;
+        margin-left: 350px;
+        margin-top: 40px;
+        padding-left: 20px;
+        display: inline-block;
+        justify-content: right;
+        align-items: right;
+        border: none;
+    }
+
+    .information {
+        color: #000000;
+        border-radius: 30px;
+        height: 1000px;
+        display: block;
+        height: auto;
+    }
+
+    .map {
+        color: #000000;
+        border-radius: 30px;
+        height: 1000px;
+        display: block;
+        height: auto;
+    }
+    .topnav {
+        overflow: hidden;
+        margin-left: 0.5%;
+        background-color: #222222;
+    }
+
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .topnav a:hover {
+      background-color: #F7941E;
+      border-radius: 50px;
+      color: #000000;
+    }
+
+    .topnav a.active {
+      background-color: #04AA6D;
+    }
+
+    .footer {
+        background-color: #FFFFFF;
+        font-family: "Courier Prime", sans-serif;
+        height: 300px;
+        justify-content: space-between;
+        color:#000000;
+    }
+
+    </style>
+</head>
+<body>
+
+{% include 'navbar.html' %}
+{% include 'messages.html' %}
+
+<br>
+<br>
+
+{% if error_text %}
+<ul class="error-list">
+    <li class="error-item">{{error_text}}</li>
+</ul>
+{% endif %}
+<form id="route-form" method="post">
+    {% csrf_token %}
+    <div class="map">
+        </div>
+        <div class="information">
+            <h1>  Новый маршрут:</h1>
+            <p class="route_name"><label>Название: </label> <input type="text" name="Name"></p>
+            <div class="container">
+                <p class="starting-date"><label>Дата начала </label> <input type="date" name="date_in"></p>
+                <p class="ending-date"><label>Дата конца</label> <input type="date" name="date_out"></p>
+            </div>
+            <div class="container">
+                <p class="list_of_things"><label>Список вещей для путешествия:</label> <input type="text"
+                                                                                              name="baggage">
+                </p>
+                <p class="comment"><label>Комментарий:</label> <input type="text" name="comment"></p>
+
+            </div>
+            <p class="rating">
+                <label>Оценка:</label>
+                <input type="number" name="rate" min="-1" max="5">
+            </p>
+
+        </div>
+
+        <div class="container">
+            <br>
+                <div class="dotes">
+                    <div id="dots-container">
+                        {% for dot_form in dot_forms%}
+                        <a>
+                            {% csrf_token %}
+                            {{ dot_form.as_p }}
+                        </a>
+                        <br>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="notes">
+                    <div id="notes-container">
+                        {% for note_form in note_forms %}
+                        <a>
+                            {% csrf_token %}
+                            {{ note_form.as_p }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        <br>
+        <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
+        <br>
+        <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
+        <br>
+        <button type="submit">Создать</button>
+        <br>
+
+</form>
+{% include 'footer.html' %}
+</body>
+<script>
+    function createDotForm(prefix) {
+        const dotFormHtml = `
+            <p>Точка</p>
+            <div>
+                <label for="id_dots-${prefix}-name">Название:</label>
+                <input type="text" name="dots-${prefix}-name" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-information">Место(название или адрес):</label>
+                <input type="text" name="dots-${prefix}-information" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-date">Дата:</label>
+                <input type="date" name="dots-${prefix}-date" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-note">Примечание:</label>
+                <textarea name="dots-${prefix}-note"></textarea>
+            </div>
+            <br>.
+        `;
+        return dotFormHtml;
+    }
+
+
+    function addDotForm() {
+        const dotsContainer = document.getElementById('dots-container');
+        const nextIndex = dotsContainer.children.length;
+        const dotFormHtml = createDotForm(nextIndex);
+        dotsContainer.insertAdjacentHTML('beforeend', dotFormHtml);
+    }
+
+    function createNoteForm(prefix) {
+        const noteFormHtml = `
+            <div>
+                <label for="id_notes-${prefix}-text">Заметка:</label>
+                <textarea name="notes-${prefix}-text"></textarea>
+            </div>
+            <br>
+        `;
+        return noteFormHtml;
+    }
+
+    function addNoteForm() {
+        const notesContainer = document.getElementById('notes-container');
+        const nextIndex = notesContainer.children.length;
+        const noteFormHtml = createNoteForm(nextIndex);
+        notesContainer.insertAdjacentHTML('beforeend', noteFormHtml);
+    }
+
+</script>
+</html>

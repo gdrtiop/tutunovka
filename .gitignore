@@ -133,7 +133,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env.django
 .venv
 env/
 venv/
@@ -197,6 +197,7 @@ cython_debug/
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea
 
 # Gradle
 .idea/**/gradle.xml
@@ -284,5 +285,6 @@ fabric.properties
 # Azure Toolkit for IntelliJ plugin
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
-
+.env.bot
+.env
 # End of https://www.toptal.com/developers/gitignore/api/django,pycharm

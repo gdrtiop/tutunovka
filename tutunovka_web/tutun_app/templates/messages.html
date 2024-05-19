@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+
+    .messages-container {
+        margin-top: 20px;
+        overflow: hidden; /* Скрыть часть контейнера, которая выходит за границы */
+    }
+
+    .alert {
+        position: relative;
+        padding: 0.75rem 1.25rem; /* Уменьшим правый и левый отступ */
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+        width: auto; /* Ширина контейнера автоматически подстраивается под содержимое */
+        transition: transform 0.3s ease; /* Добавим плавный переход для изменения размера и позиции */
+        transform: translateX(100%); /* Начальное значение transform */
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert-info {
+        color: #0c5460;
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+    }
+
+    .alert-warning {
+        color: #856404;
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 1.5rem;
+        position: absolute;
+        top: 25%;
+        transform: translateY(-50%);
+        right: 10px;
+        color: rgba(0, 0, 0, 0.5);
+        transition: color 0.3s ease;
+    }
+
+    .close-button:hover {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        font-size: 1.5rem;
+        position: absolute;
+        top: 25%;
+        transform: translateY(-50%);
+        transition: color 0.3s ease;
+        color: rgba(0, 0, 0, 1);
+    }
+    .message-text {
+        position: left;
+        margin-right: 0px;
+        text-align: left;
+    }
+
+    .expanded {
+        /* padding-right: 2rem; */ /* Удалим padding-right, так как теперь контейнер не будет двигаться вправо */
+        transform: translateX(0); /* Добавим конечное значение transform */
+    }
+</style>
+
+<div id="messages-container" class="messages-container">
+    {% if messages %}
+        {% for message in messages %}
+            <div id="message-{{ message.id }}" class="alert alert-{{ message.tags }} expanded {% if message.tags == 'error' %} alert-danger {% endif %}" role="alert">
+                <div class="message-text">{{ message }}</div>
+                <button class="close-button" aria-label="Close" onclick="closeMessage('{{ message.id }}')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+    window.onload = function() {
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.style.display = 'block';
+
+        const messages = messagesContainer.getElementsByClassName('alert');
+        Array.from(messages).forEach(message => {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        });
+    };
+    function closeMessage(messageId) {
+        var messageElement = document.getElementById('message-' + messageId);
+        if (messageElement) {
+            messageElement.remove();
+        }
+    }
+</script>

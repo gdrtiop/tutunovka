@@ -1,0 +1,27 @@
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: data_base
+    environment:
+      POSTGRES_USER: tutunovka
+      POSTGRES_PASSWORD: tutun14232
+      POSTGRES_DB: Tutunovka_DB
+    ports:
+      - "5432:5432"
+  tutunovka_web:
+    build:
+      context: ./tutunovka_web
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./.env.django:/tutunovka_web/.env.django
+  tutunovka_bot:
+    build:
+      context: ./tutunovka_bot
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./.env.bot:/tutunovka_bot/.env.bot

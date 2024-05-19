@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+    body {
+        background-color: #222222;
+        color: #FFA500;
+        font-family: Arial;
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        color: #FFFFFF;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+
+    h2 {
+        color: #000000;
+        font-family: Arkhip;
+        font-size: 30pt;
+        white-space: pre;
+    }
+    h3 {
+        color: #000000;
+        font-size: 20pt;
+        white-space: pre;
+    }
+    h4 {
+        color: #FFFFFF;
+        font-size: 20pt;
+        white-space: pre;
+    }
+
+    h5 {
+        color: #F7941E;
+        font-size: 0pt;
+    }
+    h0{
+        color: #000000;
+    }
+
+    magicNoWrap {
+        white-space: nowrap;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+
+    li {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 35pt;
+        font-weight: 700;
+        margin-left: 40px;
+    }
+    li2 {
+        margin-bottom: 10px;
+        color: #FFFFFF;
+        font-size: 20pt;
+        font-weight: 200;
+        margin-left: 45px;
+    }
+    li3 {
+        margin-bottom: 0px;
+        color: #000000;
+        font-size: 20pt;
+        font-weight: 600;
+    }
+    li4{
+        color: #FFFFFF;
+        font-size: 20pt;
+        text-align: center;
+    }
+
+    img {
+        position: bottom;
+        right: 0;
+        bottom: 0;
+    }
+
+    p {
+        margin-top: 50px;
+        margin-bottom: 10px;
+        margin-right: 650px;
+        margin-left: 800px;
+    }
+    p2 {
+        margin-right: 80px;
+
+    }
+    p4 {
+        margin-bottom: -1px;
+    }
+    p5 {
+        margin-left: 30px;
+        margin-bottom: 50px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        padding: 10px;
+        font-size: 13pt;
+        margin: 5px;
+        width: 250px;
+        border-radius: 50px;
+        border: 1px solid #F7941E;
+    }
+
+    button {
+        background-color: #F7941E;
+        color: #222222;
+        border: none;
+        padding: 10px 20px;
+        font-size: 14pt;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+
+    .button2 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 7.4%;
+        font-size: 12pt;
+        white-space: pre;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        margin-left: 44%;
+        border-radius: 15px;
+    }
+
+    button3 {
+        background-color: #FFFFFF;
+        color: #222222;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18pt;
+        margin-left: 850px;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 50px;
+    }
+
+    buttons_poz{
+        margin-left: 850px;
+    }
+    buttons_poz2{
+        margin-left: 880px;
+    }
+
+    button:hover {
+        background-color: #F15A29;
+    }
+    .button2:hover {
+        background-color: #ABABAB;
+    }
+
+    button3:hover {
+        background-color: #ABABAB;
+    }
+    .topnav {
+      overflow: hidden;
+      margin-left: 0.5%;
+      background-color: #222222;
+    }
+
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .topnav a:hover {
+      background-color: #F7941E;
+      border-radius: 50px;
+      color: #000000;
+    }
+
+    .topnav a.active {
+      background-color: #04AA6D;
+    }
+
+    .footer {
+            background-color: #FFFFFF;
+            font-family: "Courier Prime", sans-serif;
+            height: 300px;
+            justify-content: space-between;
+            color:#000000;
+        }
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <a><h1>  Тутуновка</h1></a>
+    <div class="topnav">
+
+      <p2>{% for item in bar %}</p2>
+        <a href="{{ item.url }}">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+    <hr>
+    {% include 'messages.html' %}
+
+    <div class="container">
+        <form method="post" action="/create_complaint">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="button2" value="Создать">
+        </form>
+        <form method="post" action="/complaints/">
+            {% csrf_token %}
+            <input type="submit" class="button2" value=" Назад  ">
+        </form>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br><br><br>
+    <div class = "footer">
+        <div class = "footer_container">
+            <br><br>
+            <h2>    Тутуновка</h2>
+            <h3>      Команда "Алгоритмический шик"</h3>
+            <h3>      2024</h3>
+        </div>
+    </div>
+</body>
+</html>

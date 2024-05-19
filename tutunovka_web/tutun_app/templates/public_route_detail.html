@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Route Detail</title>
+    <script src="/api_yn_map/"></script>
+    <style>
+        @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+        body {
+            background-color: #222222;
+            color: #FFA500;
+            font-family: Arial;
+            text-align: left;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #FFFFFF;
+            font-family: Arkhip;
+            font-size: 30pt;
+            white-space: pre;
+        }
+        h2 {
+            color: #000000;
+            font-family: Arkhip;
+            font-size: 30pt;
+            white-space: pre;
+        }
+        h3 {
+            color: #000000;
+            font-size: 20pt;
+            white-space: pre;
+        }
+        strong{
+            white-space: pre;
+        }
+        p2 {
+            margin-right: 80px;
+        }
+        .container2 {
+
+        }
+        .route_name {
+            color: #FFFFFF;
+            background-color: #464646;
+            font-size: 18pt;
+            width: 1835px;
+            border-radius: 20px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            padding-bottom: 7px;
+            margin-left: 20px;
+        }
+        .container {
+            display: flex;
+            margin-top: -30px;
+            margin-bottom: 20px;
+        }
+        .route_length {
+            color: #ffffff;
+            background-color: #FF5C00;
+            font-size: 18pt;
+            width: 600px;
+            border-radius: 30px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            margin-right: 105px;
+            margin-left: 20px;
+        }
+        .route_month {
+            color: #ffffff;
+            background-color: #FF5C00;
+            font-size: 18pt;
+            width: 600px;
+            border-radius: 30px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            margin-right: 105px;
+            margin-left: 20px;
+        }
+        .route_year{
+            color: #ffffff;
+            background-color: #FF5C00;
+            font-size: 18pt;
+            width: 600px;
+            border-radius: 30px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            margin-right: 27px;
+            margin-left: 20px;
+        }
+        .starting-date {
+            color: #ffffff;
+            background-color: #FF5C00;
+            font-size: 18pt;
+            width: 869px;
+            border-radius: 30px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            margin-left: 20px;
+        }
+        .ending-date {
+            color: #ffffff;
+            background-color: #FF5C00;
+            font-size: 18pt;
+            width: 869px;
+            border-radius: 30px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            margin-left: 80px;
+        }
+        .notes {
+            color: #000000;
+            background-color: #FFD84C;
+            font-size: 20pt;
+            width: 869px;
+            border-radius: 30px;
+            height: auto;
+            padding-top: 10px;
+            padding-left: 20px;
+            margin-left: 80px;
+            margin-top: 20px;
+        }
+        .comment {
+            color: #ffffff;
+            background-color: #FF9900;
+            font-size: 20pt;
+            width: 869px;
+            border-radius: 30px;
+            height: 140px;
+            padding-top: 20px;
+            padding-left: 20px;
+            margin-left: 80px;
+        }
+        .list_of_things {
+            color: #ffffff;
+            background-color: #FF9900;
+            font-size: 20pt;
+            width: 869px;
+            border-radius: 30px;
+            height: 140px;
+            padding-top: 20px;
+            padding-left: 20px;
+            margin-left: 20px;
+        }
+        .edit_btn{
+            color: #ffffff;
+            background-color: #FF4D00;
+            font-size: 18pt;
+            width: 326px;
+            border-radius: 30px;
+            height: 50px;
+            margin-left: 790px;
+            margin-top: 40px;
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+            border: none;
+        }
+        .edit_btn:hover{
+            background-color: #C22800;
+        }
+        .post_btn{
+            color: #0000000;
+            background-color: #ffffff;
+            font-size: 18pt;
+            width: 326px;
+            border-radius: 30px;
+            height: 50px;
+            margin-left: 790px;
+            margin-top: 15px;
+            display: inline-block;
+            justify-content: center;
+            align-items: center;
+            border: none;
+        }
+        .post_btn:hover{
+            background-color: #C0C0C0;
+        }
+        .topnav {
+            overflow: hidden;
+            margin-left: 0.5%;
+            background-color: #222222;
+        }
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 20px;
+        }
+        .topnav a:hover {
+            background-color: #F7941E;
+            border-radius: 50px;
+            color: #000000;
+        }
+        .topnav a.active {
+            background-color: #04AA6D;
+        }
+        .footer {
+            background-color: #FFFFFF;
+            font-family: "Courier Prime", sans-serif;
+            height: 300px;
+            justify-content: space-between;
+            color:#000000;
+        }
+        .dots {
+            color: #ffffff;
+            background-color: #FF9900;
+            font-size: 20pt;
+            width: 1840px;
+            border-radius: 30px;
+            height: auto;
+            padding-top: 20px;
+            padding-left: 20px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        #map {
+            width: 1855px;
+            height: 606px;
+            background-color: green;
+            border-radius: 30px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        #coordinates {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #FFFFFF;
+            color: #222222;
+            border: none;
+            padding: 15px 30px;
+            font-weight: 500;
+            font-size: 14pt;
+            text-decoration: none;
+            cursor: pointer;
+            border-radius: 30px;
+            margin-left: 47%;
+        }
+        button:hover {
+            background-color: #ABABAB;
+        }
+    </style>
+</head>
+<body>
+{% include 'navbar.html' %}
+<br>
+<br>
+<p class="route_name">Автор: {{ route.author.username }}</p>
+<br>
+<hr>
+<h1>  Маршрут</h1>
+<div class="container2">
+    <p class="route_name">{{ route.Name }}</p>
+
+    <div class="container">
+        <p class="route_length"><strong>Продолжительность поездки: </strong> {{ route.length }}</p>
+        <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
+        <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
+    </div>
+    <div class="container">
+        <p class="list_of_things"><strong>Оценка: </strong> {{ route.rate }}</p>
+        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+    </div>
+
+    <div id="map"></div>
+
+    <br>
+    <br>
+    <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
+</div>
+    
+    <script>
+        var dots_vis = {{ dots_vis|safe }};
+        console.log(dots_vis);
+
+        initMap()
+        async function initMap() {
+            await ymaps3.ready;
+            const {YMap, YMapDefaultSchemeLayer, YMapDefaultFeaturesLayer} = ymaps3;
+            const {YMapDefaultMarker} = await ymaps3.import('@yandex/ymaps3-markers@0.0.1');
+
+            const map = new YMap(
+                document.getElementById('map'),
+                {
+                    location: {
+                        center: [37.589873, 55.733293],
+                        zoom: 7
+                    }
+                }
+            );
+            map.addChild(new YMapDefaultSchemeLayer());
+            map.addChild(new YMapDefaultFeaturesLayer());
+            dots_vis.forEach((source) =>{
+                const marker = new YMapDefaultMarker({
+                    coordinates: source['coords'],
+                    title: source['name'],
+                    subtitle: `(${source['inf']})`,
+                    color: '#FF2400'
+                });
+                map.addChild(marker);
+            });
+        }
+    </script>
+    {% include 'footer.html' %}
+</body>
+</html>
