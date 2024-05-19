@@ -284,6 +284,7 @@
     <br>
     <br>
     <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
+</div>
     
     <script>
         var dots_vis = {{ dots_vis|safe }};
@@ -310,7 +311,7 @@
                 const marker = new YMapDefaultMarker({
                     coordinates: source['coords'],
                     title: source['name'],
-                    subtitle: (${source['inf']}),
+                    subtitle: `(${source['inf']})`,
                     color: '#FF2400'
                 });
                 map.addChild(marker);

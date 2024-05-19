@@ -353,7 +353,6 @@ def profile(request, stat):
                 email=form.data["email"],
                 first_name=form.data["first_name"],
                 last_name=form.data["last_name"],
-                tg_username=form.data["tg_username"]
             )
 
             messages.success(request, "Вы успешно изменили профиль!")

@@ -298,10 +298,23 @@
             <br>
                 <div class="dotes">
                     <div id="dots-container">
+                        {% for dot_form in dot_forms%}
+                        <a>
+                            {% csrf_token %}
+                            {{ dot_form.as_p }}
+                        </a>
+                        <br>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="notes">
                     <div id="notes-container">
+                        {% for note_form in note_forms %}
+                        <a>
+                            {% csrf_token %}
+                            {{ note_form.as_p }}
+                        </a>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -318,31 +331,29 @@
 </body>
 <script>
     function createDotForm(prefix) {
-        const dotFormHtml =`
-                <div>
-                    <label for="id_dots-${prefix}-name">Название:</label>
-                    <input type="text" name="dots-${prefix}-name" required>
-                </div>
-                <div>
-                    <label for="id_dots-${prefix}-api_vision">Api Vision:</label>
-                    <input type="text" name="dots-${prefix}-api_vision">
-                </div>
-                <div>
-                    <label for="id_dots-${prefix}-date">Дата:</label>
-                    <input type="date" name="dots-${prefix}-date"> <!-- заменили на input type="date" -->
-                </div>
-                <div>
-                    <label for="id_dots-${prefix}-note">Примечание:</label>
-                    <textarea name="dots-${prefix}-note"></textarea>
-                </div>
-                <div>
-                    <label for="id_dots-${prefix}-information">Информация:</label>
-                    <input type="text" name="dots-${prefix}-information">
-                </div>
-           <br>
+        const dotFormHtml = `
+            <p>Точка</p>
+            <div>
+                <label for="id_dots-${prefix}-name">Название:</label>
+                <input type="text" name="dots-${prefix}-name" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-information">Место(название или адрес):</label>
+                <input type="text" name="dots-${prefix}-information" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-date">Дата:</label>
+                <input type="date" name="dots-${prefix}-date" required>
+            </div>
+            <div>
+                <label for="id_dots-${prefix}-note">Примечание:</label>
+                <textarea name="dots-${prefix}-note"></textarea>
+            </div>
+            <br>.
         `;
         return dotFormHtml;
     }
+
 
     function addDotForm() {
         const dotsContainer = document.getElementById('dots-container');

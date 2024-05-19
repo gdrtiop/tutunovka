@@ -140,7 +140,7 @@
         border-radius: 15px;
     }
 
-    button3 {
+    .button3 {
         background-color: #FFFFFF;
         color: #222222;
         border: none;
@@ -169,7 +169,7 @@
         background-color: #ABABAB;
     }
 
-    button3:hover {
+    .button3:hover {
         background-color: #ABABAB;
     }
     .topnav {
@@ -228,7 +228,6 @@
     <br>
 
 
-</div>
     {% if stat == "editing" %}
     <div class="container" >
 
@@ -238,7 +237,7 @@
             <br>
             <br>
             <br>
-            <button_poz><a type="submit"><button3>Применить</button3></a></button_poz>
+            <button type="submit" class="button3">Применить</button>
         </form>
         <br>
         <buttons_poz2><a href="{{ url_back }}"><button class="btn btn-secondary">Отменить</button></a></buttons_poz2>
@@ -247,7 +246,6 @@
         <br>
         <br>
         <br>
-
     </div>
 
     {% else %}
