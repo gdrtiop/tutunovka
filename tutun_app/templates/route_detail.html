@@ -43,7 +43,7 @@
         .route_name {
             color: #FFFFFF;
             background-color: #464646;
-            font-size: 30pt;
+            font-size: 18pt;
             width: 1835px;
             border-radius: 20px;
             height: 70px;
@@ -61,7 +61,7 @@
         .route_length {
             color: #ffffff;
             background-color: #FF5C00;
-            font-size: 15pt;
+            font-size: 18pt;
             width: 600px;
             border-radius: 30px;
             height: 50px;
@@ -74,7 +74,7 @@
         .route_month {
             color: #ffffff;
             background-color: #FF5C00;
-            font-size: 15pt;
+            font-size: 18pt;
             width: 600px;
             border-radius: 30px;
             height: 50px;
@@ -87,7 +87,7 @@
         .route_year{
             color: #ffffff;
             background-color: #FF5C00;
-            font-size: 15pt;
+            font-size: 18pt;
             width: 600px;
             border-radius: 30px;
             height: 50px;
@@ -100,7 +100,7 @@
         .starting-date {
             color: #ffffff;
             background-color: #FF5C00;
-            font-size: 15pt;
+            font-size: 18pt;
             width: 869px;
             border-radius: 30px;
             height: 50px;
@@ -112,7 +112,7 @@
         .ending-date {
             color: #ffffff;
             background-color: #FF5C00;
-            font-size: 15pt;
+            font-size: 18pt;
             width: 869px;
             border-radius: 30px;
             height: 50px;
@@ -158,10 +158,10 @@
         .edit_btn{
             color: #ffffff;
             background-color: #FF4D00;
-            font-size: 20pt;
+            font-size: 18pt;
             width: 326px;
             border-radius: 30px;
-            height: 60px;
+            height: 50px;
             margin-left: 790px;
             margin-top: 40px;
             display: inline-block;
@@ -175,10 +175,10 @@
         .post_btn{
             color: #0000000;
             background-color: #ffffff;
-            font-size: 20pt;
+            font-size: 18pt;
             width: 326px;
             border-radius: 30px;
-            height: 60px;
+            height: 50px;
             margin-left: 790px;
             margin-top: 15px;
             display: inline-block;
@@ -221,7 +221,7 @@
             color: #ffffff;
             background-color: #FF9900;
             font-size: 20pt;
-            width: 869px;
+            width: 1840px;
             border-radius: 30px;
             height: auto;
             padding-top: 20px;
@@ -244,21 +244,14 @@
     </style>
 </head>
 <body>
-<a><h1>  Тутуновка</h1></a>
-<div class="topnav">
-    {% for item in bar %}
-    <a href="{{ item.url }}">{{ item.title }}</a>
-    {% endfor %}
-</div>
-<hr>
-{% include 'messages.html' %}
+{% include 'navbar.html' %}
 <br>
 <br>
 <h1>  Маршрут</h1>
 <div class="container2">
     <p class="route_name">{{ route.Name }}</p>
     <div class="container">
-        <p class="route_length"><strong>Длина поездки: </strong> {{ route.length }}</p>
+        <p class="route_length"><strong>Продолжительность: </strong> {{ route.length }}</p>
         <p class="route_month"><strong>Месяц поездки: </strong> {{ route.month }}</p>
         <p class="route_year"><strong>Год поездки: </strong> {{ route.year }}</p>
     </div>
@@ -383,16 +376,6 @@
 
     initMap();
 </script>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    {% include 'footer.html' %}
 </body>
-<footer>
-    <div class="footer">
-        <div class="footer_container">
-            <br><br>
-            <h2>Тутуновка</h2>
-            <h3>Команда "Алгоритмический шик"</h3>
-            <h3>2024</h3>
-        </div>
-    </div>
-</footer>
 </html>
