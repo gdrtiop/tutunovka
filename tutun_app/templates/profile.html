@@ -270,7 +270,7 @@
                 <ul>
                     {% for route in routes %}
 
-                    <div style="background-color: #FF5C00; padding: 10px; width:30%;height:15%; margin-left: 100px; border-radius: 20px;">
+                    <div style="background-color: #FF5C00; padding: 10px; width:25%;height:15%; margin-left: 100px; border-radius: 20px;">
                         <li2>
 
                             <li3><a href="{% url 'route_detail' route_id=route.id %}"><button2>{{ route.Name }}</button2></a></li3>
@@ -292,16 +292,6 @@
             {% endif %}
         </div>
     {% endif %}
+    {% include 'footer.html' %}
 </body>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-<footer>
-    <div class = "footer">
-        <div class = "footer_container">
-            <br><br>
-            <h2>    Тутуновка</h2>
-            <h3>      Команда "Алгоритмический шик"</h3>
-            <h3>      2024</h3>
-        </div>
-    </div>
-</footer>
 </html>
