@@ -49,14 +49,20 @@ def login_checker(chat_id):
         return True
 
 
-def get_keyboard(chat_id):
+def get_keyboard(chat_id, back):
     keyboard = telebot.types.InlineKeyboardMarkup()
     if login_checker(chat_id):
+        if back:
+            return telebot.types.InlineKeyboardMarkup().add(telebot.types.InlineKeyboardButton(text="Назад", callback_data='main'))
+
         button_flight = telebot.types.InlineKeyboardButton(text="Ближайшее путешествие",
                                                            callback_data='flight')
+        button_notes = telebot.types.InlineKeyboardButton(text="Заметки ближайшего путешествия ",
+                                                          callback_data='show_notes')
         button_logout = telebot.types.InlineKeyboardButton(text="Выйти",
                                                            callback_data='logout')
         keyboard.add(button_flight)
+        keyboard.add(button_notes)
         keyboard.add(button_logout)
     else:
         button_auth = telebot.types.InlineKeyboardButton(text="Авторизоваться",
@@ -70,7 +76,7 @@ def save_chat_id(message):
     bot.send_message(message.chat.id,
                      'Здравствуйте, я бот Тутуновка! Я здесь, чтобы напоминать вам о ваших путешествиях и багаже,'
                      ' который вы хотели взять с собой. Со мной вы точно ничего не забудуете!',
-                     reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id))
+                     reply_to_message_id=message.message_id, reply_markup=get_keyboard(message.chat.id, False))
 
 
 @bot.message_handler(content_types=["text"])
@@ -83,7 +89,7 @@ def send_text(message):
         bot.send_message(message.chat.id,
                          "Вы авторизованы!",
                          reply_to_message_id=message.message_id,
-                         reply_markup=get_keyboard(message.chat.id)
+                         reply_markup=get_keyboard(message.chat.id, False)
                          )
     except jwt.ExpiredSignatureError:
         bot.send_message(message.chat.id,
@@ -95,48 +101,54 @@ def send_text(message):
                          reply_to_message_id=message.message_id)
 
 
+@bot.callback_query_handler(func=lambda call: call.data == "main")
+def main_menu(call):
+    bot.send_message(call.message.chat.id,
+                     'Я в Вашем распоряжении! Что бы Вы хотели?', reply_markup=get_keyboard(call.message.chat.id, False))
+
+
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but_flight_pressed(call):
     context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
     if context is None:
         bot.send_message(call.message.chat.id, 'У Вас нет предстоящих путешествий(',
-                         reply_markup=get_keyboard(call.message.chat.id))
+                         reply_markup=get_keyboard(call.message.chat.id, True))
     else:
         if context[5] == '' and context[4] == '':
             bot.send_message(call.message.chat.id,
-                             "Ваше следующее: " + str(context[1]) + "\n"
+                             "Ваше следующее путешествие: " + str(context[1]) + "\n"
                              + "Дата начала путешествия: " + str(context[2]) + "\n"
                              + "Дата возвращения: " + str(context[3]) + "\n"
                              + "Вы не записали что хотите взять с собой" + "\n"
                              + "Вы не оставили дополнительных сведений о маршруте",
-                             reply_markup=get_keyboard(call.message.chat.id)
+                             reply_markup=get_keyboard(call.message.chat.id, True)
                              )
         elif context[5] != '' and context[4] == '':
             bot.send_message(call.message.chat.id,
-                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             "Ваше следующее путешествие: " + str(context[1]) + "\n"
                              + "Дата начала путешествия: " + str(context[2]) + "\n"
                              + "Дата возвращения: " + str(context[3]) + "\n"
                              + "Вы хотели взять: " + str(context[5]) + "\n"
                              + "Вы не оставили дополнительных сведений о маршруте",
-                             reply_markup=get_keyboard(call.message.chat.id)
+                             reply_markup=get_keyboard(call.message.chat.id, True)
                              )
         elif context[5] == '' and context[4] != '':
             bot.send_message(call.message.chat.id,
-                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             "Ваше следующее путешествие: " + str(context[1]) + "\n"
                              + "Дата начала путешествия: " + str(context[2]) + "\n"
                              + "Дата возвращения: " + str(context[3]) + "\n"
                              + "Вы не оставили дополнительных сведений о маршруте" + "\n"
                              + "Комментарий: " + str(context[4]),
-                             reply_markup=get_keyboard(call.message.chat.id)
+                             reply_markup=get_keyboard(call.message.chat.id, True)
                              )
         else:
             bot.send_message(call.message.chat.id,
-                             "Ваш следующий вылет: " + str(context[1]) + "\n"
+                             "Ваше следующее путешествие: " + str(context[1]) + "\n"
                              + "Дата начала путешествия: " + str(context[2]) + "\n"
                              + "Дата возвращения: " + str(context[3]) + "\n"
                              + "Вы хотели взять: " + str(context[5]) + "\n"
                              + "Комментарий: " + str(context[4]),
-                             reply_markup=get_keyboard(call.message.chat.id)
+                             reply_markup=get_keyboard(call.message.chat.id, True)
                              )
 
 
@@ -150,10 +162,45 @@ def but_logout_pressed(call):
     status = MODEL.delete_tg_username(call.message.chat.id)
     if status:
         bot.send_message(call.message.chat.id, "Вы успешно вышли из аккаунта, ждём Вас снова!",
-                         reply_markup=get_keyboard(call.message.chat.id))
+                         reply_markup=get_keyboard(call.message.chat.id, False))
     else:
         bot.send_message(call.message.chat.id, "Произошла непредвиденная ошибка, попробуйте позже",
+                         reply_markup=get_keyboard(call.message.chat.id, False))
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith("note_"))
+def toggle_note_status(call):
+    note_id = int(call.data.split("_")[1])
+    status = MODEL.toggle_note_status(note_id)
+    if status:
+        bot.answer_callback_query(call.id, "Статус заметки изменён")
+    else:
+        bot.answer_callback_query(call.id, "Ошибка изменения статуса")
+
+    show_notes(call)
+
+
+@bot.callback_query_handler(func=lambda call: call.data == "show_notes")
+def show_notes(call):
+    context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    if context is None:
+        bot.send_message(call.message.chat.id, 'У Вас нет предстоящих путешествий(',
                          reply_markup=get_keyboard(call.message.chat.id))
+
+    notes = MODEL.get_notes_for_route(context[0])
+    if not notes:
+        bot.send_message(call.message.chat.id, "У маршрута нет заметок.")
+        return
+
+    keyboard = telebot.types.InlineKeyboardMarkup()
+    for note in notes:
+        status_text = "✔️ " if note[1] else "❌ "
+        button = telebot.types.InlineKeyboardButton(
+            text=f"{status_text}{note[2]}", callback_data=f"note_{note[0]}"
+        )
+        keyboard.add(button)
+    keyboard.add(telebot.types.InlineKeyboardButton(text="Назад", callback_data='main'))
+    bot.send_message(call.message.chat.id, "Ваши заметки:", reply_markup=keyboard)
 
 
 schedule_thread = threading.Thread(target=run_schedule)
