@@ -330,7 +330,7 @@
             </div>
             <div>
                 <label for="id_dots-${prefix}-information">Место(название или адрес):</label>
-                <input type="text" name="dots-${prefix}-information">
+                <input type="text" name="dots-${prefix}-information" required>
             </div>
             <div>
                 <label for="id_dots-${prefix}-date">Дата:</label>
@@ -340,7 +340,7 @@
                 <label for="id_dots-${prefix}-note">Примечание:</label>
                 <textarea name="dots-${prefix}-note"></textarea>
             </div>
-            <hr>
+            <br><br><br>
         `;
         return dotFormHtml;
     }
@@ -352,7 +352,7 @@
                 <label for="text">Заметка:</label>
                 <textarea name="text"></textarea>
             </div>
-            <hr>
+            <br><br><br>
         `;
         return noteFormHtml;
     }

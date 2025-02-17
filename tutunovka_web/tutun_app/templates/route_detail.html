@@ -286,7 +286,7 @@
                 <p><strong>Точки</strong></p>
                 {% for dot in dots %}
                     <p><strong>Имя: </strong>{{dot.name}}</p>
-                    <p><strong>Дата: </strong>{{dot.date}}</p>
+                    {% if dot.date %}<p><strong>Дата: </strong>{{dot.date}}</p>{% endif %}
                     <p><strong>Название/Адрес: </strong>{{dot.information}}</p>
                     {% if dot.note %}<p><strong>Примечание: </strong>{{dot.note}}</p>{% endif %}
                     <br>

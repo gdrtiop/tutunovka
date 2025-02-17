@@ -119,6 +119,16 @@ class PrivateDotForm(forms.ModelForm):
     """
     Форма точки для приватного маршрута
     """
+    date = forms.DateField(
+        label='Дата',
+        required=False,
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+    )
+    note = forms.CharField(
+        label='Заметка',
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         """
@@ -126,17 +136,15 @@ class PrivateDotForm(forms.ModelForm):
         """
 
         model = PrivateDot
-        fields = ['name', 'date', 'information', 'note']
+        fields = ['name', 'information', 'date', 'note']
         labels = {
             'name': 'Имя',
-            'note': 'Заметка',
-            'date': 'Дата',
             'information': 'Адрес/Название',
+            'date': 'Дата',
+            'note': 'Заметка',
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'note': forms.Textarea(attrs={'class': 'form-control'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'information': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
@@ -151,6 +159,24 @@ class PrivateRouteForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple,
         required=False,
         label='Теги'
+    )
+
+    rate = forms.IntegerField(
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
+        initial=0
+    )
+
+    comment = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        label='Комментарий'
+    )
+
+    baggage = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        label='Багаж'
     )
 
     class Meta:
@@ -170,11 +196,9 @@ class PrivateRouteForm(forms.ModelForm):
             'tags': 'Теги',
         }
         widgets = {
-            'comment': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
             'date_in': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'date_out': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'baggage': forms.Textarea(attrs={'class': 'form-control'}),
-            'rate': forms.NumberInput(attrs={'class': 'form-control', 'type': 'number', 'min': '-1', 'max': '10'}),
         }
 
 
