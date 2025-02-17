@@ -612,8 +612,8 @@ def route_detail(request, route_id):
     @rtype: :class:`django.http.HttpResponse`
     """
     route = PrivateRoute.objects.get(id=route_id)
-    dots = route.dots.all()
-    notes = route.note.all()
+    dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
+    notes = route.note.all().order_by("id")
 
     url = 'https://geocode-maps.yandex.ru/1.x/'
     apikey = API_YANDEX_MAPS_KEY
@@ -812,13 +812,13 @@ def editing_route(request, route_id):
             'rate': route.rate,
         })
 
-        notes = route.note.all()
+        notes = route.note.all().order_by("id")
         notes_form = []
 
         for note in notes:
             notes_form.append(NoteForm(initial={'text': note.text, }))
 
-        dots = route.dots.all()
+        dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
         dots_form = []
 
         for dot in dots:
