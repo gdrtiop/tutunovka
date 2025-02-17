@@ -306,12 +306,8 @@
     </style>
 </head>
 <body>
-    <a><h1>  Тутуновка</h1></a>
-    <div class="topnav">
-        {% for item in bar %}
-        <a href="{{ item.url }}">{{ item.title }}</a>
-        {% endfor %}
-    </div>
+    {% include 'navbar.html' %}
+    {% include 'messages.html' %}
     <hr>
     <br>
     <br>

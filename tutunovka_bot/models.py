@@ -53,7 +53,7 @@ class PostgreSQLQueries:
                     FROM "public"."auth_user"
                     WHERE (username = %s)
                     """,
-                    (username,)
+                    (str(username),)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()
@@ -119,7 +119,7 @@ class PostgreSQLQueries:
                     FROM "auth_user"
                     WHERE tg_username = %s
                     """,
-                    (tg_username,)
+                    (str(tg_username),)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()

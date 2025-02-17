@@ -158,4 +158,4 @@ def but_logout_pressed(call):
 
 schedule_thread = threading.Thread(target=run_schedule)
 schedule_thread.start()
-bot.polling(none_stop=True)
+bot.polling(none_stop=True, timeout=60)

@@ -306,13 +306,7 @@
     </style>
 </head>
 <body>
-    <a><h1>  Тутуновка</h1></a>
-    <div class="topnav">
-        {% for item in bar %}
-        <a href="{{ item.url }}">{{ item.title }}</a>
-        {% endfor %}
-    </div>
-    <hr>
+    {% include 'navbar.html' %}
     {% include 'messages.html' %}
 
     <form action="{% url 'search_results_public' %}" method="get">

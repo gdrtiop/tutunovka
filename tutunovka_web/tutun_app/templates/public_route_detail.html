@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Route Detail</title>
-    <script src="/api_yn_map/"></script>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=871c45f9-726b-4202-bf74-0decb2a77698&lang=ru_RU"></script>
     <style>
         @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
         body {
@@ -259,14 +259,15 @@
     </style>
 </head>
 <body>
-{% include 'navbar.html' %}
-<br>
-<br>
-<p class="route_name">Автор: {{ route.author.username }}</p>
-<br>
-<hr>
-<h1>  Маршрут</h1>
-<div class="container2">
+    {% include 'navbar.html' %}
+    {% include 'messages.html' %}
+    <br>
+    <br>
+    <p class="route_name">Автор: {{ route.author.username }}</p>
+    <br>
+    <hr>
+    <h1>  Маршрут</h1>
+    <div class="container2">
     <p class="route_name">{{ route.Name }}</p>
 
     <div class="container">
@@ -284,8 +285,8 @@
     <br>
     <br>
     <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
-</div>
-    
+    </div>
+
     <script>
         var dots_vis = {{ dots_vis|safe }};
         console.log(dots_vis);

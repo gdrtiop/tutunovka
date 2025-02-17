@@ -877,7 +877,8 @@ def editing_route(request, route_id):
             'bar': get_bar_context(request),
             'route_form': route_form,
             'dots_form': dots_form,
-            'notes_form': notes_form
+            'notes_form': notes_form,
+            'url_back': reverse('route_detail', kwargs={'route_id': route_id})
         }
 
         return render(request, 'editing_route.html', context)

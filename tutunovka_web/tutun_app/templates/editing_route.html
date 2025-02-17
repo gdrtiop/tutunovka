@@ -260,60 +260,70 @@
 
     .name_main{
         margin-left: 700px;
-     }
+    }
+
+    .button_cancel{
+        color: #000000;
+        background-color: #F7941E;
+        border: none;
+        text-decoration: none;
+    }
+    a{
+        text-decoration: none;
+    }
     </style>
 </head>
 <body>
+    {% include 'navbar.html' %}
+    {% include 'messages.html' %}
 
-{% include 'navbar.html' %}
-{% include 'messages.html' %}
+    <br>
+    <br>
 
-<br>
-<br>
-
-{% if error_text %}
-<ul class="error-list">
-    <li class="error-item">{{error_text}}</li>
-</ul>
-{% endif %}
-<div class="name_main"><h1>Маршрут</h1></div>
-<div class="cust-cont">
-    <h1>Точки:</h1>
-    <form id="route-form" method="post">
-        {% csrf_token %}
-        {{ route_form.as_p }}
-        <div id="notes-container">
-            <h1>Заметки:</h1>
-            {% for note_form in notes_form%}
-            <a>
-                {% csrf_token %}
-                {{ note_form.as_p }}
-            </a>
-            {% endfor %}
-        </div>
-        <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
-        <div id="dots-container">
-            <h1>Точки:</h1>
-            {% for dot_form in dots_form%}
-            <a>
-                {% csrf_token %}
-                {{ dot_form.as_p }}
-            </a>
+    {% if error_text %}
+    <ul class="error-list">
+        <li class="error-item">{{error_text}}</li>
+    </ul>
+    {% endif %}
+    <div class="name_main"><h1>Маршрут</h1></div>
+    <div class="cust-cont">
+        <h1>Точки:</h1>
+        <form id="route-form" method="post">
+            {% csrf_token %}
+            {{ route_form.as_p }}
+            <div id="notes-container">
+                <h1>Заметки:</h1>
+                {% for note_form in notes_form%}
+                <a>
+                    {% csrf_token %}
+                    {{ note_form.as_p }}
+                </a>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-note-btn" onclick="addNoteForm()">Добавить заметку</button>
+            <div id="dots-container">
+                <h1>Точки:</h1>
+                {% for dot_form in dots_form%}
+                <a>
+                    {% csrf_token %}
+                    {{ dot_form.as_p }}
+                </a>
+                <br>
+                {% endfor %}
+            </div>
+            <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
             <br>
-            {% endfor %}
-        </div>
-        <button type="button" id="add-dot-btn" onclick="addDotForm()">Добавить точку</button>
-        <br>
-        <button type="submit">Сохранить</button>
-    </form>
-</div>
+            <button type="submit">Сохранить</button>
+            <br>
+            <a href="{{ url_back }}"><button class="button_cancel">Отменить</button></a>
+        </form>
+    </div>
 
-{% include 'footer.html' %}
+    {% include 'footer.html' %}
 </body>
 <script>
     function createDotForm(prefix) {
         const dotFormHtml = `
-            <p>Точка</p>
             <div>
                 <label for="id_dots-${prefix}-name">Название:</label>
                 <input type="text" name="dots-${prefix}-name" required>
