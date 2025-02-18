@@ -218,8 +218,8 @@
             color:#000000;
         }
         .dots {
-            color: #ffffff;
-            background-color: #FF9900;
+            color: #FFFFFF;
+            background-color: #FFD84C;
             font-size: 20pt;
             width: 1840px;
             border-radius: 30px;
@@ -277,11 +277,16 @@
     </div>
     <div class="container">
         <p class="list_of_things"><strong>Оценка: </strong> {{ route.rate }}</p>
-        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+        <p class="comment">{% if route.comment %}<strong>Комментарий:</strong>{{ route.comment }} {% else %} К этому маршруту не оставили комментария. {%endif%}</p>
     </div>
-
+    {% if route.tags.all.exists %}
+    <div class="container" style="padding-bottom: 20px">
+        <div class="dots">
+            <p style="color: #000000">Теги: {{ route.tags.all|join:", " }}</p>
+        </div>
+    </div>
+    {% endif %}
     <div id="map"></div>
-
     <br>
     <br>
     <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>

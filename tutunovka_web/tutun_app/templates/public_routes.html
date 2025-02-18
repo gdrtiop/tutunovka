@@ -332,15 +332,17 @@
     {% for route in routes_list %}
         <li>
             <th scope="row"><h10>        {{ route.id }}</h10></th>
-            <th>
+            <th style="display: flex; align-items: center; gap: 5px; flex-wrap: nowrap;">
                 <marg><a href="{% url 'public_route_detail' route_id=route.id %}"><button2>{{ route.Name }}</button2></a></marg>
+                Автор: {{ route.author }}.
+                {% if route.tags.all %}
+                    | Теги:
+                        {% for tag in route.tags.all %}
+                            <a href="{% url 'public_routes_by_tags' tag.slug %}" style="color: #FFA500">{{ tag }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+
+                {% endif %}
             </th>
-            Автор: {{ route.author }}
-            {% if route.tags.all %}
-                <div>
-                    Теги: {% for tag in route.tags.all %} <a href="{% url 'public_routes_by_tags' tag.slug %}">{{ tag }}</a> {% endfor %}
-                </div>
-            {% endif %}
         </li>
     {% endfor %}
     <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

@@ -261,24 +261,37 @@
             <p class="ending-date"><strong>Дата конца: </strong> {{ route.date_out }}</p>
         </div>
         <div class="container">
-            <p class="list_of_things"><strong>Список вещей для путешествия: </strong> {{ route.baggage }}</p>
-            <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+            <p class="list_of_things"> {% if route.baggage %} <strong>Список вещей для путешествия: </strong> {{ route.baggage }} {% else %} Вы не написали что хотите взять с собой.{% endif %}</p>
+            <p class="comment">{% if route.comment %}<strong>Комментарий:</strong> {{ route.comment }} {% else %} Вы не оставили комментария к этому маршруту.{% endif %}</p>
         </div>
 
         <div class="container">
+            <div class="dots">
+                <p><strong>Оценка: </strong> {{ route.rate }}</p>
+                {% if route.tags.all.exists %}
+                    <p>Теги: {{ route.tags.all|join:", " }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="container" style="padding-top: 20px">
             <div id="map"></div>
             <div class="notes">
                 <p><strong>Заметки</strong></p>
-                <ul>
-                    {% for note in notes %}
-                    <li>
-                        <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
-                        <label for="note_{{ note.id }}" {% if note.done %}style="text-decoration: line-through;"{% endif %}>
-                            {{ note.text }}
-                        </label>
-                    </li>
-                    {% endfor %}
-                </ul>
+                {% if notes %}
+                    <ul>
+                        {% for note in notes %}
+                        <li>
+                            <input type="checkbox" id="note_{{ note.id }}" onchange="toggleNoteDone('{{ note.id }}')" {% if note.done %}checked{% endif %}>
+                            <label for="note_{{ note.id }}" {% if note.done %} style="text-decoration: line-through;"{% endif %}>
+                                {{ note.text }}
+                            </label>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Вы ещё не создали заметки к этому маршруту.</p>
+                {% endif %}
             </div>
         </div>
         <div class="container" style="padding-top: 20px">

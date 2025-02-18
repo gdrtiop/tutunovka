@@ -468,7 +468,7 @@ def create_route(request):
                 route.note.add(note)
 
             messages.success(request, 'Маршрут успешно создан.')
-            route.tags.set(route_form.cleaned_data['tags'])
+            route.tags.set(route_form.cleaned_data.get('tags', []))
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
 
@@ -548,7 +548,7 @@ def save_route(request, pk=None):
                 route.note.add(note)
 
             # Сохранение тегов
-            route.tags.set(route_form.cleaned_data['tags'])
+            route.tags.set(route_form.cleaned_data.get('tags', []))
 
             messages.success(request, "Вы успешно сохранили маршрут!")
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
@@ -754,7 +754,7 @@ def editing_route(request, route_id):
                 month=calendar.month_name[route.date_in.month],
                 year=route.date_in.year
             )
-
+            route.tags.set(route_form.cleaned_data.get('tags', []))
             new_notes = {"new_text": request.POST.getlist('text')}
             notes = route.note.all()
 
@@ -810,6 +810,7 @@ def editing_route(request, route_id):
             'baggage': route.baggage,
             'comment': route.comment,
             'rate': route.rate,
+            'tags': route.tags.values_list('id', flat=True)
         })
 
         notes = route.note.all().order_by("id")
