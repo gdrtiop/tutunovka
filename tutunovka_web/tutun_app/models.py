@@ -126,8 +126,8 @@ class PrivateRoute(models.Model):
     Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
-    date_in = models.DateField()
-    date_out = models.DateField()
+    date_in = models.DateField(null=True, default=None)
+    date_out = models.DateField(null=True, default=None)
 
     comment = models.CharField(max_length=700, null=True)
     baggage = models.CharField(max_length=3000, null=True)

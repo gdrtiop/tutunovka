@@ -53,7 +53,8 @@ def get_keyboard(chat_id, back):
     keyboard = telebot.types.InlineKeyboardMarkup()
     if login_checker(chat_id):
         if back:
-            return telebot.types.InlineKeyboardMarkup().add(telebot.types.InlineKeyboardButton(text="Назад", callback_data='main'))
+            return telebot.types.InlineKeyboardMarkup().add(
+                telebot.types.InlineKeyboardButton(text="Назад", callback_data='main'))
 
         button_flight = telebot.types.InlineKeyboardButton(text="Ближайшее путешествие",
                                                            callback_data='flight')
@@ -104,12 +105,16 @@ def send_text(message):
 @bot.callback_query_handler(func=lambda call: call.data == "main")
 def main_menu(call):
     bot.send_message(call.message.chat.id,
-                     'Я в Вашем распоряжении! Что бы Вы хотели?', reply_markup=get_keyboard(call.message.chat.id, False))
+                     'Я в Вашем распоряжении! Что бы Вы хотели?',
+                     reply_markup=get_keyboard(call.message.chat.id, False))
 
 
 @bot.callback_query_handler(func=lambda call: call.data == "flight")
 def but_flight_pressed(call):
-    context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    try:
+        context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    except:
+        bot.send_message(call.message.chat.id, "Ошибка: пользователь не найден.")
     if context is None:
         bot.send_message(call.message.chat.id, 'У Вас нет предстоящих путешествий(',
                          reply_markup=get_keyboard(call.message.chat.id, True))
@@ -182,7 +187,10 @@ def toggle_note_status(call):
 
 @bot.callback_query_handler(func=lambda call: call.data == "show_notes")
 def show_notes(call):
-    context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    try:
+        context = MODEL.get_route_fields(MODEL.get_user_by_tg_username(call.message.chat.id)[0])
+    except:
+        bot.send_message(call.message.chat.id, "Ошибка: пользователь не найден.")
     if context is None:
         bot.send_message(call.message.chat.id, 'У Вас нет предстоящих путешествий(',
                          reply_markup=get_keyboard(call.message.chat.id))

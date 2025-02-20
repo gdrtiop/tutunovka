@@ -297,6 +297,9 @@ class ComplaintForm(forms.ModelForm):
 
         model = Complaint
         fields = ['text']
+        labels = {
+            'text': 'Текст',
+        }
         widgets = {
             'text': forms.Textarea(attrs={'class': 'form-control'}),
         }
@@ -319,6 +322,9 @@ class AnswerComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
         fields = ['answer']
+        labels = {
+            'answer': 'Ответ',
+        }
         widgets = {
             'answer': forms.Textarea(attrs={'class': 'form-control'}),
         }

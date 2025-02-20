@@ -289,7 +289,10 @@
     <div id="map"></div>
     <br>
     <br>
-    <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
+    <form action="{% url 'save_route' pk=route.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Сохранить</button>
+    </form>
     </div>
 
     <script>

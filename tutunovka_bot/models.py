@@ -161,7 +161,7 @@ class PostgreSQLQueries:
                     SET tg_username = NULL
                     WHERE tg_username = %s
                     """,
-                    (tg_user_id,)
+                    (str(tg_user_id),)
                 )
                 conn.commit()
                 cursor.close()
