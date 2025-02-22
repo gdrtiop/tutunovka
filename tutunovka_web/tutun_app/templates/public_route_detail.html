@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Route Detail</title>
-    <script src="/api_yn_map/"></script>
+    <script src="https://api-maps.yandex.ru/v3/?apikey=871c45f9-726b-4202-bf74-0decb2a77698&lang=ru_RU"></script>
     <style>
         @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
         body {
@@ -218,8 +218,8 @@
             color:#000000;
         }
         .dots {
-            color: #ffffff;
-            background-color: #FF9900;
+            color: #FFFFFF;
+            background-color: #FFD84C;
             font-size: 20pt;
             width: 1840px;
             border-radius: 30px;
@@ -259,14 +259,15 @@
     </style>
 </head>
 <body>
-{% include 'navbar.html' %}
-<br>
-<br>
-<p class="route_name">Автор: {{ route.author.username }}</p>
-<br>
-<hr>
-<h1>  Маршрут</h1>
-<div class="container2">
+    {% include 'navbar.html' %}
+    {% include 'messages.html' %}
+    <br>
+    <br>
+    <p class="route_name">Автор: {{ route.author.username }}</p>
+    <br>
+    <hr>
+    <h1>  Маршрут</h1>
+    <div class="container2">
     <p class="route_name">{{ route.Name }}</p>
 
     <div class="container">
@@ -276,16 +277,24 @@
     </div>
     <div class="container">
         <p class="list_of_things"><strong>Оценка: </strong> {{ route.rate }}</p>
-        <p class="comment"><strong>Комментарий:</strong> {{ route.comment }}</p>
+        <p class="comment">{% if route.comment %}<strong>Комментарий:</strong>{{ route.comment }} {% else %} К этому маршруту не оставили комментария. {%endif%}</p>
+    </div>
+    {% if route.tags.all.exists %}
+    <div class="container" style="padding-bottom: 20px">
+        <div class="dots">
+            <p style="color: #000000">Теги: {{ route.tags.all|join:", " }}</p>
+        </div>
+    </div>
+    {% endif %}
+    <div id="map"></div>
+    <br>
+    <br>
+    <form action="{% url 'save_route' pk=route.pk %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Сохранить</button>
+    </form>
     </div>
 
-    <div id="map"></div>
-
-    <br>
-    <br>
-    <a href="{% url 'save_route' pk=route.pk %}"><button>Сохранить</button></a>
-</div>
-    
     <script>
         var dots_vis = {{ dots_vis|safe }};
         console.log(dots_vis);

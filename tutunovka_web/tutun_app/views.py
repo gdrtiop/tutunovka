@@ -12,7 +12,7 @@ import jwt
 from taggit.models import Tag
 
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseNotAllowed
 
 from django.contrib.auth import logout, views
 from django.contrib.auth.decorators import login_required
@@ -424,23 +424,24 @@ def create_route(request):
 
             for dot_form in dot_forms:
                 dot_data = dot_form.data
-                dot_date = datetime.datetime.strptime(
-                    dot_data[f'dots-{dot_form.prefix}-date'],
-                    '%Y-%m-%d').date()
+                if dot_data[f'dots-{dot_form.prefix}-date']:
+                    dot_date = datetime.datetime.strptime(
+                        dot_data[f'dots-{dot_form.prefix}-date'],
+                        '%Y-%m-%d').date()
 
-                if dot_date > route.date_out or dot_date < route.date_in:
-                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
+                    if dot_date > route.date_out or dot_date < route.date_in:
+                        messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
 
-                    context = {
-                        'bar': get_bar_context(request),
-                        'route_form': route_form,
-                        'dot_forms': dot_forms,
-                        'note_forms': note_forms,
-                    }
+                        context = {
+                            'bar': get_bar_context(request),
+                            'route_form': route_form,
+                            'dot_forms': dot_forms,
+                            'note_forms': note_forms,
+                        }
 
-                    route.delete()
+                        route.delete()
 
-                    return render(request, 'new_route.html', context)
+                        return render(request, 'new_route.html', context)
 
                 dot = PrivateDot(
                     name=dot_data[f'dots-{dot_form.prefix}-name'],
@@ -467,7 +468,7 @@ def create_route(request):
                 route.note.add(note)
 
             messages.success(request, 'Маршрут успешно создан.')
-            route.tags.set(route_form.cleaned_data['tags'])
+            route.tags.set(route_form.cleaned_data.get('tags', []))
 
             return redirect(reverse('profile', kwargs={'stat': 'reading'}))
 
@@ -492,153 +493,37 @@ def create_route(request):
 @login_required
 def save_route(request, pk=None):
     """
-    Сохранение существующего маршрута
-
-    Сохраняет публичный маршрут к маршрутам пользователя и
-    даёт возможность его изменить перед сохраненим в базу данных.
-
-    @param request: Запрос на страницу
-    @type request: :class:`django.http.HttpRequest`
-
-    @param pk: индекс маршрута, который необходимо сохранить
-    @type pk: int
-
-    @return: Возвращает объект ответа сервера с html-кодом внутри, либо HTTP ответ,
-    который перенаправляет клиента на указанный URL
-    @rtype: :class:`django.http.HttpResponse` / `HttpResponseRedirect`
+    Копирование публичного маршрута в приватный
     """
-    data = get_object_or_404(PublicRoute, pk=pk)
-
     if request.method == 'POST':
-        route_form = PrivateRouteForm(request.POST)
+        public_route = get_object_or_404(PublicRoute, pk=pk)
 
-        dot_forms = [PrivateDotForm(request.POST,
-                                    prefix=str(x)) for x in range(len(request.POST)) if
-                     f'dots-{x}-name' in request.POST]
-        note_forms = [NoteForm(request.POST, prefix=str(x)) for x in range(len(request.POST)) if
-                      f'notes-{x}-text' in request.POST]
+        private_route = PrivateRoute.objects.create(
+            Name=public_route.Name,
+            author=request.user,
+            comment=public_route.comment,
+            rate=public_route.rate if public_route.rate is not None else 0,
+            length=public_route.length,
+            month=public_route.month,
+            year=public_route.year
+        )
 
-        if len(dot_forms) + len(request.POST.getlist('date')) != 0:
-            route = route_form.save(commit=False)
-
-            route.author = request.user
-            route.length = (route.date_out - route.date_in).days
-            route.month = calendar.month_name[route.date_in.month]
-            route.year = route.date_in.year
-
-            route.save()
-
-            for i in range(len(request.POST.getlist('date'))):
-                dot_date = datetime.datetime.strptime(
-                    request.POST.getlist('date')[i],
-                    '%Y-%m-%d').date()
-
-                if dot_date > route.date_out or dot_date < route.date_in:
-                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
-
-                    context = {
-                        'bar': get_bar_context(request),
-                        'route_form': route_form,
-                        'dot_forms': dot_forms,
-                        'note_forms': note_forms,
-                    }
-
-                    route.delete()
-
-                    return render(request, 'new_route.html', context)
-
-                dot = PrivateDot(
-                    name=request.POST.getlist('name')[i],
-                    date=request.POST.getlist('date')[i],
-                    note=request.POST.getlist('note')[i],
-                    information=request.POST.getlist('information')[i],
-                )
-
-                dot.save()
-                route.dots.add(dot)
-
-            for dot_form in dot_forms:
-                dot_data = dot_form.data
-                dot_date = datetime.datetime.strptime(
-                    dot_data[f'dots-{dot_form.prefix}-date'],
-                    '%Y-%m-%d').date()
-
-                if dot_date > route.date_out or dot_date < route.date_in:
-                    messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
-
-                    context = {
-                        'bar': get_bar_context(request),
-                        'route_form': route_form,
-                        'dot_forms': dot_forms,
-                        'note_forms': note_forms,
-                    }
-
-                    route.delete()
-
-                    return render(request, 'new_route.html', context)
-
-                dot = PrivateDot(
-                    name=dot_data[f'dots-{dot_form.prefix}-name'],
-                    date=None,
-                    note=dot_data.get(f'dots-{dot_form.prefix}-note'),
-                    information=dot_data.get(f'dots-{dot_form.prefix}-information'),
-                )
-
-                if (f'dots-{dot_form.prefix}-date' in dot_data and
-                        dot_data[f'dots-{dot_form.prefix}-date']):
-                    dot.date = dot_data[f'dots-{dot_form.prefix}-date']
-
-                dot.save()
-                route.dots.add(dot)
-
-            for note_form in note_forms:
-                note_data = note_form.data
-
-                note = Note(
-                    text=note_data[f'notes-{note_form.prefix}-text']
-                )
-
-                note.save()
-                route.note.add(note)
-
-            route.tags.set(route_form.cleaned_data['tags'])
-
-            messages.success(request, "Вы успешно сохранили маршрут!")
-
-            return redirect(reverse('profile', kwargs={'stat': 'reading'}))
-        else:
-            messages.error(request, 'Необходимо добавить хотя бы одну точку.')
-
-            return redirect(reverse('public_route_detail', kwargs={'route_id': pk}))
-    else:
-        route = data
-
-        route_form = PrivateRouteForm(initial={
-            'Name': route.Name,
-            'comment': route.comment,
-            'rate': route.rate,
-        })
-
-        dot_forms = []
-        dots = route.dots.all()
-
-        for dot in dots:
-            dot_forms.append(
-                PrivateDotForm(initial={
-                    'name': dot.name,
-                    'information': dot.information,
-                })
+        # Копирование точек маршрута
+        for public_dot in public_route.dots.all():
+            private_dot = PrivateDot.objects.create(
+                name=public_dot.name,
+                information=public_dot.information
             )
+            private_route.dots.add(private_dot)
 
-    context = {
-        'bar': get_bar_context(request),
-        'route_form': route_form,
-        'dot_forms': dot_forms,
-        'note_forms': [],
-        'error_text': '',
-    }
+        # Копирование тегов
+        private_route.tags.set(public_route.tags.all())
 
-    return render(request, 'new_route.html', context)
+        messages.success(request, "Маршрут успешно скопирован в приватные!")
+        return redirect(reverse('route_detail', kwargs={'route_id': private_route.pk}))
+
+    return HttpResponseNotAllowed(['POST'])  # Укажите страницу ошибки или верните HTTP 405
+
 
 
 @login_required()
@@ -657,8 +542,8 @@ def route_detail(request, route_id):
     @rtype: :class:`django.http.HttpResponse`
     """
     route = PrivateRoute.objects.get(id=route_id)
-    dots = route.dots.all()
-    notes = route.note.all()
+    dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
+    notes = route.note.all().order_by("id")
 
     url = 'https://geocode-maps.yandex.ru/1.x/'
     apikey = API_YANDEX_MAPS_KEY
@@ -799,7 +684,7 @@ def editing_route(request, route_id):
                 month=calendar.month_name[route.date_in.month],
                 year=route.date_in.year
             )
-
+            route.tags.set(route_form.cleaned_data.get('tags', []))
             new_notes = {"new_text": request.POST.getlist('text')}
             notes = route.note.all()
 
@@ -821,20 +706,91 @@ def editing_route(request, route_id):
 
             dots = route.dots.all()
 
-            for index_note in range(len(dots)):
-                PrivateDot.objects.filter(id=dots[index_note].id).update(
-                    name=new_dots['new_name'][index_note],
-                    note=new_dots['new_note'][index_note],
-                    information=new_dots['new_information'][index_note],
-                    date=new_dots['new_date'][index_note],
+            for index_dot in range(len(dots)):
+                if new_dots['new_date'][index_dot]:
+                    dot_date = datetime.datetime.strptime(
+                        new_dots['new_date'][index_dot],
+                        '%Y-%m-%d').date()
+
+                    if dot_date > route.date_out or dot_date < route.date_in:
+                        messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
+
+                        notes = route.note.all().order_by("id")
+                        notes_form = []
+
+                        for note in notes:
+                            notes_form.append(NoteForm(initial={'text': note.text, }))
+
+                        dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
+                        dots_form = []
+
+                        for dot in dots:
+                            dots_form.append(PrivateDotForm(initial={
+                                'name': dot.name,
+                                'note': dot.note,
+                                'date': dot.date,
+                                'information': dot.information,
+                            }))
+
+                        context = {
+                            'bar': get_bar_context(request),
+                            'route_form': route_form,
+                            'dots_form': dots_form,
+                            'notes_form': notes_form,
+                            'url_back': reverse('route_detail', kwargs={'route_id': route_id})
+                        }
+
+                        return render(request, 'editing_route.html', context)
+
+                PrivateDot.objects.filter(id=dots[index_dot].id).update(
+                    name=new_dots['new_name'][index_dot],
+                    note=new_dots['new_note'][index_dot] if new_dots['new_note'][index_dot] else None,
+                    information=new_dots['new_information'][index_dot],
+                    date=new_dots['new_date'][index_dot] if new_dots['new_date'][index_dot] else None,
                 )
 
-            for index_note in range(len(dots), len(new_dots["new_name"])):
-                dot = PrivateDot(name=new_dots['new_name'][index_note],
-                                 note=new_dots['new_note'][index_note],
-                                 information=new_dots['new_information'][index_note],
-                                 date=new_dots['new_date'][index_note],
-                                 )
+            for index_dot in range(len(dots), len(new_dots["new_name"])):
+                dot = PrivateDot(
+                    name=new_dots['new_name'][index_dot],
+                    note=new_dots['new_note'][index_dot] if new_dots['new_note'][index_dot] else None,
+                    information=new_dots['new_information'][index_dot],
+                    date=new_dots['new_date'][index_dot] if new_dots['new_date'][index_dot] else None,
+                )
+
+                if new_dots['new_date'][index_dot]:
+                    dot_date = datetime.datetime.strptime(
+                        new_dots['new_date'][index_dot],
+                        '%Y-%m-%d').date()
+
+                    if dot_date > route.date_out or dot_date < route.date_in:
+                        messages.error(request, 'Даты точек должны находиться в пределах путешествия.')
+
+                        notes = route.note.all().order_by("id")
+                        notes_form = []
+
+                        for note in notes:
+                            notes_form.append(NoteForm(initial={'text': note.text, }))
+
+                        dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
+                        dots_form = []
+
+                        for dot in dots:
+                            dots_form.append(PrivateDotForm(initial={
+                                'name': dot.name,
+                                'note': dot.note,
+                                'date': dot.date,
+                                'information': dot.information,
+                            }))
+
+                        context = {
+                            'bar': get_bar_context(request),
+                            'route_form': route_form,
+                            'dots_form': dots_form,
+                            'notes_form': notes_form,
+                            'url_back': reverse('route_detail', kwargs={'route_id': route_id})
+                        }
+
+                        return render(request, 'editing_route.html', context)
 
                 dot.save()
                 route.dots.add(dot)
@@ -854,15 +810,16 @@ def editing_route(request, route_id):
             'baggage': route.baggage,
             'comment': route.comment,
             'rate': route.rate,
+            'tags': route.tags.values_list('id', flat=True)
         })
 
-        notes = route.note.all()
+        notes = route.note.all().order_by("id")
         notes_form = []
 
         for note in notes:
             notes_form.append(NoteForm(initial={'text': note.text, }))
 
-        dots = route.dots.all()
+        dots = sorted(route.dots.all(), key=lambda dot: dot.date if dot.date else datetime.date.min)
         dots_form = []
 
         for dot in dots:
@@ -877,7 +834,8 @@ def editing_route(request, route_id):
             'bar': get_bar_context(request),
             'route_form': route_form,
             'dots_form': dots_form,
-            'notes_form': notes_form
+            'notes_form': notes_form,
+            'url_back': reverse('route_detail', kwargs={'route_id': route_id})
         }
 
         return render(request, 'editing_route.html', context)

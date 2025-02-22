@@ -53,7 +53,7 @@ class PostgreSQLQueries:
                     FROM "public"."auth_user"
                     WHERE (username = %s)
                     """,
-                    (username,)
+                    (str(username),)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()
@@ -119,7 +119,7 @@ class PostgreSQLQueries:
                     FROM "auth_user"
                     WHERE tg_username = %s
                     """,
-                    (tg_username,)
+                    (str(tg_username),)
                 )
                 user_data = cursor.fetchone()
                 cursor.close()
@@ -161,12 +161,59 @@ class PostgreSQLQueries:
                     SET tg_username = NULL
                     WHERE tg_username = %s
                     """,
-                    (tg_user_id,)
+                    (str(tg_user_id),)
                 )
                 conn.commit()
                 cursor.close()
                 conn.close()
                 return True
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return False
+
+    def get_notes_for_route(self, route_id):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    SELECT id, done, text FROM "public"."Notes"
+                    WHERE id IN (
+                        SELECT note_id FROM "public"."Private_Routes_note"
+                        WHERE privateroute_id = %s
+                    )
+                    ORDER BY id ASC
+                    """,
+                    (route_id,)
+                )
+                notes = cursor.fetchall()
+                cursor.close()
+                conn.close()
+                return notes
+            except psycopg2.Error as e:
+                print("Error executing SQL statement:", e)
+                return None
+
+    def toggle_note_status(self, note_id):
+        conn = self.connect()
+        if conn is not None:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(
+                    """
+                    UPDATE "public"."Notes"
+                    SET done = NOT done
+                    WHERE id = %s
+                    RETURNING done
+                    """,
+                    (note_id,)
+                )
+                new_status = cursor.fetchone()
+                conn.commit()
+                cursor.close()
+                conn.close()
+                return new_status is not None
             except psycopg2.Error as e:
                 print("Error executing SQL statement:", e)
                 return False

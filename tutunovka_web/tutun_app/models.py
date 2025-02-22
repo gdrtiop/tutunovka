@@ -37,7 +37,7 @@ class PrivateDot(models.Model):
 
     name = models.CharField(max_length=125, default='Untitled dot')
     date = models.DateField(default=None, null=True)
-    note = models.CharField(max_length=700)
+    note = models.CharField(max_length=700, null=True)
     information = models.CharField(max_length=700)
 
 
@@ -126,14 +126,14 @@ class PrivateRoute(models.Model):
     Name = models.CharField(max_length=125, default='Untitled')
     author = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
-    date_in = models.DateField()
-    date_out = models.DateField()
+    date_in = models.DateField(null=True, default=None)
+    date_out = models.DateField(null=True, default=None)
 
-    comment = models.CharField(max_length=700)
-    baggage = models.CharField(max_length=3000)
+    comment = models.CharField(max_length=700, null=True)
+    baggage = models.CharField(max_length=3000, null=True)
 
     note = models.ManyToManyField(to=Note)
-    rate = models.IntegerField(default='-1')
+    rate = models.IntegerField(default='0')
     dots = models.ManyToManyField(to=PrivateDot)
 
     tags = TaggableManager()
