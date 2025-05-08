@@ -4,79 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Index page</title>
-    <style>
-        @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
-        body {
-            background-color: #222222;
-            color: #FFA500;
-            font-family: Arial;
-            text-align: right;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        h1 {
-            color: #FFFFFF;
-            font-family: Arkhip;
-            font-size: 50pt;
-            text-align: left;
-            white-space: pre;
-        }
-
-        h5 {
-            color: #F7941E;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        img {
-            position: bottom;
-            right: 0;
-            bottom: 0;
-            margin-top: -215px;
-
-        }
-
-        button {
-            background-color: #F7941E;
-            color: #222222;
-            border: none;
-            padding: 20px 40px;
-            text-align: center;
-            display: inline-block;
-            text-decoration: none;
-            cursor: pointer;
-            margin-top: 10px;
-            margin-right: 30px;
-            border-radius: 50px;
-        }
-
-        button:hover {
-            background-color: #F15A29;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class = "body_index">
     {% include 'messages.html' %}
-    <br>
-
-    <a href="{% url 'login' %}"><button style="font-size: 1.5rem">Авторизация</button></a>
-    <a href="{% url 'register' %}"><button style="font-size: 1.5rem">Регистрация</button>  </a>
-    <h1>            Добро пожаловать </h1>
-    <h1>            В Тутуновку</h1>
-
-    <br>
-    <br>
-    <a><img src="https://iili.io/JhlkvWX.png" alt="JhlkvWX.png" border="0" style="width:100%;height:100%; "></a>
+    <div class = "nav_container_index">
+        <a href="{% url 'login' %}">
+            <button class="btn_index">Авторизация</button>
+        </a>
+        <a href="{% url 'register' %}">
+            <button class="btn_index">Регистрация</button>
+        </a>
+    </div>
+    <div class="head_container_index">
+        <h1 class = "head_0">Добро пожаловать</h1>
+        <h1 class = "head_0">В Тутуновку</h1>
+    </div>
+    <a>
+        <img src="https://iili.io/JhlkvWX.png" alt="JhlkvWX.png" class = "img_index">
+    </a>
 </body>
 
 </html>
