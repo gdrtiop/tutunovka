@@ -1,4 +1,9 @@
+/* Fonts */
+
 @font-face { font-family: Arkhip; src: url('https://static1.squarespace.com/static/645eae040417d24d02c493bb/t/647738d0faa0e254c65cfe6e/1685534928515/Arkhip_font.otf'); }
+
+/* Headers */
+
 .head_0 {
     color: #FFFFFF;
     font-family: Arkhip;
@@ -8,6 +13,30 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.head_1 {
+    color: #FFFFFF;
+    font-family: Arkhip;
+    font-size: 30pt;
+    white-space: pre;
+    margin-left: 20px;
+}
+
+.head_2 {
+    color: #000000;
+    font-family: Arkhip;
+    font-size: 30pt;
+    white-space: pre;
+}
+
+.head_3 {
+    color: #000000;
+    font-size: 20pt;
+    white-space: pre;
+}
+
+/* Bodies */
+
 .body_index {
     background-color: #222222;
     color: #FFA500;
@@ -15,6 +44,15 @@
     text-align: right;
     overflow: hidden;
 }
+
+.body_rdetails {
+     background-color: #222222;
+     color: #FFA500;
+     font-family: Arial;
+     text-align: left;
+}
+
+/* Buttons */
 
 .btn_index {
     background-color: #F7941E;
@@ -31,9 +69,68 @@
     font-size: 1.5rem;
 }
 
+.edit_btn_rdetails {
+    color: #ffffff;
+    background-color: #FF4D00;
+    font-size: 18pt;
+    width: 326px;
+    border-radius: 30px;
+    height: 50px;
+    margin-left: 790px;
+    margin-top: 40px;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.post_btn_rdetails {
+    color: #0000000;
+    background-color: #ffffff;
+    font-size: 18pt;
+    width: 326px;
+    border-radius: 30px;
+    height: 50px;
+    margin-left: 790px;
+    margin-top: 15px;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.btn_rdetails{
+    background-color: #FFFFFF;
+    color: #222222;
+    border: none;
+    padding: 15px 30px;
+    font-weight: 500;
+    font-size: 14pt;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 30px;
+    margin-left: 47%;
+}
+
+/* Button specialities */
+
 .btn_index:hover {
      background-color: #F15A29;
 }
+
+.edit_btn_rdetails:hover{
+     background-color: #C22800;
+}
+
+.post_btn_rdetails:hover{
+     background-color: #C0C0C0;
+}
+
+.btn_rdetails:hover {
+     background-color: #ABABAB;
+}
+
+/* Containers */
 
 .head_container_index{
     display: grid;
@@ -45,6 +142,14 @@
     width: auto;
 }
 
+.container_rdetails {
+    display: flex;
+    margin-top: -30px;
+    margin-bottom: 20px;
+}
+
+/* Images */
+
 .img_index{
     position: bottom;
     right: 0;
@@ -53,4 +158,186 @@
     width:100%;
     height:100%;
     border=0;
+}
+
+/* Route details */
+
+.route_name_rdetails {
+    color: #FFFFFF;
+    background-color: #464646;
+    font-size: 18pt;
+    width: 1835px;
+    border-radius: 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-bottom: 7px;
+    margin-left: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.route_author_rdetails {
+    color: #FFFFFF;
+    background-color: #464646;
+    font-size: 18pt;
+    width: 1835px;
+    border-radius: 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-bottom: 7px;
+    margin-left: 20px;
+    margin-top: 40px;
+    margin-bottom: 100px;
+}
+
+.route_length_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 105px;
+    margin-left: 20px;
+}
+
+.route_month_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 105px;
+    margin-left: 20px;
+}
+
+.route_year_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 27px;
+    margin-left: 20px;
+}
+
+.starting_date_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 869px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-left: 20px;
+}
+
+.ending_date_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 869px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-left: 80px;
+}
+
+.notes_rdetails {
+    color: #000000;
+    background-color: #FFD84C;
+    font-size: 20pt;
+    width: 869px;
+    border-radius: 30px;
+    height: auto;
+    padding-top: 10px;
+    padding-left: 20px;
+    margin-left: 80px;
+    margin-top: 20px;
+}
+
+.comment_rdetails {
+    color: #ffffff;
+    background-color: #FF9900;
+    font-size: 20pt;
+    width: 869px;
+    border-radius: 30px;
+    height: 140px;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 80px;
+}
+
+.list_of_things_rdetails {
+    color: #ffffff;
+    background-color: #FF9900;
+    font-size: 20pt;
+    width: 869px;
+    border-radius: 30px;
+    height: 140px;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 20px;
+}
+
+/* Strong */
+
+.strong_rdetails{
+    white-space: pre;
+}
+
+/* Dots */
+
+.dots_rdetails {
+    color: #FFFFFF;
+    background-color: #FFD84C;
+    font-size: 20pt;
+    width: 1840px;
+    border-radius: 30px;
+    height: auto;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+/* Maps */
+
+#map_rdetails {
+    width: 1855px;
+    height: 606px;
+    background-color: green;
+    border-radius: 30px;
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+/* Footer */
+
+.footer {
+    background-color: #FFFFFF;
+    font-family: "Courier Prime", sans-serif;
+    height: 300px;
+    justify-content: space-between;
+    color:#000000;
 }
