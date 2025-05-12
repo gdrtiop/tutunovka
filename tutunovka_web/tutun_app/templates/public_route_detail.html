@@ -14,7 +14,7 @@
     </p>
     <h1 class="head_1">Маршрут</h1>
     <div>
-        <p class="route_name_rdetails">
+        <p class="route_name route_name_rdetails">
             {{route.Name}}
         </p>
 
@@ -33,11 +33,11 @@
             </p>
         </div>
         <div class="container_rdetails">
-            <p class="list_of_things_rdetails">
+            <p class="list_of_things">
                 <strong class="strong_rdetails">Оценка: </strong>
                 {{route.rate}}
             </p>
-            <p class="comment_rdetails">
+            <p class="comment">
                 {% if route.comment %}
                 <strong class="strong_rdetails">Комментарий:</strong>
                 {{route.comment}}
@@ -46,7 +46,7 @@
         </div>
         {% if route.tags.all.exists %}
         <div class="container_rdetails" style="padding-bottom: 20px">
-            <div class="dots_rdetails">
+            <div class="dots dots_rdetails">
                 <p style="color: #000000">
                     Теги: {{ route.tags.all|join:", " }}
                 </p>

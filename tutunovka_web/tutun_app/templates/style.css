@@ -37,18 +37,18 @@
 
 /* Bodies */
 
-.body_index {
+body {
     background-color: #222222;
     color: #FFA500;
     font-family: Arial;
+}
+
+.body_index {
     text-align: right;
     overflow: hidden;
 }
 
 .body_rdetails {
-     background-color: #222222;
-     color: #FFA500;
-     font-family: Arial;
      text-align: left;
 }
 
@@ -69,19 +69,22 @@
     font-size: 1.5rem;
 }
 
-.edit_btn_rdetails {
+.edit_btn {
     color: #ffffff;
     background-color: #FF4D00;
-    font-size: 18pt;
-    width: 326px;
     border-radius: 30px;
-    height: 50px;
-    margin-left: 790px;
     margin-top: 40px;
     display: inline-block;
+    border: none;
+}
+
+.edit_btn_rdetails {
+    font-size: 18pt;
+    width: 326px;
+    height: 50px;
+    margin-left: 790px;
     justify-content: center;
     align-items: center;
-    border: none;
 }
 
 .post_btn_rdetails {
@@ -148,6 +151,20 @@
     margin-bottom: 20px;
 }
 
+.container_nroute {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.information_container_nroute {
+    color: #000000;
+    border-radius: 30px;
+    height: 1000px;
+    display: block;
+    height: auto;
+}
+
 /* Images */
 
 .img_index{
@@ -160,143 +177,26 @@
     border=0;
 }
 
-/* Route details */
+/* Label */
 
-.route_name_rdetails {
-    color: #FFFFFF;
-    background-color: #464646;
+.label_nroute {
+    margin-top: 10px;
     font-size: 18pt;
-    width: 1835px;
-    border-radius: 20px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    padding-bottom: 7px;
-    margin-left: 20px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    font-weight: 600;
 }
 
-.route_author_rdetails {
-    color: #FFFFFF;
-    background-color: #464646;
-    font-size: 18pt;
-    width: 1835px;
-    border-radius: 20px;
-    height: 70px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    padding-bottom: 7px;
-    margin-left: 20px;
-    margin-top: 40px;
-    margin-bottom: 100px;
-}
+/* Input */
 
-.route_length_rdetails {
-    color: #ffffff;
-    background-color: #FF5C00;
-    font-size: 18pt;
-    width: 600px;
+.input_nroute {
+    font-weight: 700;
+    height: 15px;
+    padding: 10px;
+    font-size: 14pt;
+    margin-left: 25px;
+    margin-top: 6px;
+    width: 200px;
     border-radius: 30px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    margin-right: 105px;
-    margin-left: 20px;
-}
-
-.route_month_rdetails {
-    color: #ffffff;
-    background-color: #FF5C00;
-    font-size: 18pt;
-    width: 600px;
-    border-radius: 30px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    margin-right: 105px;
-    margin-left: 20px;
-}
-
-.route_year_rdetails {
-    color: #ffffff;
-    background-color: #FF5C00;
-    font-size: 18pt;
-    width: 600px;
-    border-radius: 30px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    margin-right: 27px;
-    margin-left: 20px;
-}
-
-.starting_date_rdetails {
-    color: #ffffff;
-    background-color: #FF5C00;
-    font-size: 18pt;
-    width: 869px;
-    border-radius: 30px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    margin-left: 20px;
-}
-
-.ending_date_rdetails {
-    color: #ffffff;
-    background-color: #FF5C00;
-    font-size: 18pt;
-    width: 869px;
-    border-radius: 30px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding-left: 20px;
-    margin-left: 80px;
-}
-
-.notes_rdetails {
-    color: #000000;
-    background-color: #FFD84C;
-    font-size: 20pt;
-    width: 869px;
-    border-radius: 30px;
-    height: auto;
-    padding-top: 10px;
-    padding-left: 20px;
-    margin-left: 80px;
-    margin-top: 20px;
-}
-
-.comment_rdetails {
-    color: #ffffff;
-    background-color: #FF9900;
-    font-size: 20pt;
-    width: 869px;
-    border-radius: 30px;
-    height: 140px;
-    padding-top: 20px;
-    padding-left: 20px;
-    margin-left: 80px;
-}
-
-.list_of_things_rdetails {
-    color: #ffffff;
-    background-color: #FF9900;
-    font-size: 20pt;
-    width: 869px;
-    border-radius: 30px;
-    height: 140px;
-    padding-top: 20px;
-    padding-left: 20px;
-    margin-left: 20px;
+    border: 1px solid #F7941E;
 }
 
 /* Strong */
@@ -307,17 +207,33 @@
 
 /* Dots */
 
-.dots_rdetails {
+.dots {
     color: #FFFFFF;
+    padding-left: 20px;
+    margin-left: 20px;
+    padding-left: 20px;
+    margin-left: 20px;
+}
+
+.dots_rdetails {
     background-color: #FFD84C;
     font-size: 20pt;
     width: 1840px;
     border-radius: 30px;
     height: auto;
     padding-top: 20px;
-    padding-left: 20px;
-    margin-left: 20px;
     margin-top: 20px;
+}
+
+.dots_nroute {
+   align-items: center;
+   background-color: #FF5C00;
+   font-size: 15pt;
+   padding-top: 15px;
+   width: 872px;
+   border-radius: 30px;
+   height: auto;
+   display: flex;
 }
 
 /* Maps */
@@ -340,4 +256,208 @@
     height: 300px;
     justify-content: space-between;
     color:#000000;
+}
+
+/* Route name */
+
+.route_name {
+    color: #FFFFFF;
+    background-color: #464646;
+    border-radius: 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-bottom: 7px;
+    margin-left: 20px;
+}
+
+.route_name_nroute {
+    font-size: 30pt;
+    width: 1850px;
+    padding-bottom: 7px;
+    margin-left: 20px;
+}
+
+.route_name_rdetails {
+    font-size: 18pt;
+    width: 1835px;
+    margin-left: 20px;
+}
+
+/* Route author */
+
+.route_author_rdetails {
+    color: #FFFFFF;
+    background-color: #464646;
+    font-size: 18pt;
+    width: 1835px;
+    border-radius: 20px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    padding-bottom: 7px;
+    margin-left: 20px;
+    margin-top: 40px;
+    margin-bottom: 100px;
+}
+
+/* Route length */
+
+.route_length_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 105px;
+    margin-left: 20px;
+}
+
+/* Route month */
+
+.route_month_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 105px;
+    margin-left: 20px;
+}
+
+/* Route year */
+
+.route_year_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 600px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 27px;
+    margin-left: 20px;
+}
+
+/* Starting date */
+
+.starting_date_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 872px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-left: 20px;
+}
+
+/* Ending date */
+
+.ending_date_rdetails {
+    color: #ffffff;
+    background-color: #FF5C00;
+    font-size: 18pt;
+    width: 872px;
+    border-radius: 30px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    margin-left: 80px;
+}
+
+/* Notes */
+
+.notes {
+    border-radius: 30px;
+    height: auto;
+    padding-left: 20px;
+    width: 872px;
+}
+
+.notes_rdetails {
+    color: #000000;
+    background-color: #FFD84C;
+    font-size: 20pt;
+    padding-top: 10px;
+    margin-left: 80px;
+    margin-top: 20px;
+}
+
+.notes_nroute {
+    color: #FFFFFF;
+    background-color: #FF5C00;
+    font-size: 15pt;
+    display: flex;
+    padding-top: 20px;
+    align-items: center;
+    margin-left: 80px;
+}
+
+/* Comment */
+
+.comment {
+    color: #ffffff;
+    background-color: #FF9900;
+    font-size: 20pt;
+    width: 872px;
+    border-radius: 30px;
+    height: 140px;;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 80px;
+}
+
+.comment_nroute {
+    align-items: center;
+}
+
+/* List of things */
+
+.list_of_things {
+    color: #ffffff;
+    background-color: #FF9900;
+    width: 872px;
+    font-size: 20pt;
+    width: 872px;
+    border-radius: 30px;
+    height: 140px;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 20px;
+}
+
+.list_of_things_nroute {
+    align-items: center;
+}
+
+/* Rating */
+
+.rating_nroute {
+    color: #000000;
+    background-color: #FFD84C;
+    align-items: center;
+    font-size: 20pt;
+    width: 1850px;
+    border-radius: 30px;
+    height: 200px;
+    padding-top: 20px;
+    padding-left: 20px;
+    margin-left: 20px;
+    margin-bottom: 50px;
 }

@@ -11,7 +11,7 @@
     {% include 'messages.html' %}
     <h1 class="head_1">  Маршрут</h1>
     <div>
-        <p class="route_name_rdetails">{{route.Name}}</p>
+        <p class="route_name route_name_rdetails">{{route.Name}}</p>
         <div class="container_rdetails">
             <p class="route_length_rdetails">
                 <strong class="strong_rdetails">Продолжительность: </strong>
@@ -37,13 +37,13 @@
             </p>
         </div>
         <div class="container_rdetails">
-            <p class="list_of_things_rdetails">
+            <p class="list_of_things">
                 {% if route.baggage %}
                 <strong class="strong_rdetails">Список вещей для путешествия: </strong>
                 {{route.baggage}}
                 {% else %} Вы не написали что хотите взять с собой.{% endif %}
             </p>
-            <p class="comment_rdetails">
+            <p class="comment">
                 {% if route.comment %}
                 <strong class="strong_rdetails">Комментарий:</strong>
                 {{route.comment}}
@@ -67,7 +67,7 @@
 
         <div class="container_rdetails" style="padding-top: 20px">
             <div id="map_rdetails"></div>
-            <div class="notes_rdetails">
+            <div class="notes notes_rdetails">
                 <p>
                     <strong class="strong_rdetails">Заметки</strong>
                 </p>
@@ -88,7 +88,7 @@
             </div>
         </div>
         <div class="container_rdetails" style="padding-top: 20px">
-            <div class="dots_rdetails">
+            <div class="dots dots_rdetails">
                 <p>
                     <strong class="strong_rdetails">Точки</strong>
                 </p>
@@ -119,7 +119,7 @@
 
         <div class="container_rdetails" style>
             <a href="{% url 'editing_route' route_id=route.id %}">
-                <button class="edit_btn_rdetails">Редактировать</button>
+                <button class="edit_btn edit_btn_rdetails">Редактировать</button>
             </a>
         </div>
         <a href="{% url 'post_route' id=route.id %}">
