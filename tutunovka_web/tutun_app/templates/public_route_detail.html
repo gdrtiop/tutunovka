@@ -56,7 +56,7 @@
         <div id="map_rdetails"></div>
         <form action="{% url 'save_route' pk=route.pk %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn_rdetails">Сохранить</button>
+            <button type="submit" class="btn_route btn_rdetails">Сохранить</button>
         </form>
     </div>
 

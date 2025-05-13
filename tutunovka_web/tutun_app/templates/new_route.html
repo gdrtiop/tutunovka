@@ -23,25 +23,25 @@
             <div class="information_container_nroute">
                 <h1 class="head_1" style="margin-left:0px">  Новый маршрут:</h1>
                 <p class="route_name rounte_name_nroute">
-                    <label class="label_nroute">Название: </label>
+                    <label class="label_route">Название: </label>
                     <input type="text" name="Name" value="{{ route_form.Name.value|default_if_none:'' }}" class="input_nroute">
                 </p>
                 <div class="container_nroute">
-                    <p class="starting_date_rdetails" style="font-size: 14px"><label class="label_nroute">Дата начала </label> <input class="input_nroute" type="date" name="date_in" value="{{ route_form.date_in.value|default_if_none:'' }}"></p>
-                    <p class="ending_date_rdetails" style="font-size: 14px"><label class="label_nroute">Дата конца</label> <input class="input_nroute" type="date" name="date_out" value="{{ route_form.date_out.value|default_if_none:'' }}"></p>
+                    <p class="starting_date_rdetails" style="font-size: 14px"><label class="label_route">Дата начала </label> <input class="input_nroute" type="date" name="date_in" value="{{ route_form.date_in.value|default_if_none:'' }}"></p>
+                    <p class="ending_date_rdetails" style="font-size: 14px"><label class="label_route">Дата конца</label> <input class="input_nroute" type="date" name="date_out" value="{{ route_form.date_out.value|default_if_none:'' }}"></p>
                 </div>
                 <div class="container_nroute">
-                    <p class="list_of_things list_of_things_nroute"><label class="label_nroute">Список вещей для путешествия:</label> <input class="input_nroute" type="text" name="baggage" value="{{ route_form.baggage.value|default_if_none:'' }}">
+                    <p class="list_of_things list_of_things_nroute"><label class="label_route">Список вещей для путешествия:</label> <input class="input_nroute" type="text" name="baggage" value="{{ route_form.baggage.value|default_if_none:'' }}">
                     </p>
-                    <p class="comment comment_nroute"><label class="label_nroute">Комментарий:</label> <input class="input_nroute" type="text" name="comment" value="{{ route_form.comment.value|default_if_none:'' }}"></p>
+                    <p class="comment comment_nroute"><label class="label_route">Комментарий:</label> <input class="input_nroute" type="text" name="comment" value="{{ route_form.comment.value|default_if_none:'' }}"></p>
 
                 </div>
                 <div class="rating_nroute">
                     <p>
-                        <label class="label_nroute">Оценка:</label>
+                        <label class="label_route">Оценка:</label>
                         <input class="input_nroute" type="number" name="rate" min="-1" max="10" value="{{ route_form.rate.value|default:0 }}">
                     </p>
-                    <label class="label_nroute">Теги:</label>
+                    <label class="label_route">Теги:</label>
                     {{route_form.tags}}
                     <br>
                 </div>
@@ -72,11 +72,11 @@
                     </div>
                 </div>
             <br>
-            <button type="button" id="add-note-btn" onclick="addNoteForm()" class="btn_rdetails" style="margin: 0 auto; display: block">Добавить заметку</button>
+            <button type="button" id="add-note-btn" onclick="addNoteForm()" class="btn_route btn_rdetails" style="margin: 0 auto; display: block">Добавить заметку</button>
             <br>
-            <button type="button" id="add-dot-btn" onclick="addDotForm()" class="btn_rdetails" style="margin: 0 auto; display: block">Добавить точку</button>
+            <button type="button" id="add-dot-btn" onclick="addDotForm()" class="btn_route btn_rdetails" style="margin: 0 auto; display: block">Добавить точку</button>
             <br>
-            <button type="submit" class="btn_rdetails" style="margin: 0 auto; display: block">Создать</button>
+            <button type="submit" class="btn_route btn_rdetails" style="margin: 0 auto; display: block">Создать</button>
             <br>
 
     </form>

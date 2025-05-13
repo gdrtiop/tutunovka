@@ -52,6 +52,12 @@ body {
      text-align: left;
 }
 
+/* Anchor */
+
+.a_redit {
+    text-decoration: none;
+}
+
 /* Buttons */
 
 .btn_index {
@@ -102,7 +108,7 @@ body {
     border: none;
 }
 
-.btn_rdetails{
+.btn_route{
     background-color: #FFFFFF;
     color: #222222;
     border: none;
@@ -112,7 +118,22 @@ body {
     text-decoration: none;
     cursor: pointer;
     border-radius: 30px;
+}
+
+.btn_rdetails{
     margin-left: 47%;
+}
+
+.btn_redit{
+    margin: 0 auto;
+    display: block;
+}
+
+.btn_cancel{
+    color: #000000;
+    background-color: #F7941E;
+    border: none;
+    text-decoration: none;
 }
 
 /* Button specialities */
@@ -129,8 +150,12 @@ body {
      background-color: #C0C0C0;
 }
 
-.btn_rdetails:hover {
+.btn_route:hover {
      background-color: #ABABAB;
+}
+
+.btn_cancel:hover {
+    background-color: #c97816;
 }
 
 /* Containers */
@@ -143,6 +168,10 @@ body {
 
 .nav_container_index{
     width: auto;
+}
+
+.cust_container{
+    margin-left: 20px;
 }
 
 .container_rdetails {
@@ -179,7 +208,7 @@ body {
 
 /* Label */
 
-.label_nroute {
+.label_route {
     margin-top: 10px;
     font-size: 18pt;
     font-weight: 600;
