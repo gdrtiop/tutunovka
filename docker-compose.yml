@@ -18,6 +18,7 @@ services:
       - postgres-db
     volumes:
       - ./.env.django:/tutunovka_web/.env.django
+      - static_volume:/tutunovka_web/staticfiles
   tutunovka_bot:
     build:
       context: ./tutunovka_bot
@@ -25,3 +26,15 @@ services:
       - postgres-db
     volumes:
       - ./.env.bot:/tutunovka_bot/.env.bot
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/staticfiles
+    depends_on:
+      - tutunovka_web
+
+volumes:
+  static_volume:
